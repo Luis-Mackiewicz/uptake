@@ -1,9 +1,12 @@
 "use client";
 
+import { useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { EditorView } from "@codemirror/view";
+import { applyMarkdownCommand, type MarkdownCommand } from "./markdown-commands";
+import { NoteMarkdownToolbar } from "./note-markdown-toolbar";
 
 const extensions = [
   markdown({ base: markdownLanguage, codeLanguages: languages }),
@@ -50,16 +53,31 @@ interface NoteCodeMirrorProps {
 }
 
 export default function NoteCodeMirror({ value, onChange }: NoteCodeMirrorProps) {
+  const viewRef = useRef<EditorView | null>(null);
+
+  const handleCommand = (command: MarkdownCommand) => {
+    if (!viewRef.current) return;
+    applyMarkdownCommand(viewRef.current, command);
+  };
+
   return (
-    <CodeMirror
-      value={value}
-      height="100%"
-      className="h-full"
-      theme="light"
-      placeholder="# Título da nota"
-      extensions={extensions}
-      basicSetup={{ lineNumbers: true, foldGutter: false, highlightActiveLine: true, autocompletion: true }}
-      onChange={(nextValue) => onChange(nextValue)}
-    />
+    <div className="flex h-full min-h-0 flex-col">
+      <NoteMarkdownToolbar onCommand={handleCommand} />
+      <div className="min-h-0 flex-1">
+        <CodeMirror
+          value={value}
+          height="100%"
+          className="h-full"
+          theme="light"
+          placeholder="# Título da nota"
+          extensions={extensions}
+          basicSetup={{ lineNumbers: true, foldGutter: false, highlightActiveLine: true, autocompletion: true }}
+          onChange={(nextValue) => onChange(nextValue)}
+          onCreateEditor={(view) => {
+            viewRef.current = view;
+          }}
+        />
+      </div>
+    </div>
   );
 }
