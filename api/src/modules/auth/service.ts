@@ -3,13 +3,13 @@ import {
   ConflictError,
   NotFoundError,
   UnauthorizedError,
-} from "../errors/AppError.js";
-import { userRepository } from "../repositories/user.repository.js";
+} from "../../errors/AppError.js";
+import { userRepository } from "./repository.js";
 import type {
   CreateUserData,
   LoginData,
   UpdateUserData,
-} from "../schemas/user.schemas.js";
+} from "./schemas.js";
 
 export class AuthService {
   constructor(private readonly repository: typeof userRepository = userRepository) {}

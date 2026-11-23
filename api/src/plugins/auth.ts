@@ -20,6 +20,13 @@ export default fp(async (fastify) => {
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         await request.jwtVerify();
+        const userId = Number(request.user.sub);
+
+        if (!Number.isInteger(userId) || userId <= 0) {
+          throw new Error("Invalid subject");
+        }
+
+        request.userId = userId;
       } catch {
         return reply.status(401).send({ error: "Token inválido ou ausente" });
       }
@@ -33,5 +40,9 @@ declare module "fastify" {
       request: FastifyRequest,
       reply: FastifyReply,
     ) => Promise<void>;
+  }
+
+  interface FastifyRequest {
+    userId: number;
   }
 }

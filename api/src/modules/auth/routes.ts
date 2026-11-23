@@ -1,12 +1,9 @@
 import type { FastifyInstance } from "fastify";
-import { env } from "../config/env.js";
-import {
-  createUserSchema,
-  loginSchema,
-  parseSchema,
-  updateUserSchema,
-} from "../schemas/user.schemas.js";
-import { authService } from "../services/auth.service.js";
+import { env } from "../../config/env.js";
+import { privatePlugin } from "../../shared/routes.js";
+import { parseSchema } from "../../shared/validation.js";
+import { createUserSchema, loginSchema, updateUserSchema } from "./schemas.js";
+import { authService } from "./service.js";
 
 export async function authRoutes(app: FastifyInstance) {
   app.post("/auth/register", async (request, reply) => {
@@ -25,12 +22,14 @@ export async function authRoutes(app: FastifyInstance) {
     return { token };
   });
 
-  app.get("/auth/me", { preHandler: [app.authenticate] }, async (request) => {
-    return authService.getProfile(Number(request.user.sub));
-  });
+  await privatePlugin(app, (privateApp) => {
+    privateApp.get("/auth/me", async (request) => {
+      return authService.getProfile(request.userId);
+    });
 
-  app.patch("/auth/me", { preHandler: [app.authenticate] }, async (request) => {
-    const data = parseSchema(updateUserSchema, request.body);
-    return authService.updateProfile(Number(request.user.sub), data);
+    privateApp.patch("/auth/me", async (request) => {
+      const data = parseSchema(updateUserSchema, request.body);
+      return authService.updateProfile(request.userId, data);
+    });
   });
 }

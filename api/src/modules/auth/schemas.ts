@@ -70,5 +70,3 @@ export const updateUserSchema = z
 export type CreateUserData = z.infer<typeof createUserSchema>;
 export type LoginData = z.infer<typeof loginSchema>;
 export type UpdateUserData = z.infer<typeof updateUserSchema>;
-
-export { parseSchema } from "./parse.js";

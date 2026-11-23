@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { authRoutes } from "./auth.routes.js";
+import { authRoutes } from "../modules/auth/routes.js";
 import { contentRoutes } from "./content.routes.js";
 import { examRoutes } from "./exam.routes.js";
 import { noteRoutes } from "./note.routes.js";

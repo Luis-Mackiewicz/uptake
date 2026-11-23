@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma.js";
+import { prisma } from "../../lib/prisma.js";
 
 export const userSafeSelect = {
   id: true,
@@ -64,6 +64,10 @@ export const userRepository = {
   },
 
   async update(id: number, data: UpdateUserInput) {
-    return prisma.user.update({ where: { id }, data, select: userSafeSelect });
+    return prisma.user.update({
+      where: { id, deletedAt: null },
+      data,
+      select: userSafeSelect,
+    });
   },
 };
