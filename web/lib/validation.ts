@@ -1,5 +1,4 @@
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export function isBlank(value: string | null | undefined) {
@@ -37,10 +36,6 @@ export function isValidUrl(value: string) {
   } catch {
     return false;
   }
-}
-
-export function isValidHexColor(value: string) {
-  return HEX_COLOR_PATTERN.test(value.trim());
 }
 
 export function isValidDate(value: string) {

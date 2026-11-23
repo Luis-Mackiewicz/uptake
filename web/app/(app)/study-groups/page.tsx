@@ -17,12 +17,12 @@ import { Dialog } from "@/components/ui/dialog";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type { CreateStudyGroupRequest, MessageResponse, StudyGroup } from "@/lib/api/types";
-import { isBlank, isValidHexColor, validateLength } from "@/lib/validation";
+import { isBlank, validateLength } from "@/lib/validation";
 
-type GroupForm = { name: string; description: string; color: string };
+type GroupForm = { name: string; description: string };
 type FormErrors = Partial<Record<keyof GroupForm, string>>;
 
-const emptyForm: GroupForm = { name: "", description: "", color: "#84cc16" };
+const emptyForm: GroupForm = { name: "", description: "" };
 
 export default function StudyGroupsPage() {
   const { data, setPage, reload } = useResourceList<StudyGroup>("/study-groups");
@@ -46,7 +46,6 @@ export default function StudyGroupsPage() {
     setForm({
       name: group.name,
       description: group.description ?? "",
-      color: group.color ?? "#84cc16",
     });
     setErrors({});
     setDialogOpen(true);
@@ -57,7 +56,6 @@ export default function StudyGroupsPage() {
     if (isBlank(form.name)) nextErrors.name = "Informe o nome";
     else if (!validateLength(form.name, 100)) nextErrors.name = "Máximo de 100 caracteres";
     if (!validateLength(form.description, 500)) nextErrors.description = "Máximo de 500 caracteres";
-    if (!isValidHexColor(form.color)) nextErrors.color = "Use uma cor hexadecimal";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -69,7 +67,6 @@ export default function StudyGroupsPage() {
     const payload: CreateStudyGroupRequest = {
       name: form.name.trim(),
       description: isBlank(form.description) ? null : form.description.trim(),
-      color: form.color.trim(),
     };
 
     setSaving(true);
@@ -124,7 +121,6 @@ export default function StudyGroupsPage() {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Descrição</TableHead>
-                  <TableHead>Cor</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -133,12 +129,6 @@ export default function StudyGroupsPage() {
                   <TableRow key={group.id}>
                     <TableCell className="font-medium">{group.name}</TableCell>
                     <TableCell className="max-w-xs truncate text-neutral-600">{group.description ?? "—"}</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center gap-2 text-xs text-neutral-600">
-                        <span className="size-4 rounded-full border border-neutral-300" style={{ background: group.color ?? "#d4d4d4" }} />
-                        {group.color ?? "—"}
-                      </span>
-                    </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-2">
                         <Button variant="secondary" size="sm" onClick={() => openEdit(group)}>
@@ -173,9 +163,6 @@ export default function StudyGroupsPage() {
           </Field>
           <Field label="Descrição" htmlFor="group-description" error={errors.description}>
             <Textarea id="group-description" value={form.description} invalid={Boolean(errors.description)} onChange={(event) => setForm({ ...form, description: event.target.value })} />
-          </Field>
-          <Field label="Cor" htmlFor="group-color" error={errors.color}>
-            <Input id="group-color" type="color" value={form.color} invalid={Boolean(errors.color)} onChange={(event) => setForm({ ...form, color: event.target.value })} />
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>

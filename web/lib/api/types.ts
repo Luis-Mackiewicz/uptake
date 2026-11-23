@@ -56,7 +56,6 @@ export interface StudyGroup {
   id: number;
   name: string;
   description: string | null;
-  color: string | null;
   userId: number;
   createdAt: string;
   updatedAt: string;
@@ -65,7 +64,6 @@ export interface StudyGroup {
 export interface CreateStudyGroupRequest {
   name: string;
   description?: string | null;
-  color?: string | null;
 }
 
 export interface Content {
