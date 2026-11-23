@@ -17,7 +17,8 @@ export interface ApiErrorPayload {
 
 export interface User {
   id: number;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   cpf: string;
   musicUrl: string | null;
@@ -26,7 +27,8 @@ export interface User {
 }
 
 export interface RegisterRequest {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   cpf: string;
   password: string;
@@ -43,7 +45,8 @@ export interface LoginResponse {
 }
 
 export interface UpdateProfileRequest {
-  name: string;
+  firstName: string;
+  lastName: string;
   cpf: string;
   password: string;
   musicUrl?: string | null;

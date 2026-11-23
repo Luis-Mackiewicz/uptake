@@ -14,7 +14,8 @@ import { ApiRequestError } from "@/lib/api/client";
 import { isBlank, isValidCpf, isValidEmail, isValidPassword } from "@/lib/validation";
 
 type RegisterForm = {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   cpf: string;
   password: string;
@@ -27,7 +28,8 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const { notify } = useToast();
   const [form, setForm] = useState<RegisterForm>({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     cpf: "",
     password: "",
@@ -42,7 +44,8 @@ export default function RegisterPage() {
 
   const validate = () => {
     const nextErrors: FormErrors = {};
-    if (isBlank(form.name)) nextErrors.name = "Informe seu nome";
+    if (isBlank(form.firstName)) nextErrors.firstName = "Informe seu nome";
+    if (isBlank(form.lastName)) nextErrors.lastName = "Informe seu sobrenome";
     if (isBlank(form.email)) nextErrors.email = "Informe seu e-mail";
     else if (!isValidEmail(form.email)) nextErrors.email = "E-mail inválido";
     if (!isValidCpf(form.cpf)) nextErrors.cpf = "CPF inválido";
@@ -61,7 +64,8 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register({
-        name: form.name.trim(),
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         email: form.email.trim().toLowerCase(),
         cpf: form.cpf.replace(/\D/g, ""),
         password: form.password,
@@ -90,8 +94,11 @@ export default function RegisterPage() {
       </CardHeader>
       <CardContent>
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit} noValidate>
-          <Field label="Nome" htmlFor="name" error={errors.name}>
-            <Input id="name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => update("name", event.target.value)} />
+          <Field label="Nome" htmlFor="firstName" error={errors.firstName}>
+            <Input id="firstName" autoComplete="given-name" value={form.firstName} invalid={Boolean(errors.firstName)} onChange={(event) => update("firstName", event.target.value)} />
+          </Field>
+          <Field label="Sobrenome" htmlFor="lastName" error={errors.lastName}>
+            <Input id="lastName" autoComplete="family-name" value={form.lastName} invalid={Boolean(errors.lastName)} onChange={(event) => update("lastName", event.target.value)} />
           </Field>
           <Field label="E-mail" htmlFor="email" error={errors.email}>
             <Input id="email" type="email" autoComplete="email" value={form.email} invalid={Boolean(errors.email)} onChange={(event) => update("email", event.target.value)} />

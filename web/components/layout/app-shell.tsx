@@ -56,7 +56,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               UPTAKE
             </Link>
             <div className="ml-auto flex items-center gap-4">
-              <span className="hidden text-sm text-neutral-600 sm:inline">{user?.name}</span>
+              <span className="hidden text-sm text-neutral-600 sm:inline">
+                {user ? `${user.firstName} ${user.lastName}` : null}
+              </span>
               <Button variant="secondary" size="sm" onClick={logout}>
                 Sair
               </Button>

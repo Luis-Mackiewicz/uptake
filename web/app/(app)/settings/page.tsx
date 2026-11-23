@@ -14,7 +14,8 @@ import type { User } from "@/lib/api/types";
 import { isBlank, isValidCpf, isValidPassword, isValidUrl } from "@/lib/validation";
 
 type ProfileForm = {
-  name: string;
+  firstName: string;
+  lastName: string;
   cpf: string;
   password: string;
   musicUrl: string;
@@ -25,7 +26,8 @@ function ProfileForm({ user }: { user: User }) {
   const { updateProfile } = useAuth();
   const { notify } = useToast();
   const [form, setForm] = useState<ProfileForm>(() => ({
-    name: user.name,
+    firstName: user.firstName,
+    lastName: user.lastName,
     cpf: user.cpf,
     password: "",
     musicUrl: user.musicUrl ?? "",
@@ -39,7 +41,8 @@ function ProfileForm({ user }: { user: User }) {
 
   const validate = () => {
     const nextErrors: FormErrors = {};
-    if (isBlank(form.name)) nextErrors.name = "Informe seu nome";
+    if (isBlank(form.firstName)) nextErrors.firstName = "Informe seu nome";
+    if (isBlank(form.lastName)) nextErrors.lastName = "Informe seu sobrenome";
     if (!isValidCpf(form.cpf)) nextErrors.cpf = "CPF inválido";
     if (!isValidPassword(form.password)) {
       nextErrors.password = "Use 8+ caracteres com maiúscula, minúscula e número";
@@ -56,7 +59,8 @@ function ProfileForm({ user }: { user: User }) {
     setLoading(true);
     try {
       await updateProfile({
-        name: form.name.trim(),
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         cpf: form.cpf.replace(/\D/g, ""),
         password: form.password,
         musicUrl: isBlank(form.musicUrl) ? null : form.musicUrl.trim(),
@@ -84,8 +88,11 @@ function ProfileForm({ user }: { user: User }) {
       </CardHeader>
       <CardContent>
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit} noValidate>
-          <Field label="Nome" htmlFor="name" error={errors.name}>
-            <Input id="name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => update("name", event.target.value)} />
+          <Field label="Nome" htmlFor="firstName" error={errors.firstName}>
+            <Input id="firstName" autoComplete="given-name" value={form.firstName} invalid={Boolean(errors.firstName)} onChange={(event) => update("firstName", event.target.value)} />
+          </Field>
+          <Field label="Sobrenome" htmlFor="lastName" error={errors.lastName}>
+            <Input id="lastName" autoComplete="family-name" value={form.lastName} invalid={Boolean(errors.lastName)} onChange={(event) => update("lastName", event.target.value)} />
           </Field>
           <Field label="E-mail" htmlFor="email" hint="Não pode ser alterado">
             <Input id="email" value={user.email} disabled />
@@ -93,9 +100,11 @@ function ProfileForm({ user }: { user: User }) {
           <Field label="CPF" htmlFor="cpf" error={errors.cpf}>
             <Input id="cpf" inputMode="numeric" value={form.cpf} invalid={Boolean(errors.cpf)} onChange={(event) => update("cpf", event.target.value)} />
           </Field>
-          <Field label="URL da música" htmlFor="musicUrl" error={errors.musicUrl}>
-            <Input id="musicUrl" type="url" value={form.musicUrl} invalid={Boolean(errors.musicUrl)} onChange={(event) => update("musicUrl", event.target.value)} />
-          </Field>
+          <div className="sm:col-span-2">
+            <Field label="URL da música" htmlFor="musicUrl" error={errors.musicUrl}>
+              <Input id="musicUrl" type="url" value={form.musicUrl} invalid={Boolean(errors.musicUrl)} onChange={(event) => update("musicUrl", event.target.value)} />
+            </Field>
+          </div>
           <div className="sm:col-span-2">
             <Field
               label="Nova senha"

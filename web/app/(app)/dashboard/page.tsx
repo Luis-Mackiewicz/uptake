@@ -71,7 +71,7 @@ export default function DashboardPage() {
     <div>
       <PageHeader
         title="Dashboard"
-        description={user ? `Olá, ${user.name}. Veja o panorama dos seus estudos.` : undefined}
+        description={user ? `Olá, ${user.firstName} ${user.lastName}. Veja o panorama dos seus estudos.` : undefined}
         actions={
           <Link href="/study-groups">
             <Button>Novo grupo</Button>
