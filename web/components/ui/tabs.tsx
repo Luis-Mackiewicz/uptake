@@ -16,9 +16,10 @@ interface TabsProps {
   onChange: (id: string) => void;
   onClose?: (id: string) => void;
   className?: string;
+  idPrefix?: string;
 }
 
-export function Tabs({ items, value, onChange, onClose, className }: TabsProps) {
+export function Tabs({ items, value, onChange, onClose, className, idPrefix = "note" }: TabsProps) {
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
 
@@ -59,10 +60,10 @@ export function Tabs({ items, value, onChange, onClose, className }: TabsProps) 
             <button
               type="button"
               role="tab"
-              id={`note-tab-${item.id}`}
-              data-tab-id={item.id}
-              aria-selected={selected}
-              aria-controls={`note-panel-${item.id}`}
+            id={`${idPrefix}-tab-${item.id}`}
+            data-tab-id={item.id}
+            aria-selected={selected}
+            aria-controls={`${idPrefix}-panel-${item.id}`}
               tabIndex={selected ? 0 : -1}
               onClick={() => onChange(item.id)}
               className={cn(

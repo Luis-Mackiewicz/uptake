@@ -8,7 +8,7 @@ const features = [
   },
   {
     title: "Pratique",
-    description: "Provas, pomodoro e revisões no mesmo fluxo.",
+    description: "Provas, pomodoro e ciclos no mesmo fluxo.",
   },
   {
     title: "Evolua",
@@ -20,12 +20,12 @@ export default function HomePage() {
   return (
     <div className="mx-auto w-full max-w-5xl py-12">
       <section className="rounded-3xl bg-white p-10 shadow-panel sm:p-16">
-        <p className="text-sm font-semibold uppercase tracking-widest text-lime-700">Estudo sem ruído</p>
         <h1 className="mt-4 max-w-2xl font-display text-5xl leading-tight tracking-wide text-neutral-900 sm:text-7xl">
           SEU ESTUDO EM UM SÓ LUGAR
         </h1>
         <p className="mt-6 max-w-xl text-base text-neutral-600 sm:text-lg">
-          Planeje conteúdos, registre notas em Markdown, acompanhe provas e mantenha o ritmo com revisões e pomodoro.
+          Planeje conteúdos, registre notas em Markdown, acompanhe provas e
+          mantenha o ritmo com ciclos e pomodoro.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/register">
@@ -41,9 +41,16 @@ export default function HomePage() {
 
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
         {features.map((feature) => (
-          <div key={feature.title} className="rounded-xl border border-neutral-200 bg-white p-6 shadow-panel">
-            <h2 className="font-display text-2xl tracking-wide text-neutral-900">{feature.title}</h2>
-            <p className="mt-2 text-sm text-neutral-600">{feature.description}</p>
+          <div
+            key={feature.title}
+            className="rounded-xl border border-neutral-200 bg-white p-6 shadow-panel"
+          >
+            <h2 className="font-display text-2xl tracking-wide text-neutral-900">
+              {feature.title}
+            </h2>
+            <p className="mt-2 text-sm text-neutral-600">
+              {feature.description}
+            </p>
           </div>
         ))}
       </section>

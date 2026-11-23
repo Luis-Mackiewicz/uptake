@@ -2,10 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { NoteService } from "../src/modules/note/service.js";
 import {
+  createNoteSchema,
   listNotesQuerySchema,
-  type CreateNoteData,
   type UpdateNoteData,
 } from "../src/modules/note/schemas.js";
+import type { NoteInput } from "../src/modules/note/repository.js";
 import { ValidationError } from "../src/shared/errors.js";
 import { toCrudPagination } from "../src/shared/crud.service.js";
 
@@ -15,14 +16,14 @@ type ContentLookup = NonNullable<ConstructorParameters<typeof NoteService>[1]>;
 
 const now = new Date("2026-01-01T00:00:00.000Z");
 
-function makeNote(data: CreateNoteData | UpdateNoteData): NoteRecord {
+function makeNote(data: NoteInput | UpdateNoteData): NoteRecord {
   return {
     id: 1,
     title: data.title,
     fileName: data.fileName,
     markdownContent: data.markdownContent,
-    mimeType: data.mimeType,
-    sizeBytes: data.sizeBytes,
+    mimeType: data.mimeType ?? "text/markdown",
+    sizeBytes: data.sizeBytes ?? 0,
     contentId: data.contentId,
     position: 1,
     userId: 1,
@@ -31,14 +32,23 @@ function makeNote(data: CreateNoteData | UpdateNoteData): NoteRecord {
   };
 }
 
-function createService() {
-  let persisted: CreateNoteData | UpdateNoteData | undefined;
+function createService(examLinks = 0) {
+  let persisted: NoteInput | UpdateNoteData | undefined;
   let findManyContentId: number | undefined;
   let reorderedIds: number[] | undefined;
+  let softDeleted = false;
+  let normalized = 0;
 
   const repository: NoteRepository = {
     async findById() {
-      return null;
+      return makeNote({
+        title: "Nota",
+        fileName: "nota.md",
+        markdownContent: "# Nota",
+        mimeType: "text/markdown",
+        sizeBytes: 6,
+        contentId: 1,
+      });
     },
     async findMany(_userId, _pagination, contentId) {
       findManyContentId = contentId;
@@ -53,7 +63,12 @@ function createService() {
     async reorder(_userId, _contentId, ids) {
       reorderedIds = ids;
     },
-    async normalizePositions() {},
+    async countActiveExamLinks() {
+      return examLinks;
+    },
+    async normalizePositions() {
+      normalized += 1;
+    },
     async create(_userId, data) {
       persisted = data;
       return makeNote(data);
@@ -63,6 +78,7 @@ function createService() {
       return makeNote(data);
     },
     async softDelete() {
+      softDeleted = true;
       return makeNote({
         title: "Nota",
         fileName: "nota.md",
@@ -83,7 +99,9 @@ function createService() {
 
   const contents: ContentLookup = {
     async findById(id, userId) {
-      return id === 1 && userId === 1 ? { id, title: "Conteúdo" } : null;
+      return id === 1 && userId === 1
+        ? { id, title: "Conteúdo", studyGroupId: 1 }
+        : null;
     },
   };
 
@@ -92,13 +110,43 @@ function createService() {
     persisted: () => persisted,
     findManyContentId: () => findManyContentId,
     reorderedIds: () => reorderedIds,
+    softDeleted: () => softDeleted,
+    normalized: () => normalized,
   };
 }
 
-test("note service calculates sizeBytes from markdown content", async () => {
+test("note service derives title and fileName from the name", async () => {
   const { service, persisted } = createService();
 
-  await service.create(1, {
+  await service.createFromName(1, {
+    name: "Resumo",
+    mimeType: "text/markdown",
+    sizeBytes: 0,
+    contentId: 1,
+  });
+
+  assert.equal(persisted()?.title, "Resumo.md");
+  assert.equal(persisted()?.fileName, "Resumo.md");
+  assert.equal(persisted()?.markdownContent, "");
+});
+
+test("note service does not duplicate the .md extension", async () => {
+  const { service, persisted } = createService();
+
+  await service.createFromName(1, {
+    name: "Resumo.md",
+    mimeType: "text/markdown",
+    sizeBytes: 0,
+    contentId: 1,
+  });
+
+  assert.equal(persisted()?.fileName, "Resumo.md");
+});
+
+test("note service calculates sizeBytes from markdown content on update", async () => {
+  const { service, persisted } = createService();
+
+  await service.update(1, 1, {
     title: "Nota",
     fileName: "nota.md",
     markdownContent: "# SZ",
@@ -114,7 +162,7 @@ test("note service rejects content larger than 2 MB", async () => {
   const { service } = createService();
 
   await assert.rejects(
-    service.create(1, {
+    service.update(1, 1, {
       title: "Nota grande",
       fileName: "grande.md",
       markdownContent: "x".repeat(2 * 1024 * 1024 + 1),
@@ -124,6 +172,11 @@ test("note service rejects content larger than 2 MB", async () => {
     }),
     ValidationError,
   );
+});
+
+test("create note schema requires a name", () => {
+  assert.equal(createNoteSchema.parse({ name: "Resumo", contentId: "1" }).name, "Resumo");
+  assert.equal(createNoteSchema.safeParse({ contentId: 1 }).success, false);
 });
 
 test("note service filters notes by content", async () => {
@@ -146,4 +199,20 @@ test("note service merges a partial reorder with the remaining ids", async () =>
 test("list notes query coerces contentId and rejects zero", () => {
   assert.equal(listNotesQuerySchema.parse({ contentId: "3" }).contentId, 3);
   assert.equal(listNotesQuerySchema.safeParse({ contentId: 0 }).success, false);
+});
+
+test("note service blocks removal when exams are linked", async () => {
+  const { service, softDeleted } = createService(1);
+
+  await assert.rejects(service.remove(1, 1), /provas vinculadas/);
+  assert.equal(softDeleted(), false);
+});
+
+test("note service removes a note without exam links", async () => {
+  const { service, softDeleted, normalized } = createService();
+
+  await service.remove(1, 1);
+
+  assert.equal(softDeleted(), true);
+  assert.equal(normalized(), 1);
 });

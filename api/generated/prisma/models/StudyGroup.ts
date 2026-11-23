@@ -239,7 +239,7 @@ export type StudyGroupWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   contents?: Prisma.ContentListRelationFilter
   exams?: Prisma.ExamListRelationFilter
-  cycleItems?: Prisma.StudyCycleItemListRelationFilter
+  cycles?: Prisma.StudyCycleListRelationFilter
 }
 
 export type StudyGroupOrderByWithRelationInput = {
@@ -253,7 +253,7 @@ export type StudyGroupOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   contents?: Prisma.ContentOrderByRelationAggregateInput
   exams?: Prisma.ExamOrderByRelationAggregateInput
-  cycleItems?: Prisma.StudyCycleItemOrderByRelationAggregateInput
+  cycles?: Prisma.StudyCycleOrderByRelationAggregateInput
   _relevance?: Prisma.StudyGroupOrderByRelevanceInput
 }
 
@@ -272,7 +272,7 @@ export type StudyGroupWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   contents?: Prisma.ContentListRelationFilter
   exams?: Prisma.ExamListRelationFilter
-  cycleItems?: Prisma.StudyCycleItemListRelationFilter
+  cycles?: Prisma.StudyCycleListRelationFilter
 }, "id" | "userId_name">
 
 export type StudyGroupOrderByWithAggregationInput = {
@@ -312,7 +312,7 @@ export type StudyGroupCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutStudyGroupsInput
   contents?: Prisma.ContentCreateNestedManyWithoutStudyGroupInput
   exams?: Prisma.ExamCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupUncheckedCreateInput = {
@@ -325,7 +325,7 @@ export type StudyGroupUncheckedCreateInput = {
   deletedAt?: Date | string | null
   contents?: Prisma.ContentUncheckedCreateNestedManyWithoutStudyGroupInput
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupUpdateInput = {
@@ -337,7 +337,7 @@ export type StudyGroupUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutStudyGroupsNestedInput
   contents?: Prisma.ContentUpdateManyWithoutStudyGroupNestedInput
   exams?: Prisma.ExamUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupUncheckedUpdateInput = {
@@ -350,7 +350,7 @@ export type StudyGroupUncheckedUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUncheckedUpdateManyWithoutStudyGroupNestedInput
   exams?: Prisma.ExamUncheckedUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupCreateManyInput = {
@@ -524,18 +524,18 @@ export type StudyGroupUpdateOneWithoutExamsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudyGroupUpdateToOneWithWhereWithoutExamsInput, Prisma.StudyGroupUpdateWithoutExamsInput>, Prisma.StudyGroupUncheckedUpdateWithoutExamsInput>
 }
 
-export type StudyGroupCreateNestedOneWithoutCycleItemsInput = {
-  create?: Prisma.XOR<Prisma.StudyGroupCreateWithoutCycleItemsInput, Prisma.StudyGroupUncheckedCreateWithoutCycleItemsInput>
-  connectOrCreate?: Prisma.StudyGroupCreateOrConnectWithoutCycleItemsInput
+export type StudyGroupCreateNestedOneWithoutCyclesInput = {
+  create?: Prisma.XOR<Prisma.StudyGroupCreateWithoutCyclesInput, Prisma.StudyGroupUncheckedCreateWithoutCyclesInput>
+  connectOrCreate?: Prisma.StudyGroupCreateOrConnectWithoutCyclesInput
   connect?: Prisma.StudyGroupWhereUniqueInput
 }
 
-export type StudyGroupUpdateOneRequiredWithoutCycleItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.StudyGroupCreateWithoutCycleItemsInput, Prisma.StudyGroupUncheckedCreateWithoutCycleItemsInput>
-  connectOrCreate?: Prisma.StudyGroupCreateOrConnectWithoutCycleItemsInput
-  upsert?: Prisma.StudyGroupUpsertWithoutCycleItemsInput
+export type StudyGroupUpdateOneRequiredWithoutCyclesNestedInput = {
+  create?: Prisma.XOR<Prisma.StudyGroupCreateWithoutCyclesInput, Prisma.StudyGroupUncheckedCreateWithoutCyclesInput>
+  connectOrCreate?: Prisma.StudyGroupCreateOrConnectWithoutCyclesInput
+  upsert?: Prisma.StudyGroupUpsertWithoutCyclesInput
   connect?: Prisma.StudyGroupWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.StudyGroupUpdateToOneWithWhereWithoutCycleItemsInput, Prisma.StudyGroupUpdateWithoutCycleItemsInput>, Prisma.StudyGroupUncheckedUpdateWithoutCycleItemsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudyGroupUpdateToOneWithWhereWithoutCyclesInput, Prisma.StudyGroupUpdateWithoutCyclesInput>, Prisma.StudyGroupUncheckedUpdateWithoutCyclesInput>
 }
 
 export type StudyGroupCreateWithoutUserInput = {
@@ -546,7 +546,7 @@ export type StudyGroupCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   contents?: Prisma.ContentCreateNestedManyWithoutStudyGroupInput
   exams?: Prisma.ExamCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupUncheckedCreateWithoutUserInput = {
@@ -558,7 +558,7 @@ export type StudyGroupUncheckedCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   contents?: Prisma.ContentUncheckedCreateNestedManyWithoutStudyGroupInput
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupCreateOrConnectWithoutUserInput = {
@@ -608,7 +608,7 @@ export type StudyGroupCreateWithoutContentsInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutStudyGroupsInput
   exams?: Prisma.ExamCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupUncheckedCreateWithoutContentsInput = {
@@ -620,7 +620,7 @@ export type StudyGroupUncheckedCreateWithoutContentsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupCreateOrConnectWithoutContentsInput = {
@@ -647,7 +647,7 @@ export type StudyGroupUpdateWithoutContentsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutStudyGroupsNestedInput
   exams?: Prisma.ExamUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupUncheckedUpdateWithoutContentsInput = {
@@ -659,7 +659,7 @@ export type StudyGroupUncheckedUpdateWithoutContentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   exams?: Prisma.ExamUncheckedUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupCreateWithoutExamsInput = {
@@ -670,7 +670,7 @@ export type StudyGroupCreateWithoutExamsInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutStudyGroupsInput
   contents?: Prisma.ContentCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupUncheckedCreateWithoutExamsInput = {
@@ -682,7 +682,7 @@ export type StudyGroupUncheckedCreateWithoutExamsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   contents?: Prisma.ContentUncheckedCreateNestedManyWithoutStudyGroupInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedCreateNestedManyWithoutStudyGroupInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutStudyGroupInput
 }
 
 export type StudyGroupCreateOrConnectWithoutExamsInput = {
@@ -709,7 +709,7 @@ export type StudyGroupUpdateWithoutExamsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutStudyGroupsNestedInput
   contents?: Prisma.ContentUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupUncheckedUpdateWithoutExamsInput = {
@@ -721,10 +721,10 @@ export type StudyGroupUncheckedUpdateWithoutExamsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUncheckedUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutStudyGroupNestedInput
 }
 
-export type StudyGroupCreateWithoutCycleItemsInput = {
+export type StudyGroupCreateWithoutCyclesInput = {
   name: string
   description?: string | null
   createdAt?: Date | string
@@ -735,7 +735,7 @@ export type StudyGroupCreateWithoutCycleItemsInput = {
   exams?: Prisma.ExamCreateNestedManyWithoutStudyGroupInput
 }
 
-export type StudyGroupUncheckedCreateWithoutCycleItemsInput = {
+export type StudyGroupUncheckedCreateWithoutCyclesInput = {
   id?: number
   name: string
   description?: string | null
@@ -747,23 +747,23 @@ export type StudyGroupUncheckedCreateWithoutCycleItemsInput = {
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutStudyGroupInput
 }
 
-export type StudyGroupCreateOrConnectWithoutCycleItemsInput = {
+export type StudyGroupCreateOrConnectWithoutCyclesInput = {
   where: Prisma.StudyGroupWhereUniqueInput
-  create: Prisma.XOR<Prisma.StudyGroupCreateWithoutCycleItemsInput, Prisma.StudyGroupUncheckedCreateWithoutCycleItemsInput>
+  create: Prisma.XOR<Prisma.StudyGroupCreateWithoutCyclesInput, Prisma.StudyGroupUncheckedCreateWithoutCyclesInput>
 }
 
-export type StudyGroupUpsertWithoutCycleItemsInput = {
-  update: Prisma.XOR<Prisma.StudyGroupUpdateWithoutCycleItemsInput, Prisma.StudyGroupUncheckedUpdateWithoutCycleItemsInput>
-  create: Prisma.XOR<Prisma.StudyGroupCreateWithoutCycleItemsInput, Prisma.StudyGroupUncheckedCreateWithoutCycleItemsInput>
+export type StudyGroupUpsertWithoutCyclesInput = {
+  update: Prisma.XOR<Prisma.StudyGroupUpdateWithoutCyclesInput, Prisma.StudyGroupUncheckedUpdateWithoutCyclesInput>
+  create: Prisma.XOR<Prisma.StudyGroupCreateWithoutCyclesInput, Prisma.StudyGroupUncheckedCreateWithoutCyclesInput>
   where?: Prisma.StudyGroupWhereInput
 }
 
-export type StudyGroupUpdateToOneWithWhereWithoutCycleItemsInput = {
+export type StudyGroupUpdateToOneWithWhereWithoutCyclesInput = {
   where?: Prisma.StudyGroupWhereInput
-  data: Prisma.XOR<Prisma.StudyGroupUpdateWithoutCycleItemsInput, Prisma.StudyGroupUncheckedUpdateWithoutCycleItemsInput>
+  data: Prisma.XOR<Prisma.StudyGroupUpdateWithoutCyclesInput, Prisma.StudyGroupUncheckedUpdateWithoutCyclesInput>
 }
 
-export type StudyGroupUpdateWithoutCycleItemsInput = {
+export type StudyGroupUpdateWithoutCyclesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -774,7 +774,7 @@ export type StudyGroupUpdateWithoutCycleItemsInput = {
   exams?: Prisma.ExamUpdateManyWithoutStudyGroupNestedInput
 }
 
-export type StudyGroupUncheckedUpdateWithoutCycleItemsInput = {
+export type StudyGroupUncheckedUpdateWithoutCyclesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -803,7 +803,7 @@ export type StudyGroupUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUpdateManyWithoutStudyGroupNestedInput
   exams?: Prisma.ExamUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupUncheckedUpdateWithoutUserInput = {
@@ -815,7 +815,7 @@ export type StudyGroupUncheckedUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contents?: Prisma.ContentUncheckedUpdateManyWithoutStudyGroupNestedInput
   exams?: Prisma.ExamUncheckedUpdateManyWithoutStudyGroupNestedInput
-  cycleItems?: Prisma.StudyCycleItemUncheckedUpdateManyWithoutStudyGroupNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutStudyGroupNestedInput
 }
 
 export type StudyGroupUncheckedUpdateManyWithoutUserInput = {
@@ -835,13 +835,13 @@ export type StudyGroupUncheckedUpdateManyWithoutUserInput = {
 export type StudyGroupCountOutputType = {
   contents: number
   exams: number
-  cycleItems: number
+  cycles: number
 }
 
 export type StudyGroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contents?: boolean | StudyGroupCountOutputTypeCountContentsArgs
   exams?: boolean | StudyGroupCountOutputTypeCountExamsArgs
-  cycleItems?: boolean | StudyGroupCountOutputTypeCountCycleItemsArgs
+  cycles?: boolean | StudyGroupCountOutputTypeCountCyclesArgs
 }
 
 /**
@@ -871,8 +871,8 @@ export type StudyGroupCountOutputTypeCountExamsArgs<ExtArgs extends runtime.Type
 /**
  * StudyGroupCountOutputType without action
  */
-export type StudyGroupCountOutputTypeCountCycleItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.StudyCycleItemWhereInput
+export type StudyGroupCountOutputTypeCountCyclesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudyCycleWhereInput
 }
 
 
@@ -887,7 +887,7 @@ export type StudyGroupSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   contents?: boolean | Prisma.StudyGroup$contentsArgs<ExtArgs>
   exams?: boolean | Prisma.StudyGroup$examsArgs<ExtArgs>
-  cycleItems?: boolean | Prisma.StudyGroup$cycleItemsArgs<ExtArgs>
+  cycles?: boolean | Prisma.StudyGroup$cyclesArgs<ExtArgs>
   _count?: boolean | Prisma.StudyGroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["studyGroup"]>
 
@@ -908,7 +908,7 @@ export type StudyGroupInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   contents?: boolean | Prisma.StudyGroup$contentsArgs<ExtArgs>
   exams?: boolean | Prisma.StudyGroup$examsArgs<ExtArgs>
-  cycleItems?: boolean | Prisma.StudyGroup$cycleItemsArgs<ExtArgs>
+  cycles?: boolean | Prisma.StudyGroup$cyclesArgs<ExtArgs>
   _count?: boolean | Prisma.StudyGroupCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -918,7 +918,7 @@ export type $StudyGroupPayload<ExtArgs extends runtime.Types.Extensions.Internal
     user: Prisma.$UserPayload<ExtArgs>
     contents: Prisma.$ContentPayload<ExtArgs>[]
     exams: Prisma.$ExamPayload<ExtArgs>[]
-    cycleItems: Prisma.$StudyCycleItemPayload<ExtArgs>[]
+    cycles: Prisma.$StudyCyclePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1271,7 +1271,7 @@ export interface Prisma__StudyGroupClient<T, Null = never, ExtArgs extends runti
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   contents<T extends Prisma.StudyGroup$contentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudyGroup$contentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   exams<T extends Prisma.StudyGroup$examsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudyGroup$examsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  cycleItems<T extends Prisma.StudyGroup$cycleItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudyGroup$cycleItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyCycleItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cycles<T extends Prisma.StudyGroup$cyclesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudyGroup$cyclesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyCyclePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1704,27 +1704,27 @@ export type StudyGroup$examsArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * StudyGroup.cycleItems
+ * StudyGroup.cycles
  */
-export type StudyGroup$cycleItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type StudyGroup$cyclesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the StudyCycleItem
+   * Select specific fields to fetch from the StudyCycle
    */
-  select?: Prisma.StudyCycleItemSelect<ExtArgs> | null
+  select?: Prisma.StudyCycleSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the StudyCycleItem
+   * Omit specific fields from the StudyCycle
    */
-  omit?: Prisma.StudyCycleItemOmit<ExtArgs> | null
+  omit?: Prisma.StudyCycleOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.StudyCycleItemInclude<ExtArgs> | null
-  where?: Prisma.StudyCycleItemWhereInput
-  orderBy?: Prisma.StudyCycleItemOrderByWithRelationInput | Prisma.StudyCycleItemOrderByWithRelationInput[]
-  cursor?: Prisma.StudyCycleItemWhereUniqueInput
+  include?: Prisma.StudyCycleInclude<ExtArgs> | null
+  where?: Prisma.StudyCycleWhereInput
+  orderBy?: Prisma.StudyCycleOrderByWithRelationInput | Prisma.StudyCycleOrderByWithRelationInput[]
+  cursor?: Prisma.StudyCycleWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.StudyCycleItemScalarFieldEnum | Prisma.StudyCycleItemScalarFieldEnum[]
+  distinct?: Prisma.StudyCycleScalarFieldEnum | Prisma.StudyCycleScalarFieldEnum[]
 }
 
 /**

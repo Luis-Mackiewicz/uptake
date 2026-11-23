@@ -70,7 +70,6 @@ export function NoteCard({
             <span className="text-xs text-amber-600" title="Alterações não salvas">●</span>
           ) : null}
         </span>
-        <span className="block truncate font-mono text-xs text-neutral-500">{note.fileName}</span>
         <span className="block truncate text-xs text-neutral-500">{contentLabel}</span>
       </button>
       {isActive || isOpen ? (

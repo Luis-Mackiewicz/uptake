@@ -1,5 +1,6 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
 import type { Exam } from "@/lib/api/types";
 
@@ -10,8 +11,12 @@ interface ExamActionsProps {
 }
 
 export function ExamActions({ exam, onEdit, onDelete }: ExamActionsProps) {
+  const stopPropagation = (event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+  };
+
   return (
-    <div className="flex justify-end gap-2">
+    <div className="flex justify-end gap-2" onClick={stopPropagation}>
       <Button variant="secondary" size="sm" onClick={() => onEdit(exam)}>
         Editar
       </Button>

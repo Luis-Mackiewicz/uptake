@@ -103,6 +103,12 @@ export interface Note {
 }
 
 export interface CreateNoteRequest {
+  name: string;
+  mimeType?: string;
+  contentId: number;
+}
+
+export interface UpdateNoteRequest {
   title: string;
   fileName: string;
   markdownContent: string;
@@ -123,7 +129,8 @@ export interface Exam {
   location: string | null;
   studyGroupId: number | null;
   googleEventId: string | null;
-  noteIds?: number[];
+  contentIds: number[];
+  noteIds: number[];
   userId: number;
   createdAt: string;
   updatedAt: string;
@@ -135,31 +142,17 @@ export interface CreateExamRequest {
   examDate: string;
   location?: string | null;
   studyGroupId?: number | null;
+  contentIds?: number[];
   noteIds?: number[];
 }
 
-export interface Review {
-  id: number;
-  userId: number;
-  noteId: number;
-  lastReviewedAt: string | null;
-  nextReviewAt: string;
-  intervalDays: number;
-  reviewCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type CyclePriority = 1 | 2 | 3;
 
-export interface CreateReviewRequest {
-  noteId: number;
-  nextReviewAt?: string;
-  intervalDays?: number;
-}
-
-export interface UpdateReviewRequest {
-  nextReviewAt?: string;
-  intervalDays?: number;
-}
+export const CYCLE_PRIORITIES: { value: CyclePriority; label: string }[] = [
+  { value: 1, label: "Alta" },
+  { value: 2, label: "Média" },
+  { value: 3, label: "Baixa" },
+];
 
 export interface StudyCycle {
   id: number;
@@ -167,6 +160,11 @@ export interface StudyCycle {
   active: boolean;
   currentRound: number;
   nextItemOrder: number;
+  examId: number;
+  studyGroupId: number;
+  priority: CyclePriority;
+  position: number;
+  contentIds: number[];
   userId: number;
   createdAt: string;
   updatedAt: string;
@@ -175,29 +173,31 @@ export interface StudyCycle {
 export interface CreateStudyCycleRequest {
   name: string;
   active?: boolean;
+  studyGroupId: number;
+  priority: CyclePriority;
+  contentIds?: number[];
 }
 
 export interface UpdateStudyCycleRequest {
   name: string;
   active: boolean;
+  studyGroupId: number;
+  priority: CyclePriority;
+  contentIds?: number[];
 }
 
-export interface StudyCycleItem {
-  id: number;
-  studyCycleId: number;
-  studyGroupId: number;
+export interface ReorderStudyCyclesRequest {
+  priority: CyclePriority;
+  ids: number[];
+}
+
+export interface StudyCycleContent {
+  contentId: number;
   position: number;
   minutesPerSession: number;
-  createdAt: string;
-}
-
-export interface CreateCycleItemRequest {
-  studyGroupId: number;
-  position?: number;
-  minutesPerSession?: number;
 }
 
 export interface AdvanceCycleResponse {
   cycle: StudyCycle;
-  nextItem: StudyCycleItem | null;
+  nextContent: StudyCycleContent | null;
 }

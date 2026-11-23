@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { NoteCard } from "@/components/notes/note-card";
 import { NoteTableRow } from "@/components/notes/note-table-row";
 import { useNoteTabsContext } from "@/components/notes/note-tabs-provider";
@@ -16,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { SortableProvider } from "@/components/ui/sortable";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { ViewToggle } from "@/components/ui/view-toggle";
 import { useFileTree } from "@/components/files/file-tree-provider";
@@ -34,15 +35,9 @@ import type {
 } from "@/lib/api/types";
 import { isBlank, validateLength } from "@/lib/validation";
 
-const MAX_NOTE_BYTES = 2 * 1024 * 1024;
-
-type NoteForm = { title: string; fileName: string; markdownContent: string };
+type NoteForm = { name: string };
 type FormErrors = Partial<Record<keyof NoteForm, string>>;
-const emptyForm: NoteForm = { title: "", fileName: "", markdownContent: "" };
-
-function byteLength(value: string) {
-  return new TextEncoder().encode(value).length;
-}
+const emptyForm: NoteForm = { name: "" };
 
 export function ContentFolderPage({ groupId, contentId }: { groupId: number; contentId: number }) {
   const router = useRouter();
@@ -145,13 +140,9 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
 
   const validate = () => {
     const nextErrors: FormErrors = {};
-    if (isBlank(form.title)) nextErrors.title = "Informe o título";
-    else if (!validateLength(form.title, 200)) nextErrors.title = "Máximo de 200 caracteres";
-    if (isBlank(form.fileName)) nextErrors.fileName = "Informe o nome do arquivo";
-    else if (!validateLength(form.fileName, 255)) nextErrors.fileName = "Máximo de 255 caracteres";
-    else if (form.fileName.includes("/") || form.fileName.includes("\\")) nextErrors.fileName = "Não use barras no nome";
-    if (isBlank(form.markdownContent)) nextErrors.markdownContent = "Escreva o conteúdo da nota";
-    else if (byteLength(form.markdownContent) > MAX_NOTE_BYTES) nextErrors.markdownContent = "Nota excede o tamanho máximo de 2 MB";
+    if (isBlank(form.name)) nextErrors.name = "Informe o nome";
+    else if (!validateLength(form.name, 251)) nextErrors.name = "Máximo de 251 caracteres";
+    else if (form.name.includes("/") || form.name.includes("\\")) nextErrors.name = "Não use barras no nome";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -161,10 +152,8 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
     if (!validate()) return;
 
     const payload: CreateNoteRequest = {
-      title: form.title.trim(),
-      fileName: form.fileName.trim(),
+      name: form.name.trim(),
       contentId: content.id,
-      markdownContent: form.markdownContent,
     };
 
     setSaving(true);
@@ -218,8 +207,14 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
           { label: content.title },
         ]}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <ViewToggle value={view} onChange={setView} />
+            <Link href={`/study-groups/${group.id}/contents`}>
+              <Button variant="secondary">
+                <ArrowLeft size={16} aria-hidden />
+                Voltar
+              </Button>
+            </Link>
             <Button onClick={openCreate}>Nova nota</Button>
           </div>
         }
@@ -303,18 +298,10 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
         </div>
       ) : null}
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title="Nova nota" className="max-w-3xl">
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title="Nova nota">
         <form className="space-y-4" onSubmit={handleCreate} noValidate>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Título" htmlFor="folder-note-title" error={errors.title}>
-              <Input id="folder-note-title" value={form.title} invalid={Boolean(errors.title)} onChange={(event) => setForm({ ...form, title: event.target.value })} />
-            </Field>
-            <Field label="Arquivo" htmlFor="folder-note-file" error={errors.fileName} hint="Ex.: resumo.md">
-              <Input id="folder-note-file" value={form.fileName} invalid={Boolean(errors.fileName)} onChange={(event) => setForm({ ...form, fileName: event.target.value })} />
-            </Field>
-          </div>
-          <Field label="Markdown" htmlFor="folder-note-markdown" error={errors.markdownContent}>
-            <Textarea id="folder-note-markdown" className="min-h-48 font-mono text-xs" value={form.markdownContent} invalid={Boolean(errors.markdownContent)} onChange={(event) => setForm({ ...form, markdownContent: event.target.value })} />
+          <Field label="Nome" htmlFor="folder-note-name" error={errors.name} hint="O arquivo será criado com a extensão .md.">
+            <Input id="folder-note-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>

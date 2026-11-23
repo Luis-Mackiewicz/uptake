@@ -9,7 +9,7 @@ A API em `api/src` é organizada por features:
 - `plugins/`: autenticação, banco de dados e tratamento global de erros.
 - `app.ts`: registro central das rotas da aplicação.
 
-As features implementadas são `auth`, `studyGroup`, `content`, `note`, `exam`, `pomodoro`, `studyCycle` e `review`. Os módulos preservam o contrato HTTP existente e filtram todas as consultas pelo `userId` autenticado.
+As features implementadas são `auth`, `studyGroup`, `content`, `note`, `exam`, `pomodoro` e `studyCycle`. Os módulos preservam o contrato HTTP existente e filtram todas as consultas pelo `userId` autenticado. A antiga feature `review` foi removida; `/reviews` redireciona para o dashboard.
 
 ## Setup local da API
 
@@ -68,13 +68,15 @@ npm run build
 - Rotas protegidas exigem `Authorization: Bearer <token>`; token ausente retorna `401`.
 - Paginação usa `page=1` e `limit=20` por padrão, com `limit` máximo de `100`.
 - Grupos, conteúdos, notas e provas alternam entre tabela e cards; a preferência é salva por tela no navegador.
-- Grupos, conteúdos e notas usam exclusão lógica: remover um grupo oculta conteúdos, notas, provas, sessões de pomodoro, revisões e itens de ciclo relacionados; reativar o grupo restaura essa cadeia.
+- Grupos, conteúdos e notas usam exclusão lógica e só podem ser removidos sem vínculos ativos: grupo sem conteúdos, provas ou ciclos; conteúdo sem notas, provas ou ciclos; nota sem provas. Isso evita órfãos e mantém vínculos históricos com registros excluídos.
 - Conteúdos são gerenciados dentro de `/study-groups/{groupId}/contents`; clicar em um grupo abre essa tela e `GET /contents` aceita `studyGroupId` para filtrar. A tela permite arrastar para reordenar e envia `PATCH /contents/reorder`. Clicar em um conteúdo abre a pasta em `/study-groups/{groupId}/contents/{contentId}`.
-- Itens do ciclo também usam exclusão lógica para não violar a unicidade de posição.
+- Ciclos usam exclusão lógica; ao remover um ciclo, a posição dos demais ciclos da mesma prioridade é normalizada.
+- Nova nota recebe apenas um `name`; a API gera `title` e `fileName` com `.md` e inicia com `markdownContent` vazio para edição na página.
 - `sizeBytes` é calculado no servidor a partir de `markdownContent`, com limite de 2 MB.
 - `PATCH` continua substituindo completamente o recurso, preservando o contrato HTTP existente.
-- Exames devolvem `noteIds` nas respostas, permitindo editar o vínculo com notas no front.
+- Exames devolvem `contentIds` e `noteIds` nas respostas. Notas só podem ser vinculadas a conteúdos selecionados na prova.
+- Ciclos pertencem a uma prova e aparecem em um kanban em `/exams`, com colunas fixas Alta, Média e Baixa. `/cycles` redireciona para `/exams`.
 - Usuários usam `firstName` e `lastName`; a migração divide o nome antigo no primeiro espaço para preservar os dados.
-- A sidebar mostra uma árvore de arquivos `grupo/ → conteúdo/ → nota.md`, com criar/renomear/excluir direto na árvore. A rota `/notes` redireciona para `/study-groups`.
+- A sidebar mostra uma árvore de arquivos `grupo/ → conteúdo/ → nota.md`, com criar/renomear/excluir direto na árvore. A rota `/notes` continua disponível para criar e abrir notas.
 - Notas abrem em abas no editor de `/study-groups/{groupId}/contents/{contentId}/notes/{noteId}`, com editor CodeMirror, toolbar Markdown, preview Markdown e salvamento manual por `Ctrl/Cmd+S`. A lista da pasta permite arrastar para reordenar via `PATCH /notes/reorder`.
 - Pomodoro é um widget local na sidebar: 25/5/15 min por padrão, pausa longa a cada 4 focos, sinal com toast e beep; não registra histórico.

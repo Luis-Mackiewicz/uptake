@@ -275,6 +275,8 @@ export type ExamWhereInput = {
   studyGroup?: Prisma.XOR<Prisma.StudyGroupNullableScalarRelationFilter, Prisma.StudyGroupWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   notes?: Prisma.ExamNoteListRelationFilter
+  contents?: Prisma.ExamContentListRelationFilter
+  cycles?: Prisma.StudyCycleListRelationFilter
 }
 
 export type ExamOrderByWithRelationInput = {
@@ -292,6 +294,8 @@ export type ExamOrderByWithRelationInput = {
   studyGroup?: Prisma.StudyGroupOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   notes?: Prisma.ExamNoteOrderByRelationAggregateInput
+  contents?: Prisma.ExamContentOrderByRelationAggregateInput
+  cycles?: Prisma.StudyCycleOrderByRelationAggregateInput
   _relevance?: Prisma.ExamOrderByRelevanceInput
 }
 
@@ -313,6 +317,8 @@ export type ExamWhereUniqueInput = Prisma.AtLeast<{
   studyGroup?: Prisma.XOR<Prisma.StudyGroupNullableScalarRelationFilter, Prisma.StudyGroupWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   notes?: Prisma.ExamNoteListRelationFilter
+  contents?: Prisma.ExamContentListRelationFilter
+  cycles?: Prisma.StudyCycleListRelationFilter
 }, "id">
 
 export type ExamOrderByWithAggregationInput = {
@@ -363,6 +369,8 @@ export type ExamCreateInput = {
   studyGroup?: Prisma.StudyGroupCreateNestedOneWithoutExamsInput
   user: Prisma.UserCreateNestedOneWithoutExamsInput
   notes?: Prisma.ExamNoteCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutExamInput
 }
 
 export type ExamUncheckedCreateInput = {
@@ -378,6 +386,8 @@ export type ExamUncheckedCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ExamUpdateInput = {
@@ -392,6 +402,8 @@ export type ExamUpdateInput = {
   studyGroup?: Prisma.StudyGroupUpdateOneWithoutExamsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutExamsNestedInput
   notes?: Prisma.ExamNoteUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutExamNestedInput
 }
 
 export type ExamUncheckedUpdateInput = {
@@ -407,6 +419,8 @@ export type ExamUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.ExamNoteUncheckedUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUncheckedUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ExamCreateManyInput = {
@@ -629,6 +643,34 @@ export type ExamUpdateOneRequiredWithoutNotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ExamUpdateToOneWithWhereWithoutNotesInput, Prisma.ExamUpdateWithoutNotesInput>, Prisma.ExamUncheckedUpdateWithoutNotesInput>
 }
 
+export type ExamCreateNestedOneWithoutContentsInput = {
+  create?: Prisma.XOR<Prisma.ExamCreateWithoutContentsInput, Prisma.ExamUncheckedCreateWithoutContentsInput>
+  connectOrCreate?: Prisma.ExamCreateOrConnectWithoutContentsInput
+  connect?: Prisma.ExamWhereUniqueInput
+}
+
+export type ExamUpdateOneRequiredWithoutContentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ExamCreateWithoutContentsInput, Prisma.ExamUncheckedCreateWithoutContentsInput>
+  connectOrCreate?: Prisma.ExamCreateOrConnectWithoutContentsInput
+  upsert?: Prisma.ExamUpsertWithoutContentsInput
+  connect?: Prisma.ExamWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExamUpdateToOneWithWhereWithoutContentsInput, Prisma.ExamUpdateWithoutContentsInput>, Prisma.ExamUncheckedUpdateWithoutContentsInput>
+}
+
+export type ExamCreateNestedOneWithoutCyclesInput = {
+  create?: Prisma.XOR<Prisma.ExamCreateWithoutCyclesInput, Prisma.ExamUncheckedCreateWithoutCyclesInput>
+  connectOrCreate?: Prisma.ExamCreateOrConnectWithoutCyclesInput
+  connect?: Prisma.ExamWhereUniqueInput
+}
+
+export type ExamUpdateOneRequiredWithoutCyclesNestedInput = {
+  create?: Prisma.XOR<Prisma.ExamCreateWithoutCyclesInput, Prisma.ExamUncheckedCreateWithoutCyclesInput>
+  connectOrCreate?: Prisma.ExamCreateOrConnectWithoutCyclesInput
+  upsert?: Prisma.ExamUpsertWithoutCyclesInput
+  connect?: Prisma.ExamWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExamUpdateToOneWithWhereWithoutCyclesInput, Prisma.ExamUpdateWithoutCyclesInput>, Prisma.ExamUncheckedUpdateWithoutCyclesInput>
+}
+
 export type ExamCreateWithoutUserInput = {
   title: string
   description?: string | null
@@ -640,6 +682,8 @@ export type ExamCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   studyGroup?: Prisma.StudyGroupCreateNestedOneWithoutExamsInput
   notes?: Prisma.ExamNoteCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutExamInput
 }
 
 export type ExamUncheckedCreateWithoutUserInput = {
@@ -654,6 +698,8 @@ export type ExamUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ExamCreateOrConnectWithoutUserInput = {
@@ -710,6 +756,8 @@ export type ExamCreateWithoutStudyGroupInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutExamsInput
   notes?: Prisma.ExamNoteCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutExamInput
 }
 
 export type ExamUncheckedCreateWithoutStudyGroupInput = {
@@ -724,6 +772,8 @@ export type ExamUncheckedCreateWithoutStudyGroupInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ExamCreateOrConnectWithoutStudyGroupInput = {
@@ -763,6 +813,8 @@ export type ExamCreateWithoutNotesInput = {
   deletedAt?: Date | string | null
   studyGroup?: Prisma.StudyGroupCreateNestedOneWithoutExamsInput
   user: Prisma.UserCreateNestedOneWithoutExamsInput
+  contents?: Prisma.ExamContentCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutExamInput
 }
 
 export type ExamUncheckedCreateWithoutNotesInput = {
@@ -777,6 +829,8 @@ export type ExamUncheckedCreateWithoutNotesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  contents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ExamCreateOrConnectWithoutNotesInput = {
@@ -806,6 +860,8 @@ export type ExamUpdateWithoutNotesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studyGroup?: Prisma.StudyGroupUpdateOneWithoutExamsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutExamsNestedInput
+  contents?: Prisma.ExamContentUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutExamNestedInput
 }
 
 export type ExamUncheckedUpdateWithoutNotesInput = {
@@ -820,6 +876,164 @@ export type ExamUncheckedUpdateWithoutNotesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contents?: Prisma.ExamContentUncheckedUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutExamNestedInput
+}
+
+export type ExamCreateWithoutContentsInput = {
+  title: string
+  description?: string | null
+  examDate: Date | string
+  location?: string | null
+  googleEventId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  studyGroup?: Prisma.StudyGroupCreateNestedOneWithoutExamsInput
+  user: Prisma.UserCreateNestedOneWithoutExamsInput
+  notes?: Prisma.ExamNoteCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleCreateNestedManyWithoutExamInput
+}
+
+export type ExamUncheckedCreateWithoutContentsInput = {
+  id?: number
+  title: string
+  description?: string | null
+  examDate: Date | string
+  location?: string | null
+  studyGroupId?: number | null
+  googleEventId?: string | null
+  userId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  notes?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutExamInput
+  cycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutExamInput
+}
+
+export type ExamCreateOrConnectWithoutContentsInput = {
+  where: Prisma.ExamWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExamCreateWithoutContentsInput, Prisma.ExamUncheckedCreateWithoutContentsInput>
+}
+
+export type ExamUpsertWithoutContentsInput = {
+  update: Prisma.XOR<Prisma.ExamUpdateWithoutContentsInput, Prisma.ExamUncheckedUpdateWithoutContentsInput>
+  create: Prisma.XOR<Prisma.ExamCreateWithoutContentsInput, Prisma.ExamUncheckedCreateWithoutContentsInput>
+  where?: Prisma.ExamWhereInput
+}
+
+export type ExamUpdateToOneWithWhereWithoutContentsInput = {
+  where?: Prisma.ExamWhereInput
+  data: Prisma.XOR<Prisma.ExamUpdateWithoutContentsInput, Prisma.ExamUncheckedUpdateWithoutContentsInput>
+}
+
+export type ExamUpdateWithoutContentsInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  examDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  studyGroup?: Prisma.StudyGroupUpdateOneWithoutExamsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutExamsNestedInput
+  notes?: Prisma.ExamNoteUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutExamNestedInput
+}
+
+export type ExamUncheckedUpdateWithoutContentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  examDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyGroupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  googleEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.ExamNoteUncheckedUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutExamNestedInput
+}
+
+export type ExamCreateWithoutCyclesInput = {
+  title: string
+  description?: string | null
+  examDate: Date | string
+  location?: string | null
+  googleEventId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  studyGroup?: Prisma.StudyGroupCreateNestedOneWithoutExamsInput
+  user: Prisma.UserCreateNestedOneWithoutExamsInput
+  notes?: Prisma.ExamNoteCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentCreateNestedManyWithoutExamInput
+}
+
+export type ExamUncheckedCreateWithoutCyclesInput = {
+  id?: number
+  title: string
+  description?: string | null
+  examDate: Date | string
+  location?: string | null
+  studyGroupId?: number | null
+  googleEventId?: string | null
+  userId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  notes?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutExamInput
+  contents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutExamInput
+}
+
+export type ExamCreateOrConnectWithoutCyclesInput = {
+  where: Prisma.ExamWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExamCreateWithoutCyclesInput, Prisma.ExamUncheckedCreateWithoutCyclesInput>
+}
+
+export type ExamUpsertWithoutCyclesInput = {
+  update: Prisma.XOR<Prisma.ExamUpdateWithoutCyclesInput, Prisma.ExamUncheckedUpdateWithoutCyclesInput>
+  create: Prisma.XOR<Prisma.ExamCreateWithoutCyclesInput, Prisma.ExamUncheckedCreateWithoutCyclesInput>
+  where?: Prisma.ExamWhereInput
+}
+
+export type ExamUpdateToOneWithWhereWithoutCyclesInput = {
+  where?: Prisma.ExamWhereInput
+  data: Prisma.XOR<Prisma.ExamUpdateWithoutCyclesInput, Prisma.ExamUncheckedUpdateWithoutCyclesInput>
+}
+
+export type ExamUpdateWithoutCyclesInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  examDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googleEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  studyGroup?: Prisma.StudyGroupUpdateOneWithoutExamsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutExamsNestedInput
+  notes?: Prisma.ExamNoteUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUpdateManyWithoutExamNestedInput
+}
+
+export type ExamUncheckedUpdateWithoutCyclesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  examDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyGroupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  googleEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.ExamNoteUncheckedUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ExamCreateManyUserInput = {
@@ -846,6 +1060,8 @@ export type ExamUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studyGroup?: Prisma.StudyGroupUpdateOneWithoutExamsNestedInput
   notes?: Prisma.ExamNoteUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutExamNestedInput
 }
 
 export type ExamUncheckedUpdateWithoutUserInput = {
@@ -860,6 +1076,8 @@ export type ExamUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.ExamNoteUncheckedUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUncheckedUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ExamUncheckedUpdateManyWithoutUserInput = {
@@ -899,6 +1117,8 @@ export type ExamUpdateWithoutStudyGroupInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutExamsNestedInput
   notes?: Prisma.ExamNoteUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUpdateManyWithoutExamNestedInput
 }
 
 export type ExamUncheckedUpdateWithoutStudyGroupInput = {
@@ -913,6 +1133,8 @@ export type ExamUncheckedUpdateWithoutStudyGroupInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.ExamNoteUncheckedUpdateManyWithoutExamNestedInput
+  contents?: Prisma.ExamContentUncheckedUpdateManyWithoutExamNestedInput
+  cycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ExamUncheckedUpdateManyWithoutStudyGroupInput = {
@@ -935,10 +1157,14 @@ export type ExamUncheckedUpdateManyWithoutStudyGroupInput = {
 
 export type ExamCountOutputType = {
   notes: number
+  contents: number
+  cycles: number
 }
 
 export type ExamCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   notes?: boolean | ExamCountOutputTypeCountNotesArgs
+  contents?: boolean | ExamCountOutputTypeCountContentsArgs
+  cycles?: boolean | ExamCountOutputTypeCountCyclesArgs
 }
 
 /**
@@ -958,6 +1184,20 @@ export type ExamCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.ExamNoteWhereInput
 }
 
+/**
+ * ExamCountOutputType without action
+ */
+export type ExamCountOutputTypeCountContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ExamContentWhereInput
+}
+
+/**
+ * ExamCountOutputType without action
+ */
+export type ExamCountOutputTypeCountCyclesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudyCycleWhereInput
+}
+
 
 export type ExamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -974,6 +1214,8 @@ export type ExamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   studyGroup?: boolean | Prisma.Exam$studyGroupArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   notes?: boolean | Prisma.Exam$notesArgs<ExtArgs>
+  contents?: boolean | Prisma.Exam$contentsArgs<ExtArgs>
+  cycles?: boolean | Prisma.Exam$cyclesArgs<ExtArgs>
   _count?: boolean | Prisma.ExamCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["exam"]>
 
@@ -998,6 +1240,8 @@ export type ExamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   studyGroup?: boolean | Prisma.Exam$studyGroupArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   notes?: boolean | Prisma.Exam$notesArgs<ExtArgs>
+  contents?: boolean | Prisma.Exam$contentsArgs<ExtArgs>
+  cycles?: boolean | Prisma.Exam$cyclesArgs<ExtArgs>
   _count?: boolean | Prisma.ExamCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1007,6 +1251,8 @@ export type $ExamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     studyGroup: Prisma.$StudyGroupPayload<ExtArgs> | null
     user: Prisma.$UserPayload<ExtArgs>
     notes: Prisma.$ExamNotePayload<ExtArgs>[]
+    contents: Prisma.$ExamContentPayload<ExtArgs>[]
+    cycles: Prisma.$StudyCyclePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1363,6 +1609,8 @@ export interface Prisma__ExamClient<T, Null = never, ExtArgs extends runtime.Typ
   studyGroup<T extends Prisma.Exam$studyGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Exam$studyGroupArgs<ExtArgs>>): Prisma.Prisma__StudyGroupClient<runtime.Types.Result.GetResult<Prisma.$StudyGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   notes<T extends Prisma.Exam$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Exam$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contents<T extends Prisma.Exam$contentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Exam$contentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cycles<T extends Prisma.Exam$cyclesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Exam$cyclesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyCyclePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1791,6 +2039,54 @@ export type Exam$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.ExamNoteScalarFieldEnum | Prisma.ExamNoteScalarFieldEnum[]
+}
+
+/**
+ * Exam.contents
+ */
+export type Exam$contentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ExamContent
+   */
+  select?: Prisma.ExamContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ExamContent
+   */
+  omit?: Prisma.ExamContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ExamContentInclude<ExtArgs> | null
+  where?: Prisma.ExamContentWhereInput
+  orderBy?: Prisma.ExamContentOrderByWithRelationInput | Prisma.ExamContentOrderByWithRelationInput[]
+  cursor?: Prisma.ExamContentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ExamContentScalarFieldEnum | Prisma.ExamContentScalarFieldEnum[]
+}
+
+/**
+ * Exam.cycles
+ */
+export type Exam$cyclesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StudyCycle
+   */
+  select?: Prisma.StudyCycleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StudyCycle
+   */
+  omit?: Prisma.StudyCycleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudyCycleInclude<ExtArgs> | null
+  where?: Prisma.StudyCycleWhereInput
+  orderBy?: Prisma.StudyCycleOrderByWithRelationInput | Prisma.StudyCycleOrderByWithRelationInput[]
+  cursor?: Prisma.StudyCycleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StudyCycleScalarFieldEnum | Prisma.StudyCycleScalarFieldEnum[]
 }
 
 /**

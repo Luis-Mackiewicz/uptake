@@ -48,6 +48,11 @@ export type Exam = Prisma.ExamModel
  */
 export type ExamNote = Prisma.ExamNoteModel
 /**
+ * Model ExamContent
+ * 
+ */
+export type ExamContent = Prisma.ExamContentModel
+/**
  * Model PomodoroSession
  * 
  */
@@ -58,15 +63,10 @@ export type PomodoroSession = Prisma.PomodoroSessionModel
  */
 export type StudyCycle = Prisma.StudyCycleModel
 /**
- * Model StudyCycleItem
+ * Model StudyCycleContent
  * 
  */
-export type StudyCycleItem = Prisma.StudyCycleItemModel
-/**
- * Model Review
- * 
- */
-export type Review = Prisma.ReviewModel
+export type StudyCycleContent = Prisma.StudyCycleContentModel
 /**
  * Model GoogleCalendarConnection
  * 

@@ -2,6 +2,15 @@ export const DEFAULT_PAGE_SIZE = 20;
 export const MAX_PAGE_SIZE = 100;
 export const MAX_NOTE_SIZE_BYTES = 2 * 1024 * 1024;
 
+export const CYCLE_PRIORITIES = {
+  HIGH: 1,
+  MEDIUM: 2,
+  LOW: 3,
+} as const;
+
+export type CyclePriority =
+  (typeof CYCLE_PRIORITIES)[keyof typeof CYCLE_PRIORITIES];
+
 export interface Pagination {
   page: number;
   limit: number;
@@ -32,13 +41,4 @@ export function toPaginated<T>(
     total,
     totalPages: Math.ceil(total / pagination.limit),
   };
-}
-
-export const REVIEW_INTERVALS = [1, 3, 7, 15, 30, 60] as const;
-export type ReviewInterval = (typeof REVIEW_INTERVALS)[number];
-export const REVIEW_INTERVAL_MESSAGE =
-  "Intervalo deve ser 1, 3, 7, 15, 30 ou 60 dias";
-
-export function isReviewInterval(value: number): value is ReviewInterval {
-  return REVIEW_INTERVALS.includes(value as ReviewInterval);
 }

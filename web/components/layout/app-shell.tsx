@@ -7,8 +7,6 @@ import {
   ClipboardList,
   FolderOpen,
   LayoutDashboard,
-  RefreshCw,
-  Repeat2,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -23,8 +21,6 @@ const navigation: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/study-groups", label: "Grupos", icon: FolderOpen },
   { href: "/exams", label: "Provas", icon: ClipboardList },
-  { href: "/reviews", label: "Revisões", icon: RefreshCw },
-  { href: "/cycles", label: "Ciclos", icon: Repeat2 },
   { href: "/settings", label: "Configurações", icon: Settings },
 ];
 

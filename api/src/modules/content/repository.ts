@@ -53,6 +53,40 @@ export const contentRepository = {
     return { data, total };
   },
 
+  async countActiveLinks(userId: number, contentId: number) {
+    const [notes, exams, cycles] = await prisma.$transaction([
+      prisma.note.count({
+        where: {
+          userId,
+          contentId,
+          deletedAt: null,
+          content: {
+            deletedAt: null,
+            studyGroup: { deletedAt: null },
+          },
+        },
+      }),
+      prisma.examContent.count({
+        where: {
+          contentId,
+          exam: { userId, deletedAt: null },
+        },
+      }),
+      prisma.studyCycleContent.count({
+        where: {
+          contentId,
+          cycle: {
+            userId,
+            deletedAt: null,
+            exam: { deletedAt: null },
+          },
+        },
+      }),
+    ]);
+
+    return { notes, exams, cycles };
+  },
+
   async findActiveIds(userId: number, studyGroupId: number) {
     const records = await prisma.content.findMany({
       where: {
@@ -130,20 +164,11 @@ export const contentRepository = {
   },
 
   async softDelete(id: number, userId: number) {
-    const deletedAt = new Date();
-    const [, deleted] = await prisma.$transaction([
-      prisma.note.updateMany({
-        where: { contentId: id, userId, deletedAt: null },
-        data: { deletedAt },
-      }),
-      prisma.content.update({
-        where: { id, userId, deletedAt: null },
-        data: { deletedAt },
-        select: contentSafeSelect,
-      }),
-    ]);
-
-    return deleted;
+    return prisma.content.update({
+      where: { id, userId, deletedAt: null },
+      data: { deletedAt: new Date() },
+      select: contentSafeSelect,
+    });
   },
 };
 

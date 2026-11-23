@@ -7,186 +7,245 @@ export const studyCycleSafeSelect = {
   active: true,
   currentRound: true,
   nextItemOrder: true,
+  examId: true,
+  studyGroupId: true,
+  priority: true,
+  position: true,
   userId: true,
   createdAt: true,
   updatedAt: true,
+  contents: {
+    select: { contentId: true },
+  },
 } as const;
 
-export const studyCycleItemSafeSelect = {
-  id: true,
-  studyCycleId: true,
-  studyGroupId: true,
+export const studyCycleContentSafeSelect = {
+  contentId: true,
   position: true,
   minutesPerSession: true,
-  createdAt: true,
 } as const;
+
+type StudyCycleWithContents = {
+  id: number;
+  name: string;
+  active: boolean;
+  currentRound: number;
+  nextItemOrder: number;
+  examId: number;
+  studyGroupId: number;
+  priority: number;
+  position: number;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  contents: { contentId: number }[];
+};
+
+export type SafeStudyCycle = Omit<StudyCycleWithContents, "contents"> & {
+  contentIds: number[];
+};
+
+export type SafeStudyCycleContent = {
+  contentId: number;
+  position: number;
+  minutesPerSession: number;
+};
+
+function toSafeCycle(record: StudyCycleWithContents): SafeStudyCycle {
+  const { contents, ...cycle } = record;
+  return {
+    ...cycle,
+    contentIds: contents.map((item) => item.contentId),
+  };
+}
 
 export interface StudyCycleInput {
   name: string;
   active: boolean;
-}
-
-export interface StudyCycleItemInput {
   studyGroupId: number;
+  priority: number;
   position: number;
-  minutesPerSession: number;
+  contentIds: number[];
 }
 
-export interface StudyCycleState {
-  currentRound: number;
-  nextItemOrder: number;
+function activeCycleWhere(userId: number, examId?: number) {
+  return {
+    userId,
+    deletedAt: null,
+    exam: { deletedAt: null },
+    studyGroup: { deletedAt: null },
+    ...(examId === undefined ? {} : { examId }),
+  };
 }
 
 export const studyCycleRepository = {
-  async findById(id: number, userId: number) {
-    return prisma.studyCycle.findFirst({
-      where: { id, userId, deletedAt: null },
+  async findById(id: number, userId: number, examId?: number) {
+    const cycle = await prisma.studyCycle.findFirst({
+      where: { id, ...activeCycleWhere(userId, examId) },
       select: studyCycleSafeSelect,
     });
+    return cycle ? toSafeCycle(cycle) : null;
   },
 
-  async findMany(userId: number, pagination: Pagination) {
-    const where = { userId, deletedAt: null };
+  async findMany(userId: number, pagination: Pagination, examId?: number) {
+    const where = activeCycleWhere(userId, examId);
     const [data, total] = await prisma.$transaction([
       prisma.studyCycle.findMany({
         where,
         select: studyCycleSafeSelect,
         skip: pagination.skip,
         take: pagination.limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ priority: "asc" }, { position: "asc" }],
       }),
       prisma.studyCycle.count({ where }),
     ]);
-    return { data, total };
+    return { data: data.map(toSafeCycle), total };
   },
 
-  async create(userId: number, data: StudyCycleInput) {
-    return prisma.studyCycle.create({
-      data: { ...data, userId },
-      select: studyCycleSafeSelect,
-    });
-  },
-
-  async update(id: number, userId: number, data: StudyCycleInput) {
-    return prisma.studyCycle.update({
-      where: { id, userId, deletedAt: null },
-      data,
-      select: studyCycleSafeSelect,
-    });
-  },
-
-  async softDelete(id: number, userId: number) {
-    return prisma.studyCycle.update({
-      where: { id, userId, deletedAt: null },
-      data: { deletedAt: new Date() },
-      select: studyCycleSafeSelect,
-    });
-  },
-
-  async updateState(id: number, userId: number, state: StudyCycleState) {
-    return prisma.studyCycle.update({
-      where: { id, userId, deletedAt: null },
-      data: state,
-      select: studyCycleSafeSelect,
-    });
-  },
-
-  async findItems(studyCycleId: number) {
-    return prisma.studyCycleItem.findMany({
-      where: {
-        studyCycleId,
-        deletedAt: null,
-        studyGroup: { deletedAt: null },
-      },
-      select: studyCycleItemSafeSelect,
-      orderBy: { position: "asc" },
-    });
-  },
-
-  async findItemById(id: number, studyCycleId: number) {
-    return prisma.studyCycleItem.findFirst({
-      where: {
-        id,
-        studyCycleId,
-        deletedAt: null,
-        studyGroup: { deletedAt: null },
-      },
-      select: studyCycleItemSafeSelect,
-    });
-  },
-
-  async findItemByPosition(
-    studyCycleId: number,
-    position: number,
-    excludeId?: number,
-  ) {
-    return prisma.studyCycleItem.findFirst({
-      where: {
-        studyCycleId,
-        position,
-        deletedAt: null,
-        studyGroup: { deletedAt: null },
-        ...(excludeId ? { id: { not: excludeId } } : {}),
-      },
-      select: studyCycleItemSafeSelect,
-    });
-  },
-
-  async createItem(studyCycleId: number, data: StudyCycleItemInput) {
-    return prisma.studyCycleItem.create({
-      data: { ...data, studyCycleId },
-      select: studyCycleItemSafeSelect,
-    });
-  },
-
-  async updateItem(id: number, data: StudyCycleItemInput) {
-    return prisma.studyCycleItem.update({
-      where: { id },
+  async create(userId: number, examId: number, data: StudyCycleInput) {
+    const cycle = await prisma.studyCycle.create({
       data: {
-        studyGroupId: data.studyGroupId,
+        name: data.name,
+        active: data.active,
+        priority: data.priority,
         position: data.position,
-        minutesPerSession: data.minutesPerSession,
+        userId,
+        examId,
+        studyGroupId: data.studyGroupId,
+        contents: {
+          create: data.contentIds.map((contentId, index) => ({
+            contentId,
+            position: index + 1,
+          })),
+        },
       },
-      select: studyCycleItemSafeSelect,
+      select: studyCycleSafeSelect,
     });
+    return toSafeCycle(cycle);
   },
 
-  async softDeleteItem(id: number) {
-    return prisma.studyCycleItem.update({
-      where: { id, deletedAt: null },
+  async update(
+    id: number,
+    userId: number,
+    examId: number,
+    data: StudyCycleInput,
+  ) {
+    const cycle = await prisma.studyCycle.update({
+      where: { id, ...activeCycleWhere(userId, examId) },
+      data: {
+        name: data.name,
+        active: data.active,
+        priority: data.priority,
+        position: data.position,
+        studyGroupId: data.studyGroupId,
+        contents: {
+          deleteMany: {},
+          create: data.contentIds.map((contentId, index) => ({
+            contentId,
+            position: index + 1,
+          })),
+        },
+      },
+      select: studyCycleSafeSelect,
+    });
+    return toSafeCycle(cycle);
+  },
+
+  async softDelete(id: number, userId: number, examId: number) {
+    const cycle = await prisma.studyCycle.update({
+      where: { id, ...activeCycleWhere(userId, examId) },
       data: { deletedAt: new Date(), position: -id },
-      select: studyCycleItemSafeSelect,
+      select: studyCycleSafeSelect,
     });
+    return toSafeCycle(cycle);
   },
 
-  async normalizeItemPositions(studyCycleId: number) {
-    const items = await prisma.studyCycleItem.findMany({
+  async normalizePositions(examId: number, priority: number) {
+    const cycles = await prisma.studyCycle.findMany({
       where: {
-        studyCycleId,
+        examId,
+        priority,
         deletedAt: null,
         studyGroup: { deletedAt: null },
       },
       select: { id: true },
-      orderBy: { position: "asc" },
+      orderBy: [{ position: "asc" }, { id: "asc" }],
     });
 
-    if (items.length === 0) {
-      return;
-    }
+    if (cycles.length === 0) return;
 
     await prisma.$transaction([
-      ...items.map((item) =>
-        prisma.studyCycleItem.update({
-          where: { id: item.id },
-          data: { position: -item.id },
+      ...cycles.map((cycle) =>
+        prisma.studyCycle.update({
+          where: { id: cycle.id },
+          data: { position: -cycle.id },
         }),
       ),
-      ...items.map((item, index) =>
-        prisma.studyCycleItem.update({
-          where: { id: item.id },
+      ...cycles.map((cycle, index) =>
+        prisma.studyCycle.update({
+          where: { id: cycle.id },
           data: { position: index + 1 },
         }),
       ),
     ]);
+  },
+
+  async reorder(examId: number, priority: number, ids: number[]) {
+    await prisma.$transaction([
+      ...ids.map((id) =>
+        prisma.studyCycle.update({
+          where: { id },
+          data: { priority, position: -id },
+        }),
+      ),
+      ...ids.map((id, index) =>
+        prisma.studyCycle.update({
+          where: { id },
+          data: { priority, position: index + 1 },
+        }),
+      ),
+    ]);
+    return this.findManyByExam(examId);
+  },
+
+  async findManyByExam(examId: number) {
+    const cycles = await prisma.studyCycle.findMany({
+      where: {
+        examId,
+        deletedAt: null,
+        exam: { deletedAt: null },
+        studyGroup: { deletedAt: null },
+      },
+      select: studyCycleSafeSelect,
+      orderBy: [{ priority: "asc" }, { position: "asc" }],
+    });
+    return cycles.map(toSafeCycle);
+  },
+
+  async updateState(
+    id: number,
+    userId: number,
+    state: { currentRound: number; nextItemOrder: number },
+  ) {
+    const cycle = await prisma.studyCycle.update({
+      where: { id, userId, deletedAt: null },
+      data: state,
+      select: studyCycleSafeSelect,
+    });
+    return toSafeCycle(cycle);
+  },
+
+  async findContents(cycleId: number) {
+    return prisma.studyCycleContent.findMany({
+      where: {
+        cycleId,
+        content: {
+          deletedAt: null,
+          studyGroup: { deletedAt: null },
+        },
+      },
+      select: studyCycleContentSafeSelect,
+      orderBy: { position: "asc" },
+    });
   },
 };

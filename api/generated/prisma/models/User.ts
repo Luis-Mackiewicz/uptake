@@ -262,7 +262,6 @@ export type UserWhereInput = {
   exams?: Prisma.ExamListRelationFilter
   pomodoroSessions?: Prisma.PomodoroSessionListRelationFilter
   studyCycles?: Prisma.StudyCycleListRelationFilter
-  reviews?: Prisma.ReviewListRelationFilter
   googleCalendarConnection?: Prisma.XOR<Prisma.GoogleCalendarConnectionNullableScalarRelationFilter, Prisma.GoogleCalendarConnectionWhereInput> | null
 }
 
@@ -283,7 +282,6 @@ export type UserOrderByWithRelationInput = {
   exams?: Prisma.ExamOrderByRelationAggregateInput
   pomodoroSessions?: Prisma.PomodoroSessionOrderByRelationAggregateInput
   studyCycles?: Prisma.StudyCycleOrderByRelationAggregateInput
-  reviews?: Prisma.ReviewOrderByRelationAggregateInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionOrderByWithRelationInput
   _relevance?: Prisma.UserOrderByRelevanceInput
 }
@@ -308,7 +306,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   exams?: Prisma.ExamListRelationFilter
   pomodoroSessions?: Prisma.PomodoroSessionListRelationFilter
   studyCycles?: Prisma.StudyCycleListRelationFilter
-  reviews?: Prisma.ReviewListRelationFilter
   googleCalendarConnection?: Prisma.XOR<Prisma.GoogleCalendarConnectionNullableScalarRelationFilter, Prisma.GoogleCalendarConnectionWhereInput> | null
 }, "id" | "email" | "cpf">
 
@@ -362,7 +359,6 @@ export type UserCreateInput = {
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -383,7 +379,6 @@ export type UserUncheckedCreateInput = {
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -403,7 +398,6 @@ export type UserUpdateInput = {
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -424,7 +418,6 @@ export type UserUncheckedUpdateInput = {
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -632,20 +625,6 @@ export type UserUpdateOneRequiredWithoutStudyCyclesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutStudyCyclesInput, Prisma.UserUpdateWithoutStudyCyclesInput>, Prisma.UserUncheckedUpdateWithoutStudyCyclesInput>
 }
 
-export type UserCreateNestedOneWithoutReviewsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewsInput, Prisma.UserUncheckedCreateWithoutReviewsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutReviewsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewsInput, Prisma.UserUncheckedCreateWithoutReviewsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewsInput
-  upsert?: Prisma.UserUpsertWithoutReviewsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewsInput, Prisma.UserUpdateWithoutReviewsInput>, Prisma.UserUncheckedUpdateWithoutReviewsInput>
-}
-
 export type UserCreateNestedOneWithoutGoogleCalendarConnectionInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutGoogleCalendarConnectionInput, Prisma.UserUncheckedCreateWithoutGoogleCalendarConnectionInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutGoogleCalendarConnectionInput
@@ -675,7 +654,6 @@ export type UserCreateWithoutStudyGroupsInput = {
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -695,7 +673,6 @@ export type UserUncheckedCreateWithoutStudyGroupsInput = {
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -730,7 +707,6 @@ export type UserUpdateWithoutStudyGroupsInput = {
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -750,7 +726,6 @@ export type UserUncheckedUpdateWithoutStudyGroupsInput = {
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -769,7 +744,6 @@ export type UserCreateWithoutContentsInput = {
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -789,7 +763,6 @@ export type UserUncheckedCreateWithoutContentsInput = {
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -824,7 +797,6 @@ export type UserUpdateWithoutContentsInput = {
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -844,7 +816,6 @@ export type UserUncheckedUpdateWithoutContentsInput = {
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -863,7 +834,6 @@ export type UserCreateWithoutNotesInput = {
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -883,7 +853,6 @@ export type UserUncheckedCreateWithoutNotesInput = {
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -918,7 +887,6 @@ export type UserUpdateWithoutNotesInput = {
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -938,7 +906,6 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -957,7 +924,6 @@ export type UserCreateWithoutExamsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -977,7 +943,6 @@ export type UserUncheckedCreateWithoutExamsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1012,7 +977,6 @@ export type UserUpdateWithoutExamsInput = {
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -1032,7 +996,6 @@ export type UserUncheckedUpdateWithoutExamsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1051,7 +1014,6 @@ export type UserCreateWithoutPomodoroSessionsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -1071,7 +1033,6 @@ export type UserUncheckedCreateWithoutPomodoroSessionsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1106,7 +1067,6 @@ export type UserUpdateWithoutPomodoroSessionsInput = {
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -1126,7 +1086,6 @@ export type UserUncheckedUpdateWithoutPomodoroSessionsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1145,7 +1104,6 @@ export type UserCreateWithoutStudyCyclesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
 }
 
@@ -1165,7 +1123,6 @@ export type UserUncheckedCreateWithoutStudyCyclesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -1200,7 +1157,6 @@ export type UserUpdateWithoutStudyCyclesInput = {
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
 }
 
@@ -1220,101 +1176,6 @@ export type UserUncheckedUpdateWithoutStudyCyclesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
-}
-
-export type UserCreateWithoutReviewsInput = {
-  firstName: string
-  lastName: string
-  email: string
-  cpf: string
-  passwordHash: string
-  musicUrl?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  studyGroups?: Prisma.StudyGroupCreateNestedManyWithoutUserInput
-  contents?: Prisma.ContentCreateNestedManyWithoutUserInput
-  notes?: Prisma.NoteCreateNestedManyWithoutUserInput
-  exams?: Prisma.ExamCreateNestedManyWithoutUserInput
-  pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
-  studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  googleCalendarConnection?: Prisma.GoogleCalendarConnectionCreateNestedOneWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutReviewsInput = {
-  id?: number
-  firstName: string
-  lastName: string
-  email: string
-  cpf: string
-  passwordHash: string
-  musicUrl?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  studyGroups?: Prisma.StudyGroupUncheckedCreateNestedManyWithoutUserInput
-  contents?: Prisma.ContentUncheckedCreateNestedManyWithoutUserInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
-  exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
-  pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
-  studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedCreateNestedOneWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutReviewsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutReviewsInput, Prisma.UserUncheckedCreateWithoutReviewsInput>
-}
-
-export type UserUpsertWithoutReviewsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewsInput, Prisma.UserUncheckedUpdateWithoutReviewsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutReviewsInput, Prisma.UserUncheckedCreateWithoutReviewsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutReviewsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewsInput, Prisma.UserUncheckedUpdateWithoutReviewsInput>
-}
-
-export type UserUpdateWithoutReviewsInput = {
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  cpf?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  musicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  studyGroups?: Prisma.StudyGroupUpdateManyWithoutUserNestedInput
-  contents?: Prisma.ContentUpdateManyWithoutUserNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
-  exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
-  pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
-  studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  googleCalendarConnection?: Prisma.GoogleCalendarConnectionUpdateOneWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutReviewsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  cpf?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  musicUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  studyGroups?: Prisma.StudyGroupUncheckedUpdateManyWithoutUserNestedInput
-  contents?: Prisma.ContentUncheckedUpdateManyWithoutUserNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
-  exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
-  pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
-  studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -1334,7 +1195,6 @@ export type UserCreateWithoutGoogleCalendarConnectionInput = {
   exams?: Prisma.ExamCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutGoogleCalendarConnectionInput = {
@@ -1354,7 +1214,6 @@ export type UserUncheckedCreateWithoutGoogleCalendarConnectionInput = {
   exams?: Prisma.ExamUncheckedCreateNestedManyWithoutUserInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutUserInput
   studyCycles?: Prisma.StudyCycleUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutGoogleCalendarConnectionInput = {
@@ -1389,7 +1248,6 @@ export type UserUpdateWithoutGoogleCalendarConnectionInput = {
   exams?: Prisma.ExamUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutGoogleCalendarConnectionInput = {
@@ -1409,7 +1267,6 @@ export type UserUncheckedUpdateWithoutGoogleCalendarConnectionInput = {
   exams?: Prisma.ExamUncheckedUpdateManyWithoutUserNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutUserNestedInput
   studyCycles?: Prisma.StudyCycleUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1424,7 +1281,6 @@ export type UserCountOutputType = {
   exams: number
   pomodoroSessions: number
   studyCycles: number
-  reviews: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1434,7 +1290,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   exams?: boolean | UserCountOutputTypeCountExamsArgs
   pomodoroSessions?: boolean | UserCountOutputTypeCountPomodoroSessionsArgs
   studyCycles?: boolean | UserCountOutputTypeCountStudyCyclesArgs
-  reviews?: boolean | UserCountOutputTypeCountReviewsArgs
 }
 
 /**
@@ -1489,13 +1344,6 @@ export type UserCountOutputTypeCountStudyCyclesArgs<ExtArgs extends runtime.Type
   where?: Prisma.StudyCycleWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1514,7 +1362,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   exams?: boolean | Prisma.User$examsArgs<ExtArgs>
   pomodoroSessions?: boolean | Prisma.User$pomodoroSessionsArgs<ExtArgs>
   studyCycles?: boolean | Prisma.User$studyCyclesArgs<ExtArgs>
-  reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   googleCalendarConnection?: boolean | Prisma.User$googleCalendarConnectionArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -1542,7 +1389,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   exams?: boolean | Prisma.User$examsArgs<ExtArgs>
   pomodoroSessions?: boolean | Prisma.User$pomodoroSessionsArgs<ExtArgs>
   studyCycles?: boolean | Prisma.User$studyCyclesArgs<ExtArgs>
-  reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
   googleCalendarConnection?: boolean | Prisma.User$googleCalendarConnectionArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1556,7 +1402,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     exams: Prisma.$ExamPayload<ExtArgs>[]
     pomodoroSessions: Prisma.$PomodoroSessionPayload<ExtArgs>[]
     studyCycles: Prisma.$StudyCyclePayload<ExtArgs>[]
-    reviews: Prisma.$ReviewPayload<ExtArgs>[]
     googleCalendarConnection: Prisma.$GoogleCalendarConnectionPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1916,7 +1761,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   exams<T extends Prisma.User$examsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$examsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pomodoroSessions<T extends Prisma.User$pomodoroSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pomodoroSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PomodoroSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   studyCycles<T extends Prisma.User$studyCyclesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$studyCyclesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyCyclePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   googleCalendarConnection<T extends Prisma.User$googleCalendarConnectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$googleCalendarConnectionArgs<ExtArgs>>): Prisma.Prisma__GoogleCalendarConnectionClient<runtime.Types.Result.GetResult<Prisma.$GoogleCalendarConnectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2446,30 +2290,6 @@ export type User$studyCyclesArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.StudyCycleScalarFieldEnum | Prisma.StudyCycleScalarFieldEnum[]
-}
-
-/**
- * User.reviews
- */
-export type User$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Review
-   */
-  select?: Prisma.ReviewSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Review
-   */
-  omit?: Prisma.ReviewOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ReviewInclude<ExtArgs> | null
-  where?: Prisma.ReviewWhereInput
-  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
 }
 
 /**

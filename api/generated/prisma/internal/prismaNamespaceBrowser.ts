@@ -57,10 +57,10 @@ export const ModelName = {
   Note: 'Note',
   Exam: 'Exam',
   ExamNote: 'ExamNote',
+  ExamContent: 'ExamContent',
   PomodoroSession: 'PomodoroSession',
   StudyCycle: 'StudyCycle',
-  StudyCycleItem: 'StudyCycleItem',
-  Review: 'Review',
+  StudyCycleContent: 'StudyCycleContent',
   GoogleCalendarConnection: 'GoogleCalendarConnection'
 } as const
 
@@ -168,6 +168,15 @@ export const ExamNoteScalarFieldEnum = {
 export type ExamNoteScalarFieldEnum = (typeof ExamNoteScalarFieldEnum)[keyof typeof ExamNoteScalarFieldEnum]
 
 
+export const ExamContentScalarFieldEnum = {
+  examId: 'examId',
+  contentId: 'contentId',
+  createdAt: 'createdAt'
+} as const
+
+export type ExamContentScalarFieldEnum = (typeof ExamContentScalarFieldEnum)[keyof typeof ExamContentScalarFieldEnum]
+
+
 export const PomodoroSessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -190,6 +199,10 @@ export const StudyCycleScalarFieldEnum = {
   active: 'active',
   currentRound: 'currentRound',
   nextItemOrder: 'nextItemOrder',
+  examId: 'examId',
+  studyGroupId: 'studyGroupId',
+  priority: 'priority',
+  position: 'position',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -199,33 +212,15 @@ export const StudyCycleScalarFieldEnum = {
 export type StudyCycleScalarFieldEnum = (typeof StudyCycleScalarFieldEnum)[keyof typeof StudyCycleScalarFieldEnum]
 
 
-export const StudyCycleItemScalarFieldEnum = {
-  id: 'id',
-  studyCycleId: 'studyCycleId',
-  studyGroupId: 'studyGroupId',
+export const StudyCycleContentScalarFieldEnum = {
+  cycleId: 'cycleId',
+  contentId: 'contentId',
   position: 'position',
   minutesPerSession: 'minutesPerSession',
-  createdAt: 'createdAt',
-  deletedAt: 'deletedAt'
+  createdAt: 'createdAt'
 } as const
 
-export type StudyCycleItemScalarFieldEnum = (typeof StudyCycleItemScalarFieldEnum)[keyof typeof StudyCycleItemScalarFieldEnum]
-
-
-export const ReviewScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  noteId: 'noteId',
-  lastReviewedAt: 'lastReviewedAt',
-  nextReviewAt: 'nextReviewAt',
-  intervalDays: 'intervalDays',
-  reviewCount: 'reviewCount',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+export type StudyCycleContentScalarFieldEnum = (typeof StudyCycleContentScalarFieldEnum)[keyof typeof StudyCycleContentScalarFieldEnum]
 
 
 export const GoogleCalendarConnectionScalarFieldEnum = {

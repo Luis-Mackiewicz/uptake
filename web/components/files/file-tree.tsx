@@ -14,7 +14,6 @@ import { Dialog } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type {
@@ -25,18 +24,13 @@ import type {
   MessageResponse,
   Note,
   StudyGroup,
+  UpdateNoteRequest,
 } from "@/lib/api/types";
 import { isBlank, validateLength } from "@/lib/validation";
 
-const MAX_NOTE_BYTES = 2 * 1024 * 1024;
-
-type TreeForm = { name: string; markdownContent: string };
+type TreeForm = { name: string };
 type FormErrors = Partial<Record<keyof TreeForm, string>>;
-const emptyForm: TreeForm = { name: "", markdownContent: "" };
-
-function byteLength(value: string) {
-  return new TextEncoder().encode(value).length;
-}
+const emptyForm: TreeForm = { name: "" };
 
 function isDeleteAction(action: FileTreeAction) {
   return action.type.startsWith("delete-");
@@ -66,7 +60,7 @@ function actionTitle(action: FileTreeAction) {
 }
 
 function nameLabel(action: FileTreeAction) {
-  return action.type.includes("note") ? "Arquivo" : action.type.includes("content") ? "Pasta" : "Grupo";
+  return action.type.includes("note") ? "Nome" : action.type.includes("content") ? "Pasta" : "Grupo";
 }
 
 export function FileTree({ className }: { className?: string }) {
@@ -116,7 +110,7 @@ export function FileTree({ className }: { className?: string }) {
                   ? next.note.fileName
                   : "";
     setAction(next);
-    setForm({ name: existingName, markdownContent: "" });
+    setForm({ name: existingName });
     setErrors({});
   };
 
@@ -127,12 +121,6 @@ export function FileTree({ className }: { className?: string }) {
     else if (!validateLength(form.name, 255)) nextErrors.name = "Máximo de 255 caracteres";
     else if (action.type.includes("note") && (form.name.includes("/") || form.name.includes("\\"))) {
       nextErrors.name = "Não use barras no nome";
-    }
-    if (action.type === "create-note") {
-      if (isBlank(form.markdownContent)) nextErrors.markdownContent = "Escreva o conteúdo da nota";
-      else if (byteLength(form.markdownContent) > MAX_NOTE_BYTES) {
-        nextErrors.markdownContent = "Nota excede o tamanho máximo de 2 MB";
-      }
     }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -209,10 +197,8 @@ export function FileTree({ className }: { className?: string }) {
         } satisfies CreateContentRequest);
       } else if (action.type === "create-note") {
         const payload: CreateNoteRequest = {
-          title: name,
-          fileName: name.endsWith(".md") ? name : `${name}.md`,
+          name,
           contentId: action.content.id,
-          markdownContent: form.markdownContent,
         };
         const created = await api.post<Note>("/notes", payload);
         reload();
@@ -220,7 +206,7 @@ export function FileTree({ className }: { className?: string }) {
         router.push(`/study-groups/${action.group.id}/contents/${action.content.id}/notes/${created.id}`);
       } else if (action.type === "rename-note") {
         const fileName = name.endsWith(".md") ? name : `${name}.md`;
-        const payload: CreateNoteRequest = {
+        const payload: UpdateNoteRequest = {
           title: name.replace(/\.md$/i, ""),
           fileName,
           contentId: action.content.id,
@@ -238,7 +224,6 @@ export function FileTree({ className }: { className?: string }) {
         const apiErrors: FormErrors = {};
         Object.entries(error.issues).forEach(([key, messages]) => {
           if (key === "title" || key === "name" || key === "fileName") apiErrors.name = messages[0];
-          if (key === "markdownContent") apiErrors.markdownContent = messages[0];
         });
         setErrors(apiErrors);
       }
@@ -295,11 +280,6 @@ export function FileTree({ className }: { className?: string }) {
             <Field label={nameLabel(action)} htmlFor="file-tree-name" error={errors.name}>
               <Input id="file-tree-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
             </Field>
-            {action.type === "create-note" ? (
-              <Field label="Markdown" htmlFor="file-tree-markdown" error={errors.markdownContent}>
-                <Textarea id="file-tree-markdown" className="min-h-40 font-mono text-xs" value={form.markdownContent} invalid={Boolean(errors.markdownContent)} onChange={(event) => setForm({ ...form, markdownContent: event.target.value })} />
-              </Field>
-            ) : null}
             <div className="flex justify-end gap-2">
               <Button type="button" variant="secondary" onClick={() => setAction(null)}>
                 Cancelar

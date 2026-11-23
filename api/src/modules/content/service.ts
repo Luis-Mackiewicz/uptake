@@ -2,6 +2,7 @@ import {
   CrudService,
   type CrudRepository,
 } from "../../shared/crud.service.js";
+import { ConflictError } from "../../shared/errors.js";
 import { type Pagination, toPaginated } from "../../shared/domain.js";
 import { assertFound } from "../../shared/guards.js";
 import type { StudyGroupLookup } from "../../shared/ownership.js";
@@ -23,6 +24,10 @@ type ContentRepository = Omit<
     pagination: Pagination,
     studyGroupId?: number,
   ): Promise<{ data: ContentRecord[]; total: number }>;
+  countActiveLinks(
+    userId: number,
+    contentId: number,
+  ): Promise<{ notes: number; exams: number; cycles: number }>;
   findActiveIds(userId: number, studyGroupId: number): Promise<number[]>;
   findNextPosition(userId: number, studyGroupId: number): Promise<number>;
   reorder(
@@ -89,6 +94,26 @@ export class ContentService extends CrudService<
 
   override async remove(userId: number, id: number) {
     const current = await this.findById(userId, id);
+    const links = await this.repository.countActiveLinks(userId, id);
+
+    if (links.notes > 0) {
+      throw new ConflictError(
+        "Não é possível excluir o conteúdo: existem notas vinculadas",
+      );
+    }
+
+    if (links.exams > 0) {
+      throw new ConflictError(
+        "Não é possível excluir o conteúdo: existem provas vinculadas",
+      );
+    }
+
+    if (links.cycles > 0) {
+      throw new ConflictError(
+        "Não é possível excluir o conteúdo: existem ciclos vinculados",
+      );
+    }
+
     const removed = await this.repository.softDelete(id, userId);
     await this.repository.normalizePositions(userId, current.studyGroupId);
     return removed;

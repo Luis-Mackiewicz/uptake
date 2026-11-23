@@ -15,7 +15,7 @@ export async function noteRoutes(app: FastifyInstance) {
   await privatePlugin(app, (privateApp) => {
     privateApp.post("/notes", async (request, reply) => {
       const data = parseSchema(createNoteSchema, request.body);
-      const note = await noteService.create(request.userId, data);
+      const note = await noteService.createFromName(request.userId, data);
       return reply.status(201).send(note);
     });
 

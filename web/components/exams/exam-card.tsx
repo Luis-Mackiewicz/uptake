@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, FileText, FolderOpen, MapPin } from "lucide-react";
+import { BookOpen, CalendarDays, FileText, FolderOpen, MapPin } from "lucide-react";
 import { ExamActions } from "./exam-actions";
 import { Badge } from "@/components/ui/badge";
 import type { Exam } from "@/lib/api/types";
@@ -9,13 +9,27 @@ interface ExamCardProps {
   exam: Exam;
   groupLabel: string;
   dateLabel: string;
+  contentLabel: string;
+  onOpen: (exam: Exam) => void;
   onEdit: (exam: Exam) => void;
   onDelete: (exam: Exam) => void;
 }
 
-export function ExamCard({ exam, groupLabel, dateLabel, onEdit, onDelete }: ExamCardProps) {
+export function ExamCard({ exam, groupLabel, dateLabel, contentLabel, onOpen, onEdit, onDelete }: ExamCardProps) {
   return (
-    <div className="flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-4 shadow-panel transition hover:border-lime-400">
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Abrir prova ${exam.title}`}
+      className="flex h-full cursor-pointer flex-col rounded-xl border border-neutral-200 bg-white p-4 shadow-panel transition hover:border-lime-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-600"
+      onClick={() => onOpen(exam)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onOpen(exam);
+        }
+      }}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate font-display text-xl tracking-wide text-neutral-900">{exam.title}</h3>
@@ -24,10 +38,16 @@ export function ExamCard({ exam, groupLabel, dateLabel, onEdit, onDelete }: Exam
             {dateLabel}
           </p>
         </div>
-        <Badge tone="lime">
-          <FileText size={13} aria-hidden />
-          {exam.noteIds?.length ?? 0}
-        </Badge>
+        <div className="flex flex-col items-end gap-1">
+          <Badge tone="lime">
+            <BookOpen size={13} aria-hidden />
+            {contentLabel}
+          </Badge>
+          <Badge tone="neutral">
+            <FileText size={13} aria-hidden />
+            {exam.noteIds?.length ?? 0}
+          </Badge>
+        </div>
       </div>
       <p className="mt-3 line-clamp-2 min-h-10 text-sm text-neutral-600">
         {exam.description ?? "Sem descrição"}

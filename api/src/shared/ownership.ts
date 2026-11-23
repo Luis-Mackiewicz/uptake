@@ -18,12 +18,12 @@ export interface ContentLookup {
   findById(
     id: number,
     userId: number,
-  ): Promise<{ id: number; title: string } | null>;
+  ): Promise<{ id: number; title: string; studyGroupId: number } | null>;
 }
 
 export interface NoteLookup {
   findById(
     id: number,
     userId: number,
-  ): Promise<{ id: number; title: string } | null>;
+  ): Promise<{ id: number; title: string; contentId: number } | null>;
 }

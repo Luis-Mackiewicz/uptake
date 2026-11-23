@@ -24,7 +24,6 @@ model User {
   exams                    Exam[]
   pomodoroSessions         PomodoroSession[]
   studyCycles              StudyCycle[]
-  reviews                  Review[]
   googleCalendarConnection GoogleCalendarConnection?
 
   @@index([deletedAt])
@@ -38,7 +37,7 @@ model StudyGroup {
   user        User             @relation(fields: [userId], references: [id], onDelete: Restrict)
   contents    Content[]
   exams       Exam[]
-  cycleItems  StudyCycleItem[]
+  cycles      StudyCycle[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   deletedAt   DateTime?
@@ -57,6 +56,8 @@ model Content {
   userId           Int
   user             User              @relation(fields: [userId], references: [id], onDelete: Restrict)
   notes            Note[]
+  examContents     ExamContent[]
+  cycleContents    StudyCycleContent[]
   pomodoroSessions PomodoroSession[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
@@ -80,7 +81,6 @@ model Note {
   userId          Int
   user            User       @relation(fields: [userId], references: [id], onDelete: Restrict)
   exams           ExamNote[]
-  reviews         Review[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   deletedAt       DateTime?
@@ -102,6 +102,8 @@ model Exam {
   userId        Int
   user          User        @relation(fields: [userId], references: [id], onDelete: Restrict)
   notes         ExamNote[]
+  contents      ExamContent[]
+  cycles        StudyCycle[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   deletedAt     DateTime?
@@ -120,6 +122,17 @@ model ExamNote {
 
   @@id([examId, noteId])
   @@index([noteId])
+}
+
+model ExamContent {
+  examId    Int
+  contentId Int
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Restrict)
+  content   Content  @relation(fields: [contentId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now())
+
+  @@id([examId, contentId])
+  @@index([contentId])
 }
 
 model PomodoroSession {
@@ -141,53 +154,42 @@ model PomodoroSession {
 }
 
 model StudyCycle {
-  id            Int              @id @default(autoincrement())
-  name          String           @db.VarChar(120)
-  active        Boolean          @default(true)
-  currentRound  Int              @default(1)
-  nextItemOrder Int              @default(1)
+  id            Int                 @id @default(autoincrement())
+  name          String              @db.VarChar(120)
+  active        Boolean             @default(true)
+  currentRound  Int                 @default(1)
+  nextItemOrder Int                 @default(1)
+  examId        Int
+  exam          Exam                @relation(fields: [examId], references: [id], onDelete: Restrict)
+  studyGroupId  Int
+  studyGroup    StudyGroup          @relation(fields: [studyGroupId], references: [id], onDelete: Restrict)
+  priority      Int                 @default(2)
+  position      Int                 @default(1)
   userId        Int
-  user          User             @relation(fields: [userId], references: [id], onDelete: Restrict)
-  items         StudyCycleItem[]
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  user          User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  contents      StudyCycleContent[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
   deletedAt     DateTime?
 
+  @@unique([examId, priority, position])
   @@index([userId, deletedAt])
-}
-
-model StudyCycleItem {
-  id                Int        @id @default(autoincrement())
-  studyCycleId      Int
-  studyCycle        StudyCycle @relation(fields: [studyCycleId], references: [id], onDelete: Restrict)
-  studyGroupId      Int
-  studyGroup        StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Restrict)
-  position          Int
-  minutesPerSession Int        @default(25)
-  createdAt         DateTime   @default(now())
-  deletedAt         DateTime?
-
-  @@unique([studyCycleId, position])
+  @@index([examId, deletedAt])
   @@index([studyGroupId])
 }
 
-model Review {
-  id             Int       @id @default(autoincrement())
-  userId         Int
-  user           User      @relation(fields: [userId], references: [id], onDelete: Restrict)
-  noteId         Int
-  note           Note      @relation(fields: [noteId], references: [id], onDelete: Restrict)
-  lastReviewedAt DateTime?
-  nextReviewAt   DateTime
-  intervalDays   Int       @default(1)
-  reviewCount    Int       @default(0)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
+model StudyCycleContent {
+  cycleId           Int
+  contentId         Int
+  position          Int
+  minutesPerSession Int        @default(25)
+  cycle             StudyCycle @relation(fields: [cycleId], references: [id], onDelete: Restrict)
+  content           Content    @relation(fields: [contentId], references: [id], onDelete: Restrict)
+  createdAt         DateTime   @default(now())
 
-  @@unique([userId, noteId])
-  @@index([nextReviewAt])
-  @@index([userId, deletedAt])
+  @@id([cycleId, contentId])
+  @@unique([cycleId, position])
+  @@index([contentId])
 }
 
 model GoogleCalendarConnection {

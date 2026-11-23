@@ -24,6 +24,10 @@ interface StudyGroupRepository
     name: string,
     excludeId?: number,
   ): Promise<{ id: number; deletedAt: Date | null } | null>;
+  countActiveLinks(
+    userId: number,
+    studyGroupId: number,
+  ): Promise<{ contents: number; exams: number; cycles: number }>;
   reactivate(
     id: number,
     userId: number,
@@ -53,6 +57,31 @@ export class StudyGroupService extends CrudService<
     }
 
     return super.create(userId, data);
+  }
+
+  override async remove(userId: number, id: number) {
+    await this.findById(userId, id);
+    const links = await this.repository.countActiveLinks(userId, id);
+
+    if (links.contents > 0) {
+      throw new ConflictError(
+        "Não é possível excluir o grupo: existem conteúdos vinculados",
+      );
+    }
+
+    if (links.exams > 0) {
+      throw new ConflictError(
+        "Não é possível excluir o grupo: existem provas vinculadas",
+      );
+    }
+
+    if (links.cycles > 0) {
+      throw new ConflictError(
+        "Não é possível excluir o grupo: existem ciclos vinculados",
+      );
+    }
+
+    return this.repository.softDelete(id, userId);
   }
 
   override async update(

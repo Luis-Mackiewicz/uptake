@@ -1,154 +1,107 @@
-import { ConflictError, NotFoundError } from "../../shared/errors.js";
-import {
-  CrudService,
-  type CrudRepository,
-} from "../../shared/crud.service.js";
+import { NotFoundError, ValidationError } from "../../shared/errors.js";
 import { assertFound } from "../../shared/guards.js";
-import type { StudyGroupLookup } from "../../shared/ownership.js";
+import type { ContentLookup } from "../../shared/ownership.js";
+import { examRepository } from "../exam/repository.js";
+import { contentLookup } from "../content/index.js";
 import { studyGroupLookup } from "../studyGroup/index.js";
 import { StudyCycle } from "./entities.js";
-import {
-  studyCycleRepository,
-  type StudyCycleItemInput,
-  type StudyCycleState,
-} from "./repository.js";
+import { studyCycleRepository } from "./repository.js";
 import type {
   CreateStudyCycleData,
-  CreateStudyCycleItemData,
+  ReorderStudyCyclesData,
   UpdateStudyCycleData,
-  UpdateStudyCycleItemData,
 } from "./schemas.js";
 
-type StudyCycleRecord = NonNullable<
-  Awaited<ReturnType<typeof studyCycleRepository.findById>>
->;
-
-type StudyCycleItemRecord = NonNullable<
-  Awaited<ReturnType<typeof studyCycleRepository.findItemById>>
->;
-
-interface StudyCycleRepository
-  extends CrudRepository<
-    StudyCycleRecord,
-    CreateStudyCycleData,
-    UpdateStudyCycleData
-  > {
-  updateState(
-    id: number,
-    userId: number,
-    state: StudyCycleState,
-  ): Promise<StudyCycleRecord>;
-  findItems(studyCycleId: number): Promise<StudyCycleItemRecord[]>;
-  findItemById(
-    id: number,
-    studyCycleId: number,
-  ): Promise<StudyCycleItemRecord | null>;
-  findItemByPosition(
-    studyCycleId: number,
-    position: number,
-    excludeId?: number,
-  ): Promise<StudyCycleItemRecord | null>;
-  createItem(
-    studyCycleId: number,
-    data: StudyCycleItemInput,
-  ): Promise<StudyCycleItemRecord>;
-  updateItem(
-    id: number,
-    data: StudyCycleItemInput,
-  ): Promise<StudyCycleItemRecord>;
-  softDeleteItem(id: number): Promise<StudyCycleItemRecord>;
-  normalizeItemPositions(studyCycleId: number): Promise<void>;
-}
-
-export class StudyCycleService extends CrudService<
-  StudyCycleRecord,
-  CreateStudyCycleData,
-  UpdateStudyCycleData,
-  StudyCycleRepository
-> {
+export class StudyCycleService {
   constructor(
-    repository: StudyCycleRepository = studyCycleRepository,
-    private readonly studyGroups: StudyGroupLookup = studyGroupLookup,
-  ) {
-    super(repository, "Ciclo de estudos não encontrado");
+    private readonly repository = studyCycleRepository,
+    private readonly studyGroups = studyGroupLookup,
+    private readonly contents: ContentLookup = contentLookup,
+  ) {}
+
+  async findAllByExam(userId: number, examId: number) {
+    await this.ensureExam(userId, examId);
+    return this.repository.findManyByExam(examId);
   }
 
-  async findItems(userId: number, cycleId: number) {
-    await this.findById(userId, cycleId);
-    return this.repository.findItems(cycleId);
+  async findById(userId: number, examId: number, cycleId: number) {
+    await this.ensureExam(userId, examId);
+    return this.ensureCycle(userId, examId, cycleId);
   }
 
-  async addItem(
-    userId: number,
-    cycleId: number,
-    data: CreateStudyCycleItemData,
-  ) {
-    await this.findById(userId, cycleId);
-    await this.ensureStudyGroup(userId, data.studyGroupId);
-    const items = await this.repository.findItems(cycleId);
-    const position =
-      data.position ?? (items[items.length - 1]?.position ?? 0) + 1;
-    const existing = await this.repository.findItemByPosition(
-      cycleId,
+  async create(userId: number, examId: number, data: CreateStudyCycleData) {
+    await this.ensureExam(userId, examId);
+    await this.ensureRelations(userId, data.studyGroupId, data.contentIds);
+    const position = await this.nextPosition(examId, data.priority);
+    return this.repository.create(userId, examId, {
+      name: data.name,
+      active: data.active,
+      studyGroupId: data.studyGroupId,
+      priority: data.priority,
       position,
-    );
+      contentIds: data.contentIds,
+    });
+  }
 
-    if (existing) {
-      throw new ConflictError("Já existe um item nessa posição");
+  async update(
+    userId: number,
+    examId: number,
+    cycleId: number,
+    data: UpdateStudyCycleData,
+  ) {
+    const cycle = await this.findById(userId, examId, cycleId);
+    await this.ensureRelations(userId, data.studyGroupId, data.contentIds);
+
+    let position = cycle.position;
+    if (cycle.priority !== data.priority) {
+      position = await this.nextPosition(examId, data.priority);
     }
 
-    const created = await this.repository.createItem(cycleId, {
+    const updated = await this.repository.update(cycleId, userId, examId, {
+      name: data.name,
+      active: data.active,
       studyGroupId: data.studyGroupId,
+      priority: data.priority,
       position,
-      minutesPerSession: data.minutesPerSession,
+      contentIds: data.contentIds,
     });
-    await this.repository.normalizeItemPositions(cycleId);
-    return this.repository.findItemById(created.id, cycleId);
-  }
 
-  async updateItem(
-    userId: number,
-    cycleId: number,
-    itemId: number,
-    data: UpdateStudyCycleItemData,
-  ) {
-    const item = await this.findItem(userId, cycleId, itemId);
-    await this.ensureStudyGroup(userId, data.studyGroupId);
-    const position = data.position ?? item.position;
-    const existing = await this.repository.findItemByPosition(
-      cycleId,
-      position,
-      itemId,
-    );
-
-    if (existing) {
-      throw new ConflictError("Já existe um item nessa posição");
+    if (cycle.priority !== data.priority) {
+      await this.repository.normalizePositions(examId, cycle.priority);
     }
 
-    await this.repository.updateItem(itemId, {
-      studyGroupId: data.studyGroupId,
-      position,
-      minutesPerSession: data.minutesPerSession,
-    });
-    await this.repository.normalizeItemPositions(cycleId);
-    return this.repository.findItemById(itemId, cycleId);
+    return updated;
   }
 
-  async removeItem(userId: number, cycleId: number, itemId: number) {
-    const item = await this.findItem(userId, cycleId, itemId);
-    await this.repository.softDeleteItem(itemId);
-    await this.repository.normalizeItemPositions(cycleId);
-    return item;
+  async remove(userId: number, examId: number, cycleId: number) {
+    const cycle = await this.findById(userId, examId, cycleId);
+    await this.repository.softDelete(cycleId, userId, examId);
+    await this.repository.normalizePositions(examId, cycle.priority);
+    return cycle;
   }
 
-  async advance(userId: number, cycleId: number) {
-    const record = await this.findById(userId, cycleId);
-    const items = await this.repository.findItems(cycleId);
+  async reorder(
+    userId: number,
+    examId: number,
+    data: ReorderStudyCyclesData,
+  ) {
+    await this.ensureExam(userId, examId);
+
+    for (const id of data.ids) {
+      await this.ensureCycle(userId, examId, id);
+    }
+
+    return this.repository.reorder(examId, data.priority, data.ids);
+  }
+
+  async advance(userId: number, examId: number, cycleId: number) {
+    const record = await this.findById(userId, examId, cycleId);
+    const contents = await this.repository.findContents(cycleId);
     const cycle = new StudyCycle(record.currentRound, record.nextItemOrder);
-    const next = cycle.advance(items);
+    const next = cycle.advance(contents);
 
     if (!next) {
-      return { cycle: record, nextItem: null };
+      return { cycle: record, nextContent: null };
     }
 
     const updatedCycle = await this.repository.updateState(
@@ -156,23 +109,44 @@ export class StudyCycleService extends CrudService<
       userId,
       next,
     );
-    const nextItem = await this.repository.findItemByPosition(
-      record.id,
-      next.nextItemOrder,
-    );
+    const nextContent =
+      contents.find((content) => content.position === next.nextItemOrder) ?? null;
 
-    return { cycle: updatedCycle, nextItem };
+    return { cycle: updatedCycle, nextContent };
   }
 
-  private async findItem(userId: number, cycleId: number, itemId: number) {
-    await this.findById(userId, cycleId);
-    const item = await this.repository.findItemById(itemId, cycleId);
+  private async ensureExam(userId: number, examId: number) {
+    assertFound(
+      await examRepository.findById(examId, userId),
+      "Prova não encontrada",
+    );
+  }
 
-    if (!item) {
-      throw new NotFoundError("Item do ciclo não encontrado");
+  private async ensureCycle(userId: number, examId: number, cycleId: number) {
+    return assertFound(
+      await this.repository.findById(cycleId, userId, examId),
+      "Ciclo de estudos não encontrado",
+    );
+  }
+
+  private async ensureRelations(
+    userId: number,
+    studyGroupId: number,
+    contentIds: number[],
+  ) {
+    await this.ensureStudyGroup(userId, studyGroupId);
+
+    const contents = await Promise.all(
+      contentIds.map((contentId) => this.contents.findById(contentId, userId)),
+    );
+
+    if (contents.some((content) => !content)) {
+      throw new NotFoundError("Conteúdo não encontrado");
     }
 
-    return item;
+    if (contents.some((content) => content?.studyGroupId !== studyGroupId)) {
+      throw new ValidationError("Conteúdo não pertence ao grupo selecionado");
+    }
   }
 
   private async ensureStudyGroup(userId: number, studyGroupId: number) {
@@ -180,6 +154,12 @@ export class StudyCycleService extends CrudService<
       await this.studyGroups.findById(studyGroupId, userId),
       "Grupo de estudo não encontrado",
     );
+  }
+
+  private async nextPosition(examId: number, priority: number) {
+    const cycles = await this.repository.findManyByExam(examId);
+    const inPriority = cycles.filter((cycle) => cycle.priority === priority);
+    return (inPriority[inPriority.length - 1]?.position ?? 0) + 1;
   }
 }
 

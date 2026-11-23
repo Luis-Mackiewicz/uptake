@@ -12,7 +12,7 @@ flowchart TD
     provas[Provas]
     anotacoes[Anotações - legado redirecionado]
     config[Configurações]
-    ciclo[Ciclo de estudos]
+    ciclo[Ciclo de estudos - kanban em Provas]
     todo[Todo]
 
     usuario --> home

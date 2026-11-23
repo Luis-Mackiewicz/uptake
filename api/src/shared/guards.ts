@@ -1,9 +1,4 @@
 import { NotFoundError, ValidationError } from "./errors.js";
-import {
-  isReviewInterval,
-  REVIEW_INTERVAL_MESSAGE,
-  type ReviewInterval,
-} from "./domain.js";
 
 export function assertFound<T>(
   value: T | null | undefined,
@@ -30,14 +25,6 @@ export function assertNonNegativeInteger(
 ): number {
   if (!Number.isInteger(value) || value < 0) {
     throw new ValidationError(message);
-  }
-
-  return value;
-}
-
-export function assertReviewInterval(value: number): ReviewInterval {
-  if (!isReviewInterval(value)) {
-    throw new ValidationError(REVIEW_INTERVAL_MESSAGE);
   }
 
   return value;

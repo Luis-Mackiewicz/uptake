@@ -8,15 +8,19 @@ import { assertFound } from "../../shared/guards.js";
 import type { ContentLookup } from "../../shared/ownership.js";
 import { mergeReorderedIds } from "../../shared/reorder.js";
 import { contentLookup } from "../content/index.js";
-import type { CreateNoteData, UpdateNoteData } from "./schemas.js";
-import { noteRepository } from "./repository.js";
+import {
+  normalizeNoteFileName,
+  type CreateNoteData,
+  type UpdateNoteData,
+} from "./schemas.js";
+import { noteRepository, type NoteInput } from "./repository.js";
 
 type NoteRecord = NonNullable<
   Awaited<ReturnType<typeof noteRepository.findById>>
 >;
 
 type NoteRepository = Omit<
-  CrudRepository<NoteRecord, CreateNoteData, UpdateNoteData>,
+  CrudRepository<NoteRecord, NoteInput, UpdateNoteData>,
   "findMany"
 > & {
   findMany(
@@ -33,8 +37,9 @@ type NoteRepository = Omit<
   reactivate(
     id: number,
     userId: number,
-    data: CreateNoteData,
+    data: NoteInput,
   ): Promise<NoteRecord>;
+  countActiveExamLinks(userId: number, noteId: number): Promise<number>;
   findActiveIds(userId: number, contentId: number): Promise<number[]>;
   findNextPosition(userId: number, contentId: number): Promise<number>;
   reorder(userId: number, contentId: number, ids: number[]): Promise<void>;
@@ -43,7 +48,7 @@ type NoteRepository = Omit<
 
 export class NoteService extends CrudService<
   NoteRecord,
-  CreateNoteData,
+  NoteInput,
   UpdateNoteData,
   NoteRepository
 > {
@@ -70,13 +75,22 @@ export class NoteService extends CrudService<
     return toPaginated(data, total, pagination);
   }
 
-  override async create(userId: number, data: CreateNoteData) {
-    const input = this.withSize(data);
+  async createFromName(userId: number, data: CreateNoteData) {
+    const fileName = normalizeNoteFileName(data.name);
+    const input: NoteInput = {
+      title: fileName,
+      fileName,
+      markdownContent: "",
+      mimeType: data.mimeType,
+      sizeBytes: data.sizeBytes,
+      contentId: data.contentId,
+    };
+
     await this.ensureContent(userId, data.contentId);
     const existing = await this.repository.findByFileName(
       userId,
       data.contentId,
-      data.fileName,
+      fileName,
     );
 
     if (existing && existing.deletedAt === null) {
@@ -123,6 +137,14 @@ export class NoteService extends CrudService<
 
   override async remove(userId: number, id: number) {
     const current = await this.findById(userId, id);
+    const examLinks = await this.repository.countActiveExamLinks(userId, id);
+
+    if (examLinks > 0) {
+      throw new ConflictError(
+        "Não é possível excluir a nota: existem provas vinculadas",
+      );
+    }
+
     const removed = await this.repository.softDelete(id, userId);
     await this.repository.normalizePositions(userId, current.contentId);
     return removed;
@@ -139,7 +161,7 @@ export class NoteService extends CrudService<
     await this.repository.reorder(userId, contentId, orderedIds);
   }
 
-  private withSize(data: CreateNoteData | UpdateNoteData) {
+  private withSize(data: UpdateNoteData) {
     const sizeBytes = Buffer.byteLength(data.markdownContent, "utf8");
 
     if (sizeBytes > MAX_NOTE_SIZE_BYTES) {

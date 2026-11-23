@@ -28,20 +28,20 @@
 
 **Problema:** estudantes de concurso público não têm uma ferramenta feita para essa atividade. Hoje precisam combinar vários aplicativos e métodos (cronômetro, agenda, anotações, arquivos, música, IA), o que fragmenta o estudo e consome tempo de organização.
 
-**Solução:** o **Uptake** é uma plataforma web que reúne em um só lugar as ferramentas de que o concurseiro precisa: organização por matérias, revisão, ciclo de estudos, pomodoro, música ambiente, calendário de provas e apoio de inteligência artificial.
+**Solução:** o **Uptake** é uma plataforma web que reúne em um só lugar as ferramentas de que o concurseiro precisa: organização por matérias, ciclo de estudos dentro de provas, pomodoro, música ambiente, calendário de provas e apoio de inteligência artificial.
 
 ## 2. Objetivos e métricas
 
 | Objetivo                                | Métrica                                                                              | Meta                          |
 | --------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------- |
-| Reunir o estudo em uma única plataforma | Funcionalidades de estudo disponíveis (pomodoro, ciclo, revisão, música, IA, provas) | 6 de 6 na entrega             |
+| Reunir o estudo em uma única plataforma | Funcionalidades de estudo disponíveis (pomodoro, ciclo, música, IA, provas) | 5 de 5 na entrega             |
 | Permitir organização do conteúdo        | Usuário consegue criar grupo, conteúdo e arquivo sem sair da plataforma              | Fluxo completo funcionando    |
 | Atender à rubrica da disciplina         | Itens do `docs/rubrica.md` concluídos                                                | 100% marcados na apresentação |
 
 ## 3. Público
 
-- **Perfil principal:** estudantes que se preparam para concursos públicos e precisam de apoio para revisão, ciclo de estudos, pomodoro, música ambiente e IA.
-- **Persona (proposta):** concurseiro que estuda várias matérias ao mesmo tempo, geralmente em horários alternados com trabalho, e precisa saber o que revisar e quando é a próxima prova.
+- **Perfil principal:** estudantes que se preparam para concursos públicos e precisam de apoio para ciclo de estudos, pomodoro, música ambiente e IA.
+- **Persona (proposta):** concurseiro que estuda várias matérias ao mesmo tempo, geralmente em horários alternados com trabalho, e precisa saber o que estudar e quando é a próxima prova.
 - **Contexto de uso (proposta):** desktop em casa e celular em deslocamento.
 
 ## 4. Escopo
@@ -51,7 +51,7 @@
 - Front-end com 11 telas, listadas no [inventário de telas](#51-inventário-de-telas)
 - Autenticação, cadastro e edição de usuário
 - 4 CRUDs completos, todos com rotas autenticadas
-- Funcionalidades de estudo: pomodoro, ciclo de estudos, revisão, música ambiente e assistente de IA
+- Funcionalidades de estudo: pomodoro, ciclo de estudos dentro de provas, música ambiente e assistente de IA
 - Calendário de provas com integração ao Google Agenda
 - Back-end, banco MySQL e infraestrutura Docker com Nginx
 - Configuração de agentes de IA para desenvolvimento (`AGENTS.md`)
@@ -69,7 +69,7 @@
 ### Fases (proposta)
 
 - **MVP:** autenticação, cadastro, edição, 4 CRUDs, DevOps, dashboard
-- **Complemento:** pomodoro, ciclo, revisão, música, IA, integração com Google Agenda
+- **Complemento:** pomodoro, ciclo em provas, música, IA, integração com Google Agenda
 
 ## 5. Estrutura do site e inventário de telas
 
@@ -84,7 +84,7 @@
 | 5   | Conteúdos de um grupo                                  | `/study-groups/:groupId/contents` | Autenticado | RF-05 |
 | 6   | Pasta de um conteúdo                                   | `/study-groups/:groupId/contents/:contentId` | Autenticado | RF-06 |
 | 7   | Arquivo Markdown específico                            | `/study-groups/:groupId/contents/:contentId/notes/:noteId` | Autenticado | RF-06 |
-| 8   | Provas (pode anexar a uma anotação e ao Google Agenda) | `/provas`        | Autenticado | RF-07, RF-13   |
+| 8   | Provas (conteúdos, notas, ciclos em kanban e Google Agenda) | `/exams`         | Autenticado | RF-07, RF-09, RF-13 |
 | 9   | Integração com o Google Agenda                         | `/agenda`        | Autenticado | RF-13          |
 | 10  | Configurações (inclui edição de perfil)                | `/configuracoes` | Autenticado | RF-03          |
 | 11  | Grupo de estudo (ex.: História, Matemática)            | `/study-groups`  | Autenticado | RF-04          |
@@ -177,14 +177,14 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Prioridade:** Must
 **Telas:** #9
 **Descrição (proposta):** o usuário anexa e consulta arquivos ligados a um conteúdo.
-**Critérios:** segue RT-01 a RT-04. O arquivo pertence a um conteúdo (RD-02). A lista lateral oferece visão em tabela ou cards sem alterar o workspace de abas. A listagem aceita `GET /notes?contentId=<id>`; ao filtrar por conteúdo, a ordem pode ser alterada por arraste e persistida com `PATCH /notes/reorder`. O editor usa CodeMirror com toolbar Markdown para título, negrito, itálico, código, link, listas e citação.
+**Critérios:** segue RT-01 a RT-04. O arquivo pertence a um conteúdo (RD-02). Nova nota envia apenas `name` e `contentId`; a API gera `title`/`fileName` com `.md` e conteúdo vazio, e a edição ocorre na página. A lista lateral oferece visão em tabela ou cards sem alterar o workspace de abas. A listagem aceita `GET /notes?contentId=<id>`; ao filtrar por conteúdo, a ordem pode ser alterada por arraste e persistida com `PATCH /notes/reorder`. O editor usa CodeMirror com toolbar Markdown para título, negrito, itálico, código, link, listas e citação.
 
 ### RF-07 CRUD de Provas
 
 **Prioridade:** Must
 **Telas:** #6
-**Descrição:** o usuário cadastra provas, podendo anexar uma anotação e vincular ao Google Agenda (RF-13).
-**Critérios:** segue RT-01 a RT-04. A listagem oferece visão em tabela ou cards, exibindo título, data, grupo, local e quantidade de notas vinculadas.
+**Descrição:** o usuário cadastra provas, vincula grupo, conteúdos e notas, e pode integrar ao Google Agenda (RF-13).
+**Critérios:** segue RT-01 a RT-04. A listagem oferece visão em tabela ou cards, exibindo título, data, grupo, local e quantidades de conteúdos e notas vinculadas. A API impede notas de conteúdos não selecionados na prova.
 
 ### RF-08 Pomodoro
 
@@ -192,17 +192,17 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Descrição:** temporizador de foco e pausa disponível globalmente na sidebar.
 **Critérios:** padrões de 25 min de foco, 5 min de pausa curta e 15 min de pausa longa; tempos configuráveis no widget; pausa longa a cada 4 focos; sinal visual e sonoro ao finalizar cada fase; estado apenas local, sem histórico de sessões.
 
-### RF-09 Ciclo de estudos
+### RF-09 Ciclo de estudos em Provas
 
 **Prioridade:** Should
-**Descrição:** organização da rotina entre as matérias.
-**Critérios:** _a definir (como o ciclo é montado, se há tempo por matéria, como avança)._
+**Descrição:** organização da rotina de estudos dentro de uma prova.
+**Critérios:** o aluno cria ciclos com nome, grupo, conteúdos e prioridade Alta/Média/Baixa. A tela de Provas mostra um kanban com uma coluna por prioridade; ciclos podem ser arrastados entre colunas e reordenados. A API persiste posição e prioridade. A ação de avançar percorre os conteúdos do ciclo e incrementa a rodada ao final.
 
 ### RF-10 Revisão
 
-**Prioridade:** Should
-**Descrição:** apoio à revisão do que já foi estudado.
-**Critérios:** _a definir (ex.: revisão espaçada, lista de revisões pendentes)._
+**Prioridade:** Removida
+**Descrição:** a funcionalidade de revisão espaçada foi removida do produto.
+**Critérios:** rotas, tipos, componentes, dados e documentação de Revisões não fazem mais parte da aplicação. `/reviews` redireciona para o dashboard.
 
 ### RF-11 Música ambiente
 
@@ -245,7 +245,9 @@ Valem para os CRUDs (RF-04 a RF-07), salvo indicação contrária.
 - **RD-01:** Conteúdo pertence a um Grupo de estudo (N:1).
 - **RD-02:** Arquivo pertence a um Conteúdo (N:1).
 - **RD-03:** Prova pode estar associada a um Grupo de estudo (N:1).
-- **RD-04:** definir o que acontece ao remover um grupo que tem conteúdos (bloquear, remover em cascata ou deixar sem grupo).
+- **RD-04 (decisão):** bloquear com `409` a remoção de grupo com conteúdos, provas ou ciclos ativos; de conteúdo com notas, provas ou ciclos ativos; e de nota com provas ativas. Novas exclusões não cascateiam.
+- **RD-05:** Prova associa conteúdos e notas; notas só podem ser vinculadas a conteúdos da própria prova.
+- **RD-06:** Ciclo pertence a uma prova, usa prioridade 1/2/3 (Alta/Média/Baixa) e posição por prioridade; seus conteúdos formam a sequência do ciclo.
 
 A rubrica exige ao menos 1 relacionamento entre os recursos. RD-01 já atende.
 

@@ -13,7 +13,7 @@ import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiRequestError, api } from "@/lib/api/client";
-import type { Content, CreateNoteRequest, Note, StudyGroup } from "@/lib/api/types";
+import type { Content, Note, StudyGroup, UpdateNoteRequest } from "@/lib/api/types";
 import { isBlank } from "@/lib/validation";
 
 const MAX_NOTE_BYTES = 2 * 1024 * 1024;
@@ -107,7 +107,7 @@ export function NoteFilePage({
       return;
     }
 
-    const payload: CreateNoteRequest = {
+    const payload: UpdateNoteRequest = {
       title: activeTab.title,
       fileName: activeTab.fileName,
       contentId: activeTab.contentId,
@@ -181,8 +181,8 @@ export function NoteFilePage({
   return (
     <div>
       <PageHeader
-        title={note.fileName}
-        description={note.title}
+        title={note.title}
+        description={`Arquivo Markdown de ${content.title}.`}
         breadcrumbs={[
           { label: "Grupos", href: "/study-groups" },
           { label: group.name, href: `/study-groups/${group.id}/contents` },

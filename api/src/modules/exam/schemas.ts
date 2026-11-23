@@ -11,11 +11,22 @@ const examDateSchema = z
   }, "Data inválida")
   .transform((value) => new Date(`${value}T00:00:00.000Z`));
 
-const noteIdsSchema = z
-  .array(z.coerce.number().int().positive())
-  .max(50, "Uma prova pode ter no máximo 50 notas")
-  .refine((ids) => new Set(ids).size === ids.length, "Notas não podem se repetir")
-  .default([]);
+const idsSchema = (message: string, repeatedMessage: string) =>
+  z
+    .array(z.coerce.number().int().positive())
+    .max(50, message)
+    .refine((ids) => new Set(ids).size === ids.length, repeatedMessage)
+    .default([]);
+
+const noteIdsSchema = idsSchema(
+  "Uma prova pode ter no máximo 50 notas",
+  "Notas não podem se repetir",
+);
+
+const contentIdsSchema = idsSchema(
+  "Uma prova pode ter no máximo 50 conteúdos",
+  "Conteúdos não podem se repetir",
+);
 
 export const createExamSchema = z
   .object({
@@ -38,6 +49,7 @@ export const createExamSchema = z
       .nullable()
       .optional(),
     studyGroupId: z.coerce.number().int().positive().nullable().optional(),
+    contentIds: contentIdsSchema,
     noteIds: noteIdsSchema,
   })
   .strict();

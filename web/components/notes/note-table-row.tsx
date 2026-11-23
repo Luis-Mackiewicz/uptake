@@ -69,7 +69,6 @@ export function NoteTableRow({
             ) : null}
             {isActive ? <Badge tone="lime">Ativa</Badge> : isOpen ? <Badge>Aberta</Badge> : null}
           </span>
-          <span className="block truncate font-mono text-xs text-neutral-500">{note.fileName}</span>
           <span className="block truncate text-xs text-neutral-500">{contentLabel}</span>
         </button>
       </TableCell>

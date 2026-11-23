@@ -15,6 +15,9 @@ export const examSafeSelect = {
   notes: {
     select: { noteId: true },
   },
+  contents: {
+    select: { contentId: true },
+  },
 } as const;
 
 type ExamWithNotes = {
@@ -29,13 +32,21 @@ type ExamWithNotes = {
   createdAt: Date;
   updatedAt: Date;
   notes: { noteId: number }[];
+  contents: { contentId: number }[];
 };
 
-export type SafeExam = Omit<ExamWithNotes, "notes"> & { noteIds: number[] };
+export type SafeExam = Omit<ExamWithNotes, "notes" | "contents"> & {
+  noteIds: number[];
+  contentIds: number[];
+};
 
 function toSafeExam(record: ExamWithNotes): SafeExam {
-  const { notes, ...exam } = record;
-  return { ...exam, noteIds: notes.map((item) => item.noteId) };
+  const { notes, contents, ...exam } = record;
+  return {
+    ...exam,
+    noteIds: notes.map((item) => item.noteId),
+    contentIds: contents.map((item) => item.contentId),
+  };
 }
 
 export interface ExamInput {
@@ -44,6 +55,7 @@ export interface ExamInput {
   examDate: Date;
   location?: string | null;
   studyGroupId?: number | null;
+  contentIds: number[];
   noteIds: number[];
 }
 
@@ -55,6 +67,14 @@ function activeExamWhere(userId: number) {
       { studyGroupId: null },
       { studyGroup: { deletedAt: null } },
     ],
+    contents: {
+      every: {
+        content: {
+          deletedAt: null,
+          studyGroup: { deletedAt: null },
+        },
+      },
+    },
     notes: {
       every: {
         note: {
@@ -102,6 +122,11 @@ export const examRepository = {
         location: data.location ?? null,
         studyGroupId: data.studyGroupId ?? null,
         userId,
+        contents: {
+          create: data.contentIds.map((contentId) => ({
+            content: { connect: { id: contentId } },
+          })),
+        },
         notes: {
           create: data.noteIds.map((noteId) => ({
             note: { connect: { id: noteId } },
@@ -122,6 +147,12 @@ export const examRepository = {
         examDate: data.examDate,
         location: data.location ?? null,
         studyGroupId: data.studyGroupId ?? null,
+        contents: {
+          deleteMany: {},
+          create: data.contentIds.map((contentId) => ({
+            content: { connect: { id: contentId } },
+          })),
+        },
         notes: {
           deleteMany: {},
           create: data.noteIds.map((noteId) => ({

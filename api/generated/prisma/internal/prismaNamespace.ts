@@ -403,10 +403,10 @@ export const ModelName = {
   Note: 'Note',
   Exam: 'Exam',
   ExamNote: 'ExamNote',
+  ExamContent: 'ExamContent',
   PomodoroSession: 'PomodoroSession',
   StudyCycle: 'StudyCycle',
-  StudyCycleItem: 'StudyCycleItem',
-  Review: 'Review',
+  StudyCycleContent: 'StudyCycleContent',
   GoogleCalendarConnection: 'GoogleCalendarConnection'
 } as const
 
@@ -423,7 +423,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "studyGroup" | "content" | "note" | "exam" | "examNote" | "pomodoroSession" | "studyCycle" | "studyCycleItem" | "review" | "googleCalendarConnection"
+    modelProps: "user" | "studyGroup" | "content" | "note" | "exam" | "examNote" | "examContent" | "pomodoroSession" | "studyCycle" | "studyCycleContent" | "googleCalendarConnection"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -823,6 +823,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ExamContent: {
+      payload: Prisma.$ExamContentPayload<ExtArgs>
+      fields: Prisma.ExamContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExamContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExamContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>
+        }
+        findFirst: {
+          args: Prisma.ExamContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExamContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>
+        }
+        findMany: {
+          args: Prisma.ExamContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>[]
+        }
+        create: {
+          args: Prisma.ExamContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>
+        }
+        createMany: {
+          args: Prisma.ExamContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.ExamContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>
+        }
+        update: {
+          args: Prisma.ExamContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.ExamContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExamContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.ExamContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExamContentPayload>
+        }
+        aggregate: {
+          args: Prisma.ExamContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExamContent>
+        }
+        groupBy: {
+          args: Prisma.ExamContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExamContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExamContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExamContentCountAggregateOutputType> | number
+        }
+      }
+    }
     PomodoroSession: {
       payload: Prisma.$PomodoroSessionPayload<ExtArgs>
       fields: Prisma.PomodoroSessionFieldRefs
@@ -955,135 +1021,69 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    StudyCycleItem: {
-      payload: Prisma.$StudyCycleItemPayload<ExtArgs>
-      fields: Prisma.StudyCycleItemFieldRefs
+    StudyCycleContent: {
+      payload: Prisma.$StudyCycleContentPayload<ExtArgs>
+      fields: Prisma.StudyCycleContentFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.StudyCycleItemFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload> | null
+          args: Prisma.StudyCycleContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.StudyCycleItemFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>
+          args: Prisma.StudyCycleContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>
         }
         findFirst: {
-          args: Prisma.StudyCycleItemFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload> | null
+          args: Prisma.StudyCycleContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.StudyCycleItemFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>
+          args: Prisma.StudyCycleContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>
         }
         findMany: {
-          args: Prisma.StudyCycleItemFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>[]
+          args: Prisma.StudyCycleContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>[]
         }
         create: {
-          args: Prisma.StudyCycleItemCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>
+          args: Prisma.StudyCycleContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>
         }
         createMany: {
-          args: Prisma.StudyCycleItemCreateManyArgs<ExtArgs>
+          args: Prisma.StudyCycleContentCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         delete: {
-          args: Prisma.StudyCycleItemDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>
+          args: Prisma.StudyCycleContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>
         }
         update: {
-          args: Prisma.StudyCycleItemUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>
+          args: Prisma.StudyCycleContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>
         }
         deleteMany: {
-          args: Prisma.StudyCycleItemDeleteManyArgs<ExtArgs>
+          args: Prisma.StudyCycleContentDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.StudyCycleItemUpdateManyArgs<ExtArgs>
+          args: Prisma.StudyCycleContentUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         upsert: {
-          args: Prisma.StudyCycleItemUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleItemPayload>
+          args: Prisma.StudyCycleContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudyCycleContentPayload>
         }
         aggregate: {
-          args: Prisma.StudyCycleItemAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateStudyCycleItem>
+          args: Prisma.StudyCycleContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStudyCycleContent>
         }
         groupBy: {
-          args: Prisma.StudyCycleItemGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.StudyCycleItemGroupByOutputType>[]
+          args: Prisma.StudyCycleContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StudyCycleContentGroupByOutputType>[]
         }
         count: {
-          args: Prisma.StudyCycleItemCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.StudyCycleItemCountAggregateOutputType> | number
-        }
-      }
-    }
-    Review: {
-      payload: Prisma.$ReviewPayload<ExtArgs>
-      fields: Prisma.ReviewFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ReviewFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ReviewFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        findFirst: {
-          args: Prisma.ReviewFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ReviewFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        findMany: {
-          args: Prisma.ReviewFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
-        }
-        create: {
-          args: Prisma.ReviewCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        createMany: {
-          args: Prisma.ReviewCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        delete: {
-          args: Prisma.ReviewDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        update: {
-          args: Prisma.ReviewUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        deleteMany: {
-          args: Prisma.ReviewDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ReviewUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        upsert: {
-          args: Prisma.ReviewUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
-        }
-        aggregate: {
-          args: Prisma.ReviewAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateReview>
-        }
-        groupBy: {
-          args: Prisma.ReviewGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ReviewGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ReviewCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ReviewCountAggregateOutputType> | number
+          args: Prisma.StudyCycleContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StudyCycleContentCountAggregateOutputType> | number
         }
       }
     }
@@ -1280,6 +1280,15 @@ export const ExamNoteScalarFieldEnum = {
 export type ExamNoteScalarFieldEnum = (typeof ExamNoteScalarFieldEnum)[keyof typeof ExamNoteScalarFieldEnum]
 
 
+export const ExamContentScalarFieldEnum = {
+  examId: 'examId',
+  contentId: 'contentId',
+  createdAt: 'createdAt'
+} as const
+
+export type ExamContentScalarFieldEnum = (typeof ExamContentScalarFieldEnum)[keyof typeof ExamContentScalarFieldEnum]
+
+
 export const PomodoroSessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1302,6 +1311,10 @@ export const StudyCycleScalarFieldEnum = {
   active: 'active',
   currentRound: 'currentRound',
   nextItemOrder: 'nextItemOrder',
+  examId: 'examId',
+  studyGroupId: 'studyGroupId',
+  priority: 'priority',
+  position: 'position',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -1311,33 +1324,15 @@ export const StudyCycleScalarFieldEnum = {
 export type StudyCycleScalarFieldEnum = (typeof StudyCycleScalarFieldEnum)[keyof typeof StudyCycleScalarFieldEnum]
 
 
-export const StudyCycleItemScalarFieldEnum = {
-  id: 'id',
-  studyCycleId: 'studyCycleId',
-  studyGroupId: 'studyGroupId',
+export const StudyCycleContentScalarFieldEnum = {
+  cycleId: 'cycleId',
+  contentId: 'contentId',
   position: 'position',
   minutesPerSession: 'minutesPerSession',
-  createdAt: 'createdAt',
-  deletedAt: 'deletedAt'
+  createdAt: 'createdAt'
 } as const
 
-export type StudyCycleItemScalarFieldEnum = (typeof StudyCycleItemScalarFieldEnum)[keyof typeof StudyCycleItemScalarFieldEnum]
-
-
-export const ReviewScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  noteId: 'noteId',
-  lastReviewedAt: 'lastReviewedAt',
-  nextReviewAt: 'nextReviewAt',
-  intervalDays: 'intervalDays',
-  reviewCount: 'reviewCount',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+export type StudyCycleContentScalarFieldEnum = (typeof StudyCycleContentScalarFieldEnum)[keyof typeof StudyCycleContentScalarFieldEnum]
 
 
 export const GoogleCalendarConnectionScalarFieldEnum = {
@@ -1633,10 +1628,10 @@ export type GlobalOmitConfig = {
   note?: Prisma.NoteOmit
   exam?: Prisma.ExamOmit
   examNote?: Prisma.ExamNoteOmit
+  examContent?: Prisma.ExamContentOmit
   pomodoroSession?: Prisma.PomodoroSessionOmit
   studyCycle?: Prisma.StudyCycleOmit
-  studyCycleItem?: Prisma.StudyCycleItemOmit
-  review?: Prisma.ReviewOmit
+  studyCycleContent?: Prisma.StudyCycleContentOmit
   googleCalendarConnection?: Prisma.GoogleCalendarConnectionOmit
 }
 

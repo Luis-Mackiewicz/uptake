@@ -18,7 +18,6 @@ import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { SortableProvider } from "@/components/ui/sortable";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { ViewToggle } from "@/components/ui/view-toggle";
 import { useNoteTabs } from "@/hooks/use-note-tabs";
@@ -32,15 +31,16 @@ import type {
   Note,
   ReorderNotesRequest,
   StudyGroup,
+  UpdateNoteRequest,
 } from "@/lib/api/types";
 import { isBlank, isValidPositiveId, validateLength } from "@/lib/validation";
 
 const MAX_NOTE_BYTES = 2 * 1024 * 1024;
 
-type NoteForm = { title: string; fileName: string; contentId: string; markdownContent: string };
+type NoteForm = { name: string; contentId: string };
 type FormErrors = Partial<Record<keyof NoteForm, string>>;
 
-const emptyForm: NoteForm = { title: "", fileName: "", contentId: "", markdownContent: "" };
+const emptyForm: NoteForm = { name: "", contentId: "" };
 
 function byteLength(value: string) {
   return new TextEncoder().encode(value).length;
@@ -134,7 +134,7 @@ export function NotesPageContent() {
       return;
     }
 
-    const payload: CreateNoteRequest = {
+    const payload: UpdateNoteRequest = {
       title: activeTab.title,
       fileName: activeTab.fileName,
       contentId: activeTab.contentId,
@@ -204,14 +204,10 @@ export function NotesPageContent() {
 
   const validateCreate = () => {
     const nextErrors: FormErrors = {};
-    if (isBlank(form.title)) nextErrors.title = "Informe o título";
-    else if (!validateLength(form.title, 200)) nextErrors.title = "Máximo de 200 caracteres";
-    if (isBlank(form.fileName)) nextErrors.fileName = "Informe o nome do arquivo";
-    else if (!validateLength(form.fileName, 255)) nextErrors.fileName = "Máximo de 255 caracteres";
-    else if (form.fileName.includes("/") || form.fileName.includes("\\")) nextErrors.fileName = "Não use barras no nome";
+    if (isBlank(form.name)) nextErrors.name = "Informe o nome";
+    else if (!validateLength(form.name, 251)) nextErrors.name = "Máximo de 251 caracteres";
+    else if (form.name.includes("/") || form.name.includes("\\")) nextErrors.name = "Não use barras no nome";
     if (!isValidPositiveId(Number(form.contentId))) nextErrors.contentId = "Selecione um conteúdo";
-    if (isBlank(form.markdownContent)) nextErrors.markdownContent = "Escreva o conteúdo da nota";
-    else if (byteLength(form.markdownContent) > MAX_NOTE_BYTES) nextErrors.markdownContent = "Nota excede o tamanho máximo de 2 MB";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -221,10 +217,8 @@ export function NotesPageContent() {
     if (!validateCreate()) return;
 
     const payload: CreateNoteRequest = {
-      title: form.title.trim(),
-      fileName: form.fileName.trim(),
+      name: form.name.trim(),
       contentId: Number(form.contentId),
-      markdownContent: form.markdownContent,
     };
 
     setCreating(true);
@@ -405,16 +399,11 @@ export function NotesPageContent() {
         />
       </div>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title="Nova nota" className="max-w-3xl">
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title="Nova nota">
         <form className="space-y-4" onSubmit={handleCreate} noValidate>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Título" htmlFor="note-title" error={errors.title}>
-              <Input id="note-title" value={form.title} invalid={Boolean(errors.title)} onChange={(event) => setForm({ ...form, title: event.target.value })} />
-            </Field>
-            <Field label="Arquivo" htmlFor="note-file" error={errors.fileName} hint="Ex.: resumo.md">
-              <Input id="note-file" value={form.fileName} invalid={Boolean(errors.fileName)} onChange={(event) => setForm({ ...form, fileName: event.target.value })} />
-            </Field>
-          </div>
+          <Field label="Nome" htmlFor="note-name" error={errors.name} hint="O arquivo será criado com a extensão .md.">
+            <Input id="note-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+          </Field>
           <Field label="Conteúdo" htmlFor="note-content" error={errors.contentId}>
             <Select id="note-content" value={form.contentId} invalid={Boolean(errors.contentId)} onChange={(event) => setForm({ ...form, contentId: event.target.value })}>
               <option value="">Selecione</option>
@@ -422,9 +411,6 @@ export function NotesPageContent() {
                 <option key={content.id} value={content.id}>{contentLabel(content)}</option>
               ))}
             </Select>
-          </Field>
-          <Field label="Markdown" htmlFor="note-markdown" error={errors.markdownContent} hint="Tamanho calculado automaticamente pelo servidor.">
-            <Textarea id="note-markdown" className="min-h-48 font-mono text-xs" value={form.markdownContent} invalid={Boolean(errors.markdownContent)} onChange={(event) => setForm({ ...form, markdownContent: event.target.value })} />
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>

@@ -263,6 +263,8 @@ export type ContentWhereInput = {
   studyGroup?: Prisma.XOR<Prisma.StudyGroupScalarRelationFilter, Prisma.StudyGroupWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   notes?: Prisma.NoteListRelationFilter
+  examContents?: Prisma.ExamContentListRelationFilter
+  cycleContents?: Prisma.StudyCycleContentListRelationFilter
   pomodoroSessions?: Prisma.PomodoroSessionListRelationFilter
 }
 
@@ -279,6 +281,8 @@ export type ContentOrderByWithRelationInput = {
   studyGroup?: Prisma.StudyGroupOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   notes?: Prisma.NoteOrderByRelationAggregateInput
+  examContents?: Prisma.ExamContentOrderByRelationAggregateInput
+  cycleContents?: Prisma.StudyCycleContentOrderByRelationAggregateInput
   pomodoroSessions?: Prisma.PomodoroSessionOrderByRelationAggregateInput
   _relevance?: Prisma.ContentOrderByRelevanceInput
 }
@@ -299,6 +303,8 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
   studyGroup?: Prisma.XOR<Prisma.StudyGroupScalarRelationFilter, Prisma.StudyGroupWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   notes?: Prisma.NoteListRelationFilter
+  examContents?: Prisma.ExamContentListRelationFilter
+  cycleContents?: Prisma.StudyCycleContentListRelationFilter
   pomodoroSessions?: Prisma.PomodoroSessionListRelationFilter
 }, "id">
 
@@ -344,6 +350,8 @@ export type ContentCreateInput = {
   studyGroup: Prisma.StudyGroupCreateNestedOneWithoutContentsInput
   user: Prisma.UserCreateNestedOneWithoutContentsInput
   notes?: Prisma.NoteCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutContentInput
 }
 
@@ -358,6 +366,8 @@ export type ContentUncheckedCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutContentInput
 }
 
@@ -371,6 +381,8 @@ export type ContentUpdateInput = {
   studyGroup?: Prisma.StudyGroupUpdateOneRequiredWithoutContentsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutContentsNestedInput
   notes?: Prisma.NoteUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutContentNestedInput
 }
 
@@ -385,6 +397,8 @@ export type ContentUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NoteUncheckedUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUncheckedUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutContentNestedInput
 }
 
@@ -595,6 +609,20 @@ export type ContentUpdateOneRequiredWithoutNotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContentUpdateToOneWithWhereWithoutNotesInput, Prisma.ContentUpdateWithoutNotesInput>, Prisma.ContentUncheckedUpdateWithoutNotesInput>
 }
 
+export type ContentCreateNestedOneWithoutExamContentsInput = {
+  create?: Prisma.XOR<Prisma.ContentCreateWithoutExamContentsInput, Prisma.ContentUncheckedCreateWithoutExamContentsInput>
+  connectOrCreate?: Prisma.ContentCreateOrConnectWithoutExamContentsInput
+  connect?: Prisma.ContentWhereUniqueInput
+}
+
+export type ContentUpdateOneRequiredWithoutExamContentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ContentCreateWithoutExamContentsInput, Prisma.ContentUncheckedCreateWithoutExamContentsInput>
+  connectOrCreate?: Prisma.ContentCreateOrConnectWithoutExamContentsInput
+  upsert?: Prisma.ContentUpsertWithoutExamContentsInput
+  connect?: Prisma.ContentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ContentUpdateToOneWithWhereWithoutExamContentsInput, Prisma.ContentUpdateWithoutExamContentsInput>, Prisma.ContentUncheckedUpdateWithoutExamContentsInput>
+}
+
 export type ContentCreateNestedOneWithoutPomodoroSessionsInput = {
   create?: Prisma.XOR<Prisma.ContentCreateWithoutPomodoroSessionsInput, Prisma.ContentUncheckedCreateWithoutPomodoroSessionsInput>
   connectOrCreate?: Prisma.ContentCreateOrConnectWithoutPomodoroSessionsInput
@@ -611,6 +639,20 @@ export type ContentUpdateOneWithoutPomodoroSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContentUpdateToOneWithWhereWithoutPomodoroSessionsInput, Prisma.ContentUpdateWithoutPomodoroSessionsInput>, Prisma.ContentUncheckedUpdateWithoutPomodoroSessionsInput>
 }
 
+export type ContentCreateNestedOneWithoutCycleContentsInput = {
+  create?: Prisma.XOR<Prisma.ContentCreateWithoutCycleContentsInput, Prisma.ContentUncheckedCreateWithoutCycleContentsInput>
+  connectOrCreate?: Prisma.ContentCreateOrConnectWithoutCycleContentsInput
+  connect?: Prisma.ContentWhereUniqueInput
+}
+
+export type ContentUpdateOneRequiredWithoutCycleContentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ContentCreateWithoutCycleContentsInput, Prisma.ContentUncheckedCreateWithoutCycleContentsInput>
+  connectOrCreate?: Prisma.ContentCreateOrConnectWithoutCycleContentsInput
+  upsert?: Prisma.ContentUpsertWithoutCycleContentsInput
+  connect?: Prisma.ContentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ContentUpdateToOneWithWhereWithoutCycleContentsInput, Prisma.ContentUpdateWithoutCycleContentsInput>, Prisma.ContentUncheckedUpdateWithoutCycleContentsInput>
+}
+
 export type ContentCreateWithoutUserInput = {
   title: string
   description?: string | null
@@ -620,6 +662,8 @@ export type ContentCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   studyGroup: Prisma.StudyGroupCreateNestedOneWithoutContentsInput
   notes?: Prisma.NoteCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutContentInput
 }
 
@@ -633,6 +677,8 @@ export type ContentUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutContentInput
 }
 
@@ -686,6 +732,8 @@ export type ContentCreateWithoutStudyGroupInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutContentsInput
   notes?: Prisma.NoteCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutContentInput
 }
 
@@ -699,6 +747,8 @@ export type ContentUncheckedCreateWithoutStudyGroupInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutContentInput
 }
 
@@ -737,6 +787,8 @@ export type ContentCreateWithoutNotesInput = {
   deletedAt?: Date | string | null
   studyGroup: Prisma.StudyGroupCreateNestedOneWithoutContentsInput
   user: Prisma.UserCreateNestedOneWithoutContentsInput
+  examContents?: Prisma.ExamContentCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutContentInput
 }
 
@@ -750,6 +802,8 @@ export type ContentUncheckedCreateWithoutNotesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  examContents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedCreateNestedManyWithoutContentInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutContentInput
 }
 
@@ -778,6 +832,8 @@ export type ContentUpdateWithoutNotesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studyGroup?: Prisma.StudyGroupUpdateOneRequiredWithoutContentsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutContentsNestedInput
+  examContents?: Prisma.ExamContentUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutContentNestedInput
 }
 
@@ -791,6 +847,82 @@ export type ContentUncheckedUpdateWithoutNotesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  examContents?: Prisma.ExamContentUncheckedUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedUpdateManyWithoutContentNestedInput
+  pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutContentNestedInput
+}
+
+export type ContentCreateWithoutExamContentsInput = {
+  title: string
+  description?: string | null
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  studyGroup: Prisma.StudyGroupCreateNestedOneWithoutContentsInput
+  user: Prisma.UserCreateNestedOneWithoutContentsInput
+  notes?: Prisma.NoteCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentCreateNestedManyWithoutContentInput
+  pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutContentInput
+}
+
+export type ContentUncheckedCreateWithoutExamContentsInput = {
+  id?: number
+  title: string
+  description?: string | null
+  studyGroupId: number
+  position?: number
+  userId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedCreateNestedManyWithoutContentInput
+  pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutContentInput
+}
+
+export type ContentCreateOrConnectWithoutExamContentsInput = {
+  where: Prisma.ContentWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContentCreateWithoutExamContentsInput, Prisma.ContentUncheckedCreateWithoutExamContentsInput>
+}
+
+export type ContentUpsertWithoutExamContentsInput = {
+  update: Prisma.XOR<Prisma.ContentUpdateWithoutExamContentsInput, Prisma.ContentUncheckedUpdateWithoutExamContentsInput>
+  create: Prisma.XOR<Prisma.ContentCreateWithoutExamContentsInput, Prisma.ContentUncheckedCreateWithoutExamContentsInput>
+  where?: Prisma.ContentWhereInput
+}
+
+export type ContentUpdateToOneWithWhereWithoutExamContentsInput = {
+  where?: Prisma.ContentWhereInput
+  data: Prisma.XOR<Prisma.ContentUpdateWithoutExamContentsInput, Prisma.ContentUncheckedUpdateWithoutExamContentsInput>
+}
+
+export type ContentUpdateWithoutExamContentsInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  studyGroup?: Prisma.StudyGroupUpdateOneRequiredWithoutContentsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutContentsNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUpdateManyWithoutContentNestedInput
+  pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutContentNestedInput
+}
+
+export type ContentUncheckedUpdateWithoutExamContentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutContentNestedInput
 }
 
@@ -804,6 +936,8 @@ export type ContentCreateWithoutPomodoroSessionsInput = {
   studyGroup: Prisma.StudyGroupCreateNestedOneWithoutContentsInput
   user: Prisma.UserCreateNestedOneWithoutContentsInput
   notes?: Prisma.NoteCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentCreateNestedManyWithoutContentInput
 }
 
 export type ContentUncheckedCreateWithoutPomodoroSessionsInput = {
@@ -817,6 +951,8 @@ export type ContentUncheckedCreateWithoutPomodoroSessionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutContentInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedCreateNestedManyWithoutContentInput
 }
 
 export type ContentCreateOrConnectWithoutPomodoroSessionsInput = {
@@ -845,6 +981,8 @@ export type ContentUpdateWithoutPomodoroSessionsInput = {
   studyGroup?: Prisma.StudyGroupUpdateOneRequiredWithoutContentsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutContentsNestedInput
   notes?: Prisma.NoteUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUpdateManyWithoutContentNestedInput
 }
 
 export type ContentUncheckedUpdateWithoutPomodoroSessionsInput = {
@@ -858,6 +996,82 @@ export type ContentUncheckedUpdateWithoutPomodoroSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NoteUncheckedUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUncheckedUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedUpdateManyWithoutContentNestedInput
+}
+
+export type ContentCreateWithoutCycleContentsInput = {
+  title: string
+  description?: string | null
+  position?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  studyGroup: Prisma.StudyGroupCreateNestedOneWithoutContentsInput
+  user: Prisma.UserCreateNestedOneWithoutContentsInput
+  notes?: Prisma.NoteCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentCreateNestedManyWithoutContentInput
+  pomodoroSessions?: Prisma.PomodoroSessionCreateNestedManyWithoutContentInput
+}
+
+export type ContentUncheckedCreateWithoutCycleContentsInput = {
+  id?: number
+  title: string
+  description?: string | null
+  studyGroupId: number
+  position?: number
+  userId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutContentInput
+  examContents?: Prisma.ExamContentUncheckedCreateNestedManyWithoutContentInput
+  pomodoroSessions?: Prisma.PomodoroSessionUncheckedCreateNestedManyWithoutContentInput
+}
+
+export type ContentCreateOrConnectWithoutCycleContentsInput = {
+  where: Prisma.ContentWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContentCreateWithoutCycleContentsInput, Prisma.ContentUncheckedCreateWithoutCycleContentsInput>
+}
+
+export type ContentUpsertWithoutCycleContentsInput = {
+  update: Prisma.XOR<Prisma.ContentUpdateWithoutCycleContentsInput, Prisma.ContentUncheckedUpdateWithoutCycleContentsInput>
+  create: Prisma.XOR<Prisma.ContentCreateWithoutCycleContentsInput, Prisma.ContentUncheckedCreateWithoutCycleContentsInput>
+  where?: Prisma.ContentWhereInput
+}
+
+export type ContentUpdateToOneWithWhereWithoutCycleContentsInput = {
+  where?: Prisma.ContentWhereInput
+  data: Prisma.XOR<Prisma.ContentUpdateWithoutCycleContentsInput, Prisma.ContentUncheckedUpdateWithoutCycleContentsInput>
+}
+
+export type ContentUpdateWithoutCycleContentsInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  studyGroup?: Prisma.StudyGroupUpdateOneRequiredWithoutContentsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutContentsNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUpdateManyWithoutContentNestedInput
+  pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutContentNestedInput
+}
+
+export type ContentUncheckedUpdateWithoutCycleContentsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUncheckedUpdateManyWithoutContentNestedInput
+  pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutContentNestedInput
 }
 
 export type ContentCreateManyUserInput = {
@@ -880,6 +1094,8 @@ export type ContentUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   studyGroup?: Prisma.StudyGroupUpdateOneRequiredWithoutContentsNestedInput
   notes?: Prisma.NoteUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutContentNestedInput
 }
 
@@ -893,6 +1109,8 @@ export type ContentUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NoteUncheckedUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUncheckedUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutContentNestedInput
 }
 
@@ -927,6 +1145,8 @@ export type ContentUpdateWithoutStudyGroupInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutContentsNestedInput
   notes?: Prisma.NoteUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUpdateManyWithoutContentNestedInput
 }
 
@@ -940,6 +1160,8 @@ export type ContentUncheckedUpdateWithoutStudyGroupInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NoteUncheckedUpdateManyWithoutContentNestedInput
+  examContents?: Prisma.ExamContentUncheckedUpdateManyWithoutContentNestedInput
+  cycleContents?: Prisma.StudyCycleContentUncheckedUpdateManyWithoutContentNestedInput
   pomodoroSessions?: Prisma.PomodoroSessionUncheckedUpdateManyWithoutContentNestedInput
 }
 
@@ -961,11 +1183,15 @@ export type ContentUncheckedUpdateManyWithoutStudyGroupInput = {
 
 export type ContentCountOutputType = {
   notes: number
+  examContents: number
+  cycleContents: number
   pomodoroSessions: number
 }
 
 export type ContentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   notes?: boolean | ContentCountOutputTypeCountNotesArgs
+  examContents?: boolean | ContentCountOutputTypeCountExamContentsArgs
+  cycleContents?: boolean | ContentCountOutputTypeCountCycleContentsArgs
   pomodoroSessions?: boolean | ContentCountOutputTypeCountPomodoroSessionsArgs
 }
 
@@ -989,6 +1215,20 @@ export type ContentCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.E
 /**
  * ContentCountOutputType without action
  */
+export type ContentCountOutputTypeCountExamContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ExamContentWhereInput
+}
+
+/**
+ * ContentCountOutputType without action
+ */
+export type ContentCountOutputTypeCountCycleContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.StudyCycleContentWhereInput
+}
+
+/**
+ * ContentCountOutputType without action
+ */
 export type ContentCountOutputTypeCountPomodoroSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PomodoroSessionWhereInput
 }
@@ -1007,6 +1247,8 @@ export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   studyGroup?: boolean | Prisma.StudyGroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   notes?: boolean | Prisma.Content$notesArgs<ExtArgs>
+  examContents?: boolean | Prisma.Content$examContentsArgs<ExtArgs>
+  cycleContents?: boolean | Prisma.Content$cycleContentsArgs<ExtArgs>
   pomodoroSessions?: boolean | Prisma.Content$pomodoroSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.ContentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["content"]>
@@ -1030,6 +1272,8 @@ export type ContentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   studyGroup?: boolean | Prisma.StudyGroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   notes?: boolean | Prisma.Content$notesArgs<ExtArgs>
+  examContents?: boolean | Prisma.Content$examContentsArgs<ExtArgs>
+  cycleContents?: boolean | Prisma.Content$cycleContentsArgs<ExtArgs>
   pomodoroSessions?: boolean | Prisma.Content$pomodoroSessionsArgs<ExtArgs>
   _count?: boolean | Prisma.ContentCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1040,6 +1284,8 @@ export type $ContentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     studyGroup: Prisma.$StudyGroupPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
     notes: Prisma.$NotePayload<ExtArgs>[]
+    examContents: Prisma.$ExamContentPayload<ExtArgs>[]
+    cycleContents: Prisma.$StudyCycleContentPayload<ExtArgs>[]
     pomodoroSessions: Prisma.$PomodoroSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1395,6 +1641,8 @@ export interface Prisma__ContentClient<T, Null = never, ExtArgs extends runtime.
   studyGroup<T extends Prisma.StudyGroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudyGroupDefaultArgs<ExtArgs>>): Prisma.Prisma__StudyGroupClient<runtime.Types.Result.GetResult<Prisma.$StudyGroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   notes<T extends Prisma.Content$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Content$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  examContents<T extends Prisma.Content$examContentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Content$examContentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cycleContents<T extends Prisma.Content$cycleContentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Content$cycleContentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudyCycleContentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pomodoroSessions<T extends Prisma.Content$pomodoroSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Content$pomodoroSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PomodoroSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1803,6 +2051,54 @@ export type Content$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.NoteScalarFieldEnum | Prisma.NoteScalarFieldEnum[]
+}
+
+/**
+ * Content.examContents
+ */
+export type Content$examContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ExamContent
+   */
+  select?: Prisma.ExamContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ExamContent
+   */
+  omit?: Prisma.ExamContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ExamContentInclude<ExtArgs> | null
+  where?: Prisma.ExamContentWhereInput
+  orderBy?: Prisma.ExamContentOrderByWithRelationInput | Prisma.ExamContentOrderByWithRelationInput[]
+  cursor?: Prisma.ExamContentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ExamContentScalarFieldEnum | Prisma.ExamContentScalarFieldEnum[]
+}
+
+/**
+ * Content.cycleContents
+ */
+export type Content$cycleContentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the StudyCycleContent
+   */
+  select?: Prisma.StudyCycleContentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the StudyCycleContent
+   */
+  omit?: Prisma.StudyCycleContentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudyCycleContentInclude<ExtArgs> | null
+  where?: Prisma.StudyCycleContentWhereInput
+  orderBy?: Prisma.StudyCycleContentOrderByWithRelationInput | Prisma.StudyCycleContentOrderByWithRelationInput[]
+  cursor?: Prisma.StudyCycleContentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.StudyCycleContentScalarFieldEnum | Prisma.StudyCycleContentScalarFieldEnum[]
 }
 
 /**

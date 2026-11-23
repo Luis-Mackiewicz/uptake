@@ -82,6 +82,15 @@ export const noteRepository = {
     return { data, total };
   },
 
+  async countActiveExamLinks(userId: number, noteId: number) {
+    return prisma.examNote.count({
+      where: {
+        noteId,
+        exam: { userId, deletedAt: null },
+      },
+    });
+  },
+
   async findActiveIds(userId: number, contentId: number) {
     const records = await prisma.note.findMany({
       where: {

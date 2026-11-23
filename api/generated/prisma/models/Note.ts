@@ -291,7 +291,6 @@ export type NoteWhereInput = {
   content?: Prisma.XOR<Prisma.ContentScalarRelationFilter, Prisma.ContentWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   exams?: Prisma.ExamNoteListRelationFilter
-  reviews?: Prisma.ReviewListRelationFilter
 }
 
 export type NoteOrderByWithRelationInput = {
@@ -310,7 +309,6 @@ export type NoteOrderByWithRelationInput = {
   content?: Prisma.ContentOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   exams?: Prisma.ExamNoteOrderByRelationAggregateInput
-  reviews?: Prisma.ReviewOrderByRelationAggregateInput
   _relevance?: Prisma.NoteOrderByRelevanceInput
 }
 
@@ -334,7 +332,6 @@ export type NoteWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.XOR<Prisma.ContentScalarRelationFilter, Prisma.ContentWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   exams?: Prisma.ExamNoteListRelationFilter
-  reviews?: Prisma.ReviewListRelationFilter
 }, "id" | "contentId_fileName">
 
 export type NoteOrderByWithAggregationInput = {
@@ -388,7 +385,6 @@ export type NoteCreateInput = {
   content: Prisma.ContentCreateNestedOneWithoutNotesInput
   user: Prisma.UserCreateNestedOneWithoutNotesInput
   exams?: Prisma.ExamNoteCreateNestedManyWithoutNoteInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutNoteInput
 }
 
 export type NoteUncheckedCreateInput = {
@@ -405,7 +401,6 @@ export type NoteUncheckedCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   exams?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutNoteInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutNoteInput
 }
 
 export type NoteUpdateInput = {
@@ -421,7 +416,6 @@ export type NoteUpdateInput = {
   content?: Prisma.ContentUpdateOneRequiredWithoutNotesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutNotesNestedInput
   exams?: Prisma.ExamNoteUpdateManyWithoutNoteNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteUncheckedUpdateInput = {
@@ -438,7 +432,6 @@ export type NoteUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   exams?: Prisma.ExamNoteUncheckedUpdateManyWithoutNoteNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteCreateManyInput = {
@@ -668,20 +661,6 @@ export type NoteUpdateOneRequiredWithoutExamsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.NoteUpdateToOneWithWhereWithoutExamsInput, Prisma.NoteUpdateWithoutExamsInput>, Prisma.NoteUncheckedUpdateWithoutExamsInput>
 }
 
-export type NoteCreateNestedOneWithoutReviewsInput = {
-  create?: Prisma.XOR<Prisma.NoteCreateWithoutReviewsInput, Prisma.NoteUncheckedCreateWithoutReviewsInput>
-  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutReviewsInput
-  connect?: Prisma.NoteWhereUniqueInput
-}
-
-export type NoteUpdateOneRequiredWithoutReviewsNestedInput = {
-  create?: Prisma.XOR<Prisma.NoteCreateWithoutReviewsInput, Prisma.NoteUncheckedCreateWithoutReviewsInput>
-  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutReviewsInput
-  upsert?: Prisma.NoteUpsertWithoutReviewsInput
-  connect?: Prisma.NoteWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.NoteUpdateToOneWithWhereWithoutReviewsInput, Prisma.NoteUpdateWithoutReviewsInput>, Prisma.NoteUncheckedUpdateWithoutReviewsInput>
-}
-
 export type NoteCreateWithoutUserInput = {
   title: string
   fileName: string
@@ -694,7 +673,6 @@ export type NoteCreateWithoutUserInput = {
   deletedAt?: Date | string | null
   content: Prisma.ContentCreateNestedOneWithoutNotesInput
   exams?: Prisma.ExamNoteCreateNestedManyWithoutNoteInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutNoteInput
 }
 
 export type NoteUncheckedCreateWithoutUserInput = {
@@ -710,7 +688,6 @@ export type NoteUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   exams?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutNoteInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutNoteInput
 }
 
 export type NoteCreateOrConnectWithoutUserInput = {
@@ -769,7 +746,6 @@ export type NoteCreateWithoutContentInput = {
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutNotesInput
   exams?: Prisma.ExamNoteCreateNestedManyWithoutNoteInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutNoteInput
 }
 
 export type NoteUncheckedCreateWithoutContentInput = {
@@ -785,7 +761,6 @@ export type NoteUncheckedCreateWithoutContentInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   exams?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutNoteInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutNoteInput
 }
 
 export type NoteCreateOrConnectWithoutContentInput = {
@@ -826,7 +801,6 @@ export type NoteCreateWithoutExamsInput = {
   deletedAt?: Date | string | null
   content: Prisma.ContentCreateNestedOneWithoutNotesInput
   user: Prisma.UserCreateNestedOneWithoutNotesInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutNoteInput
 }
 
 export type NoteUncheckedCreateWithoutExamsInput = {
@@ -842,7 +816,6 @@ export type NoteUncheckedCreateWithoutExamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutNoteInput
 }
 
 export type NoteCreateOrConnectWithoutExamsInput = {
@@ -873,7 +846,6 @@ export type NoteUpdateWithoutExamsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.ContentUpdateOneRequiredWithoutNotesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutNotesNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteUncheckedUpdateWithoutExamsInput = {
@@ -889,85 +861,6 @@ export type NoteUncheckedUpdateWithoutExamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutNoteNestedInput
-}
-
-export type NoteCreateWithoutReviewsInput = {
-  title: string
-  fileName: string
-  markdownContent: string
-  mimeType?: string
-  sizeBytes?: number
-  position?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  content: Prisma.ContentCreateNestedOneWithoutNotesInput
-  user: Prisma.UserCreateNestedOneWithoutNotesInput
-  exams?: Prisma.ExamNoteCreateNestedManyWithoutNoteInput
-}
-
-export type NoteUncheckedCreateWithoutReviewsInput = {
-  id?: number
-  title: string
-  fileName: string
-  markdownContent: string
-  mimeType?: string
-  sizeBytes?: number
-  contentId: number
-  position?: number
-  userId: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  exams?: Prisma.ExamNoteUncheckedCreateNestedManyWithoutNoteInput
-}
-
-export type NoteCreateOrConnectWithoutReviewsInput = {
-  where: Prisma.NoteWhereUniqueInput
-  create: Prisma.XOR<Prisma.NoteCreateWithoutReviewsInput, Prisma.NoteUncheckedCreateWithoutReviewsInput>
-}
-
-export type NoteUpsertWithoutReviewsInput = {
-  update: Prisma.XOR<Prisma.NoteUpdateWithoutReviewsInput, Prisma.NoteUncheckedUpdateWithoutReviewsInput>
-  create: Prisma.XOR<Prisma.NoteCreateWithoutReviewsInput, Prisma.NoteUncheckedCreateWithoutReviewsInput>
-  where?: Prisma.NoteWhereInput
-}
-
-export type NoteUpdateToOneWithWhereWithoutReviewsInput = {
-  where?: Prisma.NoteWhereInput
-  data: Prisma.XOR<Prisma.NoteUpdateWithoutReviewsInput, Prisma.NoteUncheckedUpdateWithoutReviewsInput>
-}
-
-export type NoteUpdateWithoutReviewsInput = {
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
-  markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  content?: Prisma.ContentUpdateOneRequiredWithoutNotesNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutNotesNestedInput
-  exams?: Prisma.ExamNoteUpdateManyWithoutNoteNestedInput
-}
-
-export type NoteUncheckedUpdateWithoutReviewsInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
-  markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
-  sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
-  contentId?: Prisma.IntFieldUpdateOperationsInput | number
-  position?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  exams?: Prisma.ExamNoteUncheckedUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteCreateManyUserInput = {
@@ -996,7 +889,6 @@ export type NoteUpdateWithoutUserInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   content?: Prisma.ContentUpdateOneRequiredWithoutNotesNestedInput
   exams?: Prisma.ExamNoteUpdateManyWithoutNoteNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteUncheckedUpdateWithoutUserInput = {
@@ -1012,7 +904,6 @@ export type NoteUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   exams?: Prisma.ExamNoteUncheckedUpdateManyWithoutNoteNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteUncheckedUpdateManyWithoutUserInput = {
@@ -1055,7 +946,6 @@ export type NoteUpdateWithoutContentInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutNotesNestedInput
   exams?: Prisma.ExamNoteUpdateManyWithoutNoteNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteUncheckedUpdateWithoutContentInput = {
@@ -1071,7 +961,6 @@ export type NoteUncheckedUpdateWithoutContentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   exams?: Prisma.ExamNoteUncheckedUpdateManyWithoutNoteNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutNoteNestedInput
 }
 
 export type NoteUncheckedUpdateManyWithoutContentInput = {
@@ -1095,12 +984,10 @@ export type NoteUncheckedUpdateManyWithoutContentInput = {
 
 export type NoteCountOutputType = {
   exams: number
-  reviews: number
 }
 
 export type NoteCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exams?: boolean | NoteCountOutputTypeCountExamsArgs
-  reviews?: boolean | NoteCountOutputTypeCountReviewsArgs
 }
 
 /**
@@ -1120,13 +1007,6 @@ export type NoteCountOutputTypeCountExamsArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.ExamNoteWhereInput
 }
 
-/**
- * NoteCountOutputType without action
- */
-export type NoteCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ReviewWhereInput
-}
-
 
 export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1144,7 +1024,6 @@ export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   content?: boolean | Prisma.ContentDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   exams?: boolean | Prisma.Note$examsArgs<ExtArgs>
-  reviews?: boolean | Prisma.Note$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.NoteCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
@@ -1170,7 +1049,6 @@ export type NoteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   content?: boolean | Prisma.ContentDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   exams?: boolean | Prisma.Note$examsArgs<ExtArgs>
-  reviews?: boolean | Prisma.Note$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.NoteCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1180,7 +1058,6 @@ export type $NotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     content: Prisma.$ContentPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
     exams: Prisma.$ExamNotePayload<ExtArgs>[]
-    reviews: Prisma.$ReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1538,7 +1415,6 @@ export interface Prisma__NoteClient<T, Null = never, ExtArgs extends runtime.Typ
   content<T extends Prisma.ContentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ContentDefaultArgs<ExtArgs>>): Prisma.Prisma__ContentClient<runtime.Types.Result.GetResult<Prisma.$ContentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   exams<T extends Prisma.Note$examsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Note$examsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExamNotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  reviews<T extends Prisma.Note$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Note$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1949,30 +1825,6 @@ export type Note$examsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.ExamNoteScalarFieldEnum | Prisma.ExamNoteScalarFieldEnum[]
-}
-
-/**
- * Note.reviews
- */
-export type Note$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Review
-   */
-  select?: Prisma.ReviewSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Review
-   */
-  omit?: Prisma.ReviewOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ReviewInclude<ExtArgs> | null
-  where?: Prisma.ReviewWhereInput
-  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
-  cursor?: Prisma.ReviewWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
 }
 
 /**
