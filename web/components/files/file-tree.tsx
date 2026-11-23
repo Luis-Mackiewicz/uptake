@@ -226,7 +226,8 @@ export function FileTree({ className }: { className?: string }) {
           contentId: action.content.id,
           markdownContent: action.note.note.markdownContent,
         };
-        await api.patch(`/notes/${action.note.id}`, payload);
+        const updated = await api.patch<Note>(`/notes/${action.note.id}`, payload);
+        await openNote(updated, action.group.id);
       }
       setAction(null);
       setForm(emptyForm);
