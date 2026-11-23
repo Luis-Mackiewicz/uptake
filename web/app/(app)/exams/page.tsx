@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { ExamCard } from "@/components/exams/exam-card";
+import { ExamRow } from "@/components/exams/exam-row";
 import { PageHeader } from "@/components/layout/page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -13,10 +14,12 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { ViewToggle } from "@/components/ui/view-toggle";
 import { useResourceList } from "@/hooks/use-resource-list";
+import { useViewMode } from "@/hooks/use-view-mode";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type { Content, CreateExamRequest, Exam, MessageResponse, Note, StudyGroup } from "@/lib/api/types";
 import { isBlank, isValidDate, isValidPositiveId, validateLength } from "@/lib/validation";
@@ -54,6 +57,7 @@ export default function ExamsPage() {
   const notesQuery = useResourceList<Note>("/notes", { limit: 100 });
   const contentsQuery = useResourceList<Content>("/contents", { limit: 100 });
   const { notify } = useToast();
+  const [view, setView] = useViewMode("uptake:exams-view");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Exam | null>(null);
   const [form, setForm] = useState<ExamForm>(emptyForm);
@@ -166,57 +170,70 @@ export default function ExamsPage() {
       <PageHeader
         title="Provas"
         description="Planeje avaliações e vincule notas de estudo."
-        actions={<Button onClick={openCreate}>Nova prova</Button>}
+        actions={
+          <div className="flex items-center gap-2">
+            <ViewToggle value={view} onChange={setView} />
+            <Button onClick={openCreate}>Nova prova</Button>
+          </div>
+        }
       />
 
-      <Card className="p-0">
-        {data?.data.length ? (
-          <>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Título</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Grupo</TableHead>
-                  <TableHead>Local</TableHead>
-                  <TableHead>Notas</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.data.map((exam) => (
-                  <TableRow key={exam.id}>
-                    <TableCell className="font-medium">{exam.title}</TableCell>
-                    <TableCell>{formatDate(exam.examDate)}</TableCell>
-                    <TableCell>{groupName(exam.studyGroupId)}</TableCell>
-                    <TableCell className="text-neutral-600">{exam.location ?? "—"}</TableCell>
-                    <TableCell><Badge tone="lime">{exam.noteIds?.length ?? 0}</Badge></TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <Button variant="secondary" size="sm" onClick={() => openEdit(exam)}>
-                          Editar
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setDeleting(exam)}>
-                          Excluir
-                        </Button>
-                      </div>
-                    </TableCell>
+      {data?.data.length ? (
+        <>
+          {view === "table" ? (
+            <Card className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Título</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Grupo</TableHead>
+                    <TableHead>Local</TableHead>
+                    <TableHead>Notas</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className="p-4">
-              <Pagination page={data.page} totalPages={data.totalPages} total={data.total} onPageChange={setPage} />
+                </TableHeader>
+                <TableBody>
+                  {data.data.map((exam) => (
+                    <ExamRow
+                      key={exam.id}
+                      exam={exam}
+                      groupLabel={groupName(exam.studyGroupId)}
+                      dateLabel={formatDate(exam.examDate)}
+                      onEdit={openEdit}
+                      onDelete={setDeleting}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {data.data.map((exam) => (
+                <ExamCard
+                  key={exam.id}
+                  exam={exam}
+                  groupLabel={groupName(exam.studyGroupId)}
+                  dateLabel={formatDate(exam.examDate)}
+                  onEdit={openEdit}
+                  onDelete={setDeleting}
+                />
+              ))}
             </div>
-          </>
-        ) : (
+          )}
+          <div className="mt-4">
+            <Pagination page={data.page} totalPages={data.totalPages} total={data.total} onPageChange={setPage} />
+          </div>
+        </>
+      ) : (
+        <Card>
           <EmptyState
             title={data ? "Nenhuma prova encontrada" : "Carregando..."}
             description="Cadastre uma prova para acompanhar seus preparativos."
             action={<Button onClick={openCreate}>Nova prova</Button>}
           />
-        )}
-      </Card>
+        </Card>
+      )}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title={editing ? "Editar prova" : "Nova prova"} className="max-w-3xl">
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
