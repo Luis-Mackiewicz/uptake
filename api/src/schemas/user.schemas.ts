@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ValidationError } from "../errors/AppError.js";
 
 function isValidCpf(value: string) {
   if (value.length !== 11 || /^(\d)\1{10}$/.test(value)) {
@@ -72,14 +71,4 @@ export type CreateUserData = z.infer<typeof createUserSchema>;
 export type LoginData = z.infer<typeof loginSchema>;
 export type UpdateUserData = z.infer<typeof updateUserSchema>;
 
-export function parseSchema<T extends z.ZodType>(schema: T, data: unknown): z.infer<T> {
-  const result = schema.safeParse(data);
-
-  if (!result.success) {
-    throw new ValidationError("Dados inválidos", {
-      issues: result.error.flatten().fieldErrors,
-    });
-  }
-
-  return result.data;
-}
+export { parseSchema } from "./parse.js";
