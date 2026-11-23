@@ -6,8 +6,11 @@ flowchart TD
     login[Login]
     registrar[Registrar]
     dashboard[Dashboard]
+    grupos[Grupos]
+    conteudo[Conteúdo]
+    arquivo[nota.md]
     provas[Provas]
-    anotacoes[Anotações]
+    anotacoes[Anotações - legado redirecionado]
     config[Configurações]
     ciclo[Ciclo de estudos]
     todo[Todo]
@@ -20,8 +23,11 @@ flowchart TD
     login --> dashboard
     registrar --> dashboard
 
+    dashboard --> grupos
+    grupos --> conteudo
+    conteudo --> arquivo
+    anotacoes -.-> grupos
     dashboard --> provas
-    dashboard --> anotacoes
     dashboard --> config
     dashboard --> todo
 
@@ -37,10 +43,14 @@ flowchart TD
 
     subgraph Sidebar [Sidebar - Acesso Global]
         direction LR
+        arvore[Árvore de arquivos]
         agenda[Google Agenda]
         musica[Música]
         pomodoro[Pomodoro Timer na sidebar]
     end
 
     dashboard -.-> Sidebar
+    arvore --> grupos
+    arvore --> conteudo
+    arvore --> arquivo
 ```

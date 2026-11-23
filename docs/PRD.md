@@ -82,12 +82,13 @@
 | 3   | Cadastro                                               | `/cadastro`      | Público     | RF-02          |
 | 4   | Dashboard inicial                                      | `/dashboard`     | Autenticado | RF-14          |
 | 5   | Conteúdos de um grupo                                  | `/study-groups/:groupId/contents` | Autenticado | RF-05 |
-| 6   | Provas (pode anexar a uma anotação e ao Google Agenda) | `/provas`        | Autenticado | RF-07, RF-13   |
-| 7   | Integração com o Google Agenda                         | `/agenda`        | Autenticado | RF-13          |
-| 8   | Configurações (inclui edição de perfil)                | `/configuracoes` | Autenticado | RF-03          |
-| 9   | Arquivo específico                                     | `/arquivos/:id`  | Autenticado | RF-06          |
-| 10  | Grupo de estudo (ex.: História, Matemática)            | `/study-groups`  | Autenticado | RF-04          |
-| 11  | Not found                                              | `*`              | Público     | RT-05          |
+| 6   | Pasta de um conteúdo                                   | `/study-groups/:groupId/contents/:contentId` | Autenticado | RF-06 |
+| 7   | Arquivo Markdown específico                            | `/study-groups/:groupId/contents/:contentId/notes/:noteId` | Autenticado | RF-06 |
+| 8   | Provas (pode anexar a uma anotação e ao Google Agenda) | `/provas`        | Autenticado | RF-07, RF-13   |
+| 9   | Integração com o Google Agenda                         | `/agenda`        | Autenticado | RF-13          |
+| 10  | Configurações (inclui edição de perfil)                | `/configuracoes` | Autenticado | RF-03          |
+| 11  | Grupo de estudo (ex.: História, Matemática)            | `/study-groups`  | Autenticado | RF-04          |
+| 12  | Not found                                              | `*`              | Público     | RT-05          |
 
 ### 5.2 Fluxos principais (proposta)
 

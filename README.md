@@ -69,11 +69,12 @@ npm run build
 - Paginação usa `page=1` e `limit=20` por padrão, com `limit` máximo de `100`.
 - Grupos, conteúdos, notas e provas alternam entre tabela e cards; a preferência é salva por tela no navegador.
 - Grupos, conteúdos e notas usam exclusão lógica: remover um grupo oculta conteúdos, notas, provas, sessões de pomodoro, revisões e itens de ciclo relacionados; reativar o grupo restaura essa cadeia.
-- Conteúdos são gerenciados dentro de `/study-groups/{groupId}/contents`; clicar em um grupo abre essa tela e `GET /contents` aceita `studyGroupId` para filtrar. A tela permite arrastar para reordenar e envia `PATCH /contents/reorder`.
+- Conteúdos são gerenciados dentro de `/study-groups/{groupId}/contents`; clicar em um grupo abre essa tela e `GET /contents` aceita `studyGroupId` para filtrar. A tela permite arrastar para reordenar e envia `PATCH /contents/reorder`. Clicar em um conteúdo abre a pasta em `/study-groups/{groupId}/contents/{contentId}`.
 - Itens do ciclo também usam exclusão lógica para não violar a unicidade de posição.
 - `sizeBytes` é calculado no servidor a partir de `markdownContent`, com limite de 2 MB.
 - `PATCH` continua substituindo completamente o recurso, preservando o contrato HTTP existente.
 - Exames devolvem `noteIds` nas respostas, permitindo editar o vínculo com notas no front.
 - Usuários usam `firstName` e `lastName`; a migração divide o nome antigo no primeiro espaço para preservar os dados.
-- Notas abrem em abas dentro de `/notes`, com editor CodeMirror, toolbar Markdown, preview Markdown e salvamento manual por `Ctrl/Cmd+S`. O filtro por conteúdo usa `?contentId=<id>`; com um conteúdo selecionado é possível arrastar para reordenar via `PATCH /notes/reorder`.
+- A sidebar mostra uma árvore de arquivos `grupo/ → conteúdo/ → nota.md`, com criar/renomear/excluir direto na árvore. A rota `/notes` redireciona para `/study-groups`.
+- Notas abrem em abas no editor de `/study-groups/{groupId}/contents/{contentId}/notes/{noteId}`, com editor CodeMirror, toolbar Markdown, preview Markdown e salvamento manual por `Ctrl/Cmd+S`. A lista da pasta permite arrastar para reordenar via `PATCH /notes/reorder`.
 - Pomodoro é um widget local na sidebar: 25/5/15 min por padrão, pausa longa a cada 4 focos, sinal com toast e beep; não registra histórico.
