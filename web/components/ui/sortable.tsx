@@ -56,7 +56,7 @@ export function SortableProvider({
   );
 }
 
-export function useSortableItem(id: number) {
+export function useSortableItem(id: number, options?: { disabled?: boolean }) {
   const {
     attributes,
     listeners,
@@ -64,7 +64,7 @@ export function useSortableItem(id: number) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id, disabled: options?.disabled });
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),

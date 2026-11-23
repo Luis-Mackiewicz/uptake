@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
+import { NoteListItem } from "@/components/notes/note-list-item";
 import { NoteWorkspace } from "@/components/notes/note-workspace";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -14,13 +15,20 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
+import { SortableProvider } from "@/components/ui/sortable";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { useNoteTabs } from "@/hooks/use-note-tabs";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { ApiRequestError, api } from "@/lib/api/client";
-import { cn } from "@/lib/cn";
-import type { Content, CreateNoteRequest, MessageResponse, Note, StudyGroup } from "@/lib/api/types";
+import type {
+  Content,
+  CreateNoteRequest,
+  MessageResponse,
+  Note,
+  ReorderNotesRequest,
+  StudyGroup,
+} from "@/lib/api/types";
 import { isBlank, isValidPositiveId, validateLength } from "@/lib/validation";
 
 const MAX_NOTE_BYTES = 2 * 1024 * 1024;
@@ -35,7 +43,13 @@ function byteLength(value: string) {
 }
 
 export function NotesPageContent() {
-  const notesQuery = useResourceList<Note>("/notes");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const contentIdParam = Number(searchParams.get("contentId"));
+  const selectedContentId = isValidPositiveId(contentIdParam) ? contentIdParam : null;
+  const notesQuery = useResourceList<Note>("/notes", {
+    contentId: selectedContentId ?? undefined,
+  });
   const contentsQuery = useResourceList<Content>("/contents", { limit: 100 });
   const groupsQuery = useResourceList<StudyGroup>("/study-groups", { limit: 100 });
   const { notify } = useToast();
@@ -60,6 +74,32 @@ export function NotesPageContent() {
     if (!term) return true;
     return note.title.toLowerCase().includes(term) || note.fileName.toLowerCase().includes(term);
   });
+  const canDragNotes = selectedContentId !== null && !search.trim();
+  const noteIds = visibleNotes.map((note) => note.id);
+
+  const handleContentFilterChange = (value: string) => {
+    notesQuery.setPage(1);
+    router.replace(value ? `/notes?contentId=${value}` : "/notes", { scroll: false });
+  };
+
+  const handleReorderNotes = async (ids: number[]) => {
+    const current = notesQuery.data;
+    if (!selectedContentId || !current) return;
+    const byId = new Map(current.data.map((note) => [note.id, note]));
+    const ordered = ids
+      .map((id) => byId.get(id))
+      .filter((note): note is Note => Boolean(note));
+    notesQuery.setData({ ...current, data: ordered });
+
+    try {
+      const payload: ReorderNotesRequest = { contentId: selectedContentId, ids };
+      await api.patch("/notes/reorder", payload);
+      notify("Ordem salva", "success");
+    } catch (error) {
+      notesQuery.setData(current);
+      notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar a ordem", "error");
+    }
+  };
 
   const handleOpenNote = useCallback(
     async (note: Note) => {
@@ -151,7 +191,8 @@ export function NotesPageContent() {
   }, [closingId, dialogOpen, deleting, saveActive, workspace.activeId]);
 
   const openCreate = () => {
-    setForm({ ...emptyForm, contentId: contents[0] ? String(contents[0].id) : "" });
+    const defaultContentId = selectedContentId ?? contents[0]?.id;
+    setForm({ ...emptyForm, contentId: defaultContentId ? String(defaultContentId) : "" });
     setErrors({});
     setDialogOpen(true);
   };
@@ -231,51 +272,55 @@ export function NotesPageContent() {
 
       <div className="grid gap-4 lg:grid-cols-[20rem_minmax(0,1fr)]">
         <Card className="flex min-h-[560px] flex-col p-0">
-          <div className="border-b border-neutral-200 p-3">
+          <div className="space-y-3 border-b border-neutral-200 p-3">
+            <div>
+              <label htmlFor="note-content-filter" className="mb-1 block text-xs font-medium text-neutral-600">
+                Conteúdo
+              </label>
+              <Select
+                id="note-content-filter"
+                value={selectedContentId ? String(selectedContentId) : ""}
+                onChange={(event) => handleContentFilterChange(event.target.value)}
+              >
+                <option value="">Todos os conteúdos</option>
+                {contents.map((content) => (
+                  <option key={content.id} value={content.id}>
+                    {contentLabel(content)}
+                  </option>
+                ))}
+              </Select>
+            </div>
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar nesta página"
               aria-label="Buscar notas"
             />
+            {canDragNotes ? (
+              <p className="text-xs text-neutral-500">Arraste pela alça para reordenar as notas deste conteúdo.</p>
+            ) : null}
           </div>
           <div className="min-h-0 flex-1 overflow-auto">
             {visibleNotes.length ? (
-              visibleNotes.map((note) => {
-                const tab = workspace.tabs.find((item) => item.id === note.id);
-                const isActive = workspace.activeId === note.id;
-                const content = contents.find((item) => item.id === note.contentId);
-                return (
-                  <div
-                    key={note.id}
-                    className={cn(
-                      "flex items-center gap-2 border-b border-neutral-200 px-3 py-2",
-                      isActive && "bg-lime-50",
-                    )}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => void handleOpenNote(note)}
-                      className="min-w-0 flex-1 rounded-md px-1 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-600"
-                    >
-                      <span className="flex items-center gap-2">
-                        <span className="truncate text-sm font-medium text-neutral-900">{note.title}</span>
-                        {tab && tab.draft !== tab.savedContent ? (
-                          <span className="text-xs text-amber-600" title="Alterações não salvas">●</span>
-                        ) : null}
-                        {isActive ? <Badge tone="lime">Ativa</Badge> : tab ? <Badge>Aberta</Badge> : null}
-                      </span>
-                      <span className="block truncate font-mono text-xs text-neutral-500">{note.fileName}</span>
-                      <span className="block truncate text-xs text-neutral-500">
-                        {content ? contentLabel(content) : `#${note.contentId}`}
-                      </span>
-                    </button>
-                    <Button variant="ghost" size="sm" onClick={() => setDeleting(note)}>
-                      Excluir
-                    </Button>
-                  </div>
-                );
-              })
+              <SortableProvider ids={noteIds} onReorder={(ids) => void handleReorderNotes(ids)}>
+                {visibleNotes.map((note) => {
+                  const tab = workspace.tabs.find((item) => item.id === note.id);
+                  const content = contents.find((item) => item.id === note.contentId);
+                  return (
+                    <NoteListItem
+                      key={note.id}
+                      note={note}
+                      isActive={workspace.activeId === note.id}
+                      isOpen={Boolean(tab)}
+                      isDirty={Boolean(tab && tab.draft !== tab.savedContent)}
+                      canDrag={canDragNotes}
+                      contentLabel={content ? contentLabel(content) : `#${note.contentId}`}
+                      onOpen={(item) => void handleOpenNote(item)}
+                      onDelete={setDeleting}
+                    />
+                  );
+                })}
+              </SortableProvider>
             ) : (
               <EmptyState
                 className="m-3"
