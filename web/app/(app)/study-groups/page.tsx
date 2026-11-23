@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { StudyGroupCard } from "@/components/study-groups/study-group-card";
+import { StudyGroupRow } from "@/components/study-groups/study-group-row";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,12 +12,14 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Dialog } from "@/components/ui/dialog";
+import { ViewToggle } from "@/components/ui/view-toggle";
 import { useResourceList } from "@/hooks/use-resource-list";
+import { useViewMode } from "@/hooks/use-view-mode";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type { CreateStudyGroupRequest, MessageResponse, StudyGroup } from "@/lib/api/types";
 import { isBlank, validateLength } from "@/lib/validation";
@@ -29,6 +33,7 @@ export default function StudyGroupsPage() {
   const router = useRouter();
   const { data, setPage, reload } = useResourceList<StudyGroup>("/study-groups");
   const { notify } = useToast();
+  const [view, setView] = useViewMode("uptake:groups-view");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<StudyGroup | null>(null);
   const [form, setForm] = useState<GroupForm>(emptyForm);
@@ -41,6 +46,10 @@ export default function StudyGroupsPage() {
     setForm(emptyForm);
     setErrors({});
     setDialogOpen(true);
+  };
+
+  const openGroup = (group: StudyGroup) => {
+    router.push(`/study-groups/${group.id}/contents`);
   };
 
   const openEdit = (group: StudyGroup) => {
@@ -112,79 +121,65 @@ export default function StudyGroupsPage() {
       <PageHeader
         title="Grupos de estudo"
         description="Organize seus conteúdos por assunto."
-        actions={<Button onClick={openCreate}>Novo grupo</Button>}
+        actions={
+          <div className="flex items-center gap-2">
+            <ViewToggle value={view} onChange={setView} />
+            <Button onClick={openCreate}>Novo grupo</Button>
+          </div>
+        }
       />
 
-      <Card className="p-0">
-        {data?.data.length ? (
-          <>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.data.map((group) => (
-                  <TableRow
-                    key={group.id}
-                    role="link"
-                    tabIndex={0}
-                    className="cursor-pointer transition hover:bg-neutral-50"
-                    onClick={() => router.push(`/study-groups/${group.id}/contents`)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " " || event.key === "Spacebar") {
-                        event.preventDefault();
-                        router.push(`/study-groups/${group.id}/contents`);
-                      }
-                    }}
-                  >
-                    <TableCell className="font-medium">{group.name}</TableCell>
-                    <TableCell className="max-w-xs truncate text-neutral-600">{group.description ?? "—"}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            openEdit(group);
-                          }}
-                          onKeyDown={(event) => event.stopPropagation()}
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            setDeleting(group);
-                          }}
-                          onKeyDown={(event) => event.stopPropagation()}
-                        >
-                          Excluir
-                        </Button>
-                      </div>
-                    </TableCell>
+      {data?.data.length ? (
+        <>
+          {view === "table" ? (
+            <Card className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Descrição</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className="p-4">
-              <Pagination page={data.page} totalPages={data.totalPages} total={data.total} onPageChange={setPage} />
+                </TableHeader>
+                <TableBody>
+                  {data.data.map((group) => (
+                    <StudyGroupRow
+                      key={group.id}
+                      group={group}
+                      onOpen={openGroup}
+                      onEdit={openEdit}
+                      onDelete={setDeleting}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {data.data.map((group) => (
+                <StudyGroupCard
+                  key={group.id}
+                  group={group}
+                  onOpen={openGroup}
+                  onEdit={openEdit}
+                  onDelete={setDeleting}
+                />
+              ))}
             </div>
-          </>
-        ) : (
+          )}
+          <div className="mt-4">
+            <Pagination page={data.page} totalPages={data.totalPages} total={data.total} onPageChange={setPage} />
+          </div>
+        </>
+      ) : (
+        <Card>
           <EmptyState
             title={data ? "Nenhum grupo encontrado" : "Carregando..."}
             description="Crie um grupo para começar a organizar conteúdos."
             action={<Button onClick={openCreate}>Novo grupo</Button>}
           />
-        )}
-      </Card>
+        </Card>
+      )}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title={editing ? "Editar grupo" : "Novo grupo"}>
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
