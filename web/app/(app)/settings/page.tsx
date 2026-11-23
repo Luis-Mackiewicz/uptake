@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import type { FormEvent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useAuth } from "@/components/auth/auth-provider";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
@@ -10,79 +10,46 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { ApiRequestError } from "@/lib/api/client";
+import { applyApiIssues, nullableTrimmed } from "@/lib/form";
+import { profileFormSchema } from "@/lib/schemas";
+import type { ProfileFormValues } from "@/lib/schemas";
 import type { User } from "@/lib/api/types";
-import { isBlank, isValidCpf, isValidPassword, isValidUrl } from "@/lib/validation";
-
-type ProfileForm = {
-  firstName: string;
-  lastName: string;
-  cpf: string;
-  password: string;
-  confirmPassword: string;
-  musicUrl: string;
-};
-type FormErrors = Partial<Record<keyof ProfileForm, string>>;
 
 function ProfileForm({ user }: { user: User }) {
   const { updateProfile } = useAuth();
   const { notify } = useToast();
-  const [form, setForm] = useState<ProfileForm>(() => ({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    cpf: user.cpf,
-    password: "",
-    confirmPassword: "",
-    musicUrl: user.musicUrl ?? "",
-  }));
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      cpf: user.cpf,
+      password: "",
+      confirmPassword: "",
+      musicUrl: user.musicUrl ?? "",
+    },
+  });
 
-  const update = (key: keyof ProfileForm, value: string) => {
-    setForm((current) => ({ ...current, [key]: value }));
-  };
-
-  const validate = () => {
-    const nextErrors: FormErrors = {};
-    if (isBlank(form.firstName)) nextErrors.firstName = "Informe seu nome";
-    if (isBlank(form.lastName)) nextErrors.lastName = "Informe seu sobrenome";
-    if (!isValidCpf(form.cpf)) nextErrors.cpf = "CPF inválido";
-    if (!isValidPassword(form.password)) {
-      nextErrors.password = "Use 8+ caracteres com maiúscula, minúscula e número";
-    }
-    if (form.password !== form.confirmPassword) {
-      nextErrors.confirmPassword = "As senhas não conferem";
-    }
-    if (!isBlank(form.musicUrl) && !isValidUrl(form.musicUrl)) nextErrors.musicUrl = "URL inválida";
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
+  const onSubmit = async (values: ProfileFormValues) => {
     try {
       await updateProfile({
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        cpf: form.cpf.replace(/\D/g, ""),
-        password: form.password,
-        musicUrl: isBlank(form.musicUrl) ? null : form.musicUrl.trim(),
+        firstName: values.firstName,
+        lastName: values.lastName,
+        cpf: values.cpf.replace(/\D/g, ""),
+        password: values.password,
+        musicUrl: nullableTrimmed(values.musicUrl),
       });
-      setForm((current) => ({ ...current, password: "", confirmPassword: "" }));
+      reset({ ...values, password: "", confirmPassword: "" });
       notify("Perfil atualizado", "success");
     } catch (error) {
-      if (error instanceof ApiRequestError && error.issues) {
-        const apiErrors: FormErrors = {};
-        Object.entries(error.issues).forEach(([key, messages]) => {
-          if (key in form) apiErrors[key as keyof ProfileForm] = messages[0];
-        });
-        setErrors(apiErrors);
-      }
+      applyApiIssues(error, setError);
       notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar", "error");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -92,37 +59,37 @@ function ProfileForm({ user }: { user: User }) {
         <CardTitle>Perfil</CardTitle>
       </CardHeader>
       <CardContent>
-        <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit} noValidate>
-          <Field label="Nome" htmlFor="firstName" error={errors.firstName}>
-            <Input id="firstName" autoComplete="given-name" value={form.firstName} invalid={Boolean(errors.firstName)} onChange={(event) => update("firstName", event.target.value)} />
+        <form className="grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Field label="Nome" htmlFor="firstName" error={errors.firstName?.message}>
+            <Input id="firstName" autoComplete="given-name" invalid={Boolean(errors.firstName)} {...register("firstName")} />
           </Field>
-          <Field label="Sobrenome" htmlFor="lastName" error={errors.lastName}>
-            <Input id="lastName" autoComplete="family-name" value={form.lastName} invalid={Boolean(errors.lastName)} onChange={(event) => update("lastName", event.target.value)} />
+          <Field label="Sobrenome" htmlFor="lastName" error={errors.lastName?.message}>
+            <Input id="lastName" autoComplete="family-name" invalid={Boolean(errors.lastName)} {...register("lastName")} />
           </Field>
           <Field label="E-mail" htmlFor="email" hint="Não pode ser alterado">
             <Input id="email" value={user.email} disabled />
           </Field>
-          <Field label="CPF" htmlFor="cpf" error={errors.cpf}>
-            <Input id="cpf" inputMode="numeric" value={form.cpf} invalid={Boolean(errors.cpf)} onChange={(event) => update("cpf", event.target.value)} />
+          <Field label="CPF" htmlFor="cpf" error={errors.cpf?.message}>
+            <Input id="cpf" inputMode="numeric" invalid={Boolean(errors.cpf)} {...register("cpf")} />
           </Field>
           <div className="sm:col-span-2">
-            <Field label="URL da música" htmlFor="musicUrl" error={errors.musicUrl}>
-              <Input id="musicUrl" type="url" value={form.musicUrl} invalid={Boolean(errors.musicUrl)} onChange={(event) => update("musicUrl", event.target.value)} />
+            <Field label="URL da música" htmlFor="musicUrl" error={errors.musicUrl?.message}>
+              <Input id="musicUrl" type="url" invalid={Boolean(errors.musicUrl)} {...register("musicUrl")} />
             </Field>
           </div>
           <Field
             label="Nova senha"
             htmlFor="password"
-            error={errors.password}
+            error={errors.password?.message}
             hint="A API exige uma nova senha ao salvar o perfil."
           >
-            <Input id="password" type="password" autoComplete="new-password" value={form.password} invalid={Boolean(errors.password)} onChange={(event) => update("password", event.target.value)} />
+            <Input id="password" type="password" autoComplete="new-password" invalid={Boolean(errors.password)} {...register("password")} />
           </Field>
-          <Field label="Confirmar senha" htmlFor="confirmPassword" error={errors.confirmPassword}>
-            <Input id="confirmPassword" type="password" autoComplete="new-password" value={form.confirmPassword} invalid={Boolean(errors.confirmPassword)} onChange={(event) => update("confirmPassword", event.target.value)} />
+          <Field label="Confirmar senha" htmlFor="confirmPassword" error={errors.confirmPassword?.message}>
+            <Input id="confirmPassword" type="password" autoComplete="new-password" invalid={Boolean(errors.confirmPassword)} {...register("confirmPassword")} />
           </Field>
           <div className="sm:col-span-2">
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={isSubmitting}>
               Salvar alterações
             </Button>
           </div>

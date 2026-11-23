@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { FormEvent } from "react";
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { NoteCard } from "@/components/notes/note-card";
@@ -33,11 +34,9 @@ import type {
   ReorderNotesRequest,
   StudyGroup,
 } from "@/lib/api/types";
-import { isBlank, validateLength } from "@/lib/validation";
-
-type NoteForm = { name: string };
-type FormErrors = Partial<Record<keyof NoteForm, string>>;
-const emptyForm: NoteForm = { name: "" };
+import { applyApiIssues } from "@/lib/form";
+import { noteFormSchema } from "@/lib/schemas";
+import type { NoteFormValues } from "@/lib/schemas";
 
 export function ContentFolderPage({ groupId, contentId }: { groupId: number; contentId: number }) {
   const router = useRouter();
@@ -96,10 +95,18 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
   const notesQuery = useResourceList<Note>("/notes", { contentId: content.id });
   const [view, setView] = useViewMode("uptake:content-files-view");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState<NoteForm>(emptyForm);
-  const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<Note | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<NoteFormValues>({
+    resolver: zodResolver(noteFormSchema),
+    defaultValues: { name: "" },
+  });
 
   const contentHref = `/study-groups/${group.id}/contents/${content.id}`;
   const notes = notesQuery.data?.data ?? [];
@@ -133,49 +140,27 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
   };
 
   const openCreate = () => {
-    setForm(emptyForm);
-    setErrors({});
+    reset({ name: "" });
     setDialogOpen(true);
   };
 
-  const validate = () => {
-    const nextErrors: FormErrors = {};
-    if (isBlank(form.name)) nextErrors.name = "Informe o nome";
-    else if (!validateLength(form.name, 251)) nextErrors.name = "Máximo de 251 caracteres";
-    else if (form.name.includes("/") || form.name.includes("\\")) nextErrors.name = "Não use barras no nome";
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validate()) return;
-
+  const onSubmit = async (values: NoteFormValues) => {
     const payload: CreateNoteRequest = {
-      name: form.name.trim(),
+      name: values.name,
       contentId: content.id,
     };
 
-    setSaving(true);
     try {
       const created = await api.post<Note>("/notes", payload);
       notesQuery.reload();
       reloadFileTree();
       setDialogOpen(false);
-      setForm(emptyForm);
+      reset({ name: "" });
       notify("Nota criada", "success");
       void handleOpenNote(created);
     } catch (error) {
-      if (error instanceof ApiRequestError && error.issues) {
-        const apiErrors: FormErrors = {};
-        Object.entries(error.issues).forEach(([key, messages]) => {
-          if (key in form) apiErrors[key as keyof NoteForm] = messages[0];
-        });
-        setErrors(apiErrors);
-      }
+      applyApiIssues(error, setError);
       notify(error instanceof ApiRequestError ? error.message : "Não foi possível criar a nota", "error");
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -299,15 +284,15 @@ function ContentFolder({ group, content }: { group: StudyGroup; content: Content
       ) : null}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title="Nova nota">
-        <form className="space-y-4" onSubmit={handleCreate} noValidate>
-          <Field label="Nome" htmlFor="folder-note-name" error={errors.name} hint="O arquivo será criado com a extensão .md.">
-            <Input id="folder-note-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Field label="Nome" htmlFor="folder-note-name" error={errors.name?.message} hint="O arquivo será criado com a extensão .md.">
+            <Input id="folder-note-name" invalid={Boolean(errors.name)} {...register("name")} />
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" loading={saving}>
+            <Button type="submit" loading={isSubmitting}>
               Criar
             </Button>
           </div>

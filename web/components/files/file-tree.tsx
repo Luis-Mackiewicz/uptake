@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import { useFileTree } from "./file-tree-provider";
 import { FileTreeNode } from "./file-tree-node";
@@ -27,11 +28,11 @@ import type {
   StudyGroup,
   UpdateNoteRequest,
 } from "@/lib/api/types";
-import { isBlank, validateLength } from "@/lib/validation";
+import { applyApiIssues, nullableTrimmed } from "@/lib/form";
+import { fileTreeSchema } from "@/lib/schemas";
+import type { TreeFormValues } from "@/lib/schemas";
 
-type TreeForm = { name: string; description: string };
-type FormErrors = Partial<Record<keyof TreeForm, string>>;
-const emptyForm: TreeForm = { name: "", description: "" };
+const emptyForm: TreeFormValues = { name: "", description: "" };
 
 function isDeleteAction(action: FileTreeAction) {
   return action.type.startsWith("delete-");
@@ -84,9 +85,17 @@ export function FileTree({ className }: { className?: string }) {
   const pathname = usePathname();
   const [collapsedKeys, setCollapsedKeys] = useState<Set<string>>(new Set());
   const [action, setAction] = useState<FileTreeAction | null>(null);
-  const [form, setForm] = useState<TreeForm>(emptyForm);
-  const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<TreeFormValues>({
+    resolver: zodResolver(fileTreeSchema(action?.type ?? "")),
+    defaultValues: emptyForm,
+  });
 
   const expandedKeys = useMemo(() => {
     const segments = pathname.split("/").filter(Boolean);
@@ -129,33 +138,7 @@ export function FileTree({ className }: { className?: string }) {
           ? next.group.description ?? ""
           : "";
     setAction(next);
-    setForm({ name: existingName, description: existingDescription });
-    setErrors({});
-  };
-
-  const validate = () => {
-    if (!action) return false;
-    const nextErrors: FormErrors = {};
-
-    if (isContentAction(action)) {
-      if (isBlank(form.name)) nextErrors.name = "Informe o título";
-      else if (!validateLength(form.name, 200)) nextErrors.name = "Máximo de 200 caracteres";
-      if (!validateLength(form.description, 2000)) nextErrors.description = "Máximo de 2000 caracteres";
-    } else if (isGroupAction(action)) {
-      if (isBlank(form.name)) nextErrors.name = "Informe o nome";
-      else if (!validateLength(form.name, 100)) nextErrors.name = "Máximo de 100 caracteres";
-      if (!validateLength(form.description, 500)) nextErrors.description = "Máximo de 500 caracteres";
-    } else {
-      const nameLimit = isCreateNoteAction(action) ? 251 : 255;
-      if (isBlank(form.name)) nextErrors.name = "Informe o nome";
-      else if (!validateLength(form.name, nameLimit)) nextErrors.name = `Máximo de ${nameLimit} caracteres`;
-      else if (action.type.includes("note") && (form.name.includes("/") || form.name.includes("\\"))) {
-        nextErrors.name = "Não use barras no nome";
-      }
-    }
-
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    reset({ name: existingName, description: existingDescription });
   };
 
   const handleDelete = async () => {
@@ -202,30 +185,24 @@ export function FileTree({ className }: { className?: string }) {
     });
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!action || isDeleteAction(action) || !validate()) return;
+  const onSubmit = async (values: TreeFormValues) => {
+    if (!action || isDeleteAction(action)) return;
     setSaving(true);
 
     try {
-      const name = form.name.trim();
+      const name = values.name;
+      const description = nullableTrimmed(values.description);
       if (action.type === "create-group") {
-        const payload: CreateStudyGroupRequest = {
-          name,
-          description: isBlank(form.description) ? null : form.description.trim(),
-        };
+        const payload: CreateStudyGroupRequest = { name, description };
         const created = await api.post<StudyGroup>("/study-groups", payload);
         reload();
         router.push(`/study-groups/${created.id}/contents`);
       } else if (action.type === "rename-group") {
-        await api.patch(`/study-groups/${action.group.id}`, {
-          name,
-          description: isBlank(form.description) ? null : form.description.trim(),
-        } satisfies CreateStudyGroupRequest);
+        await api.patch(`/study-groups/${action.group.id}`, { name, description } satisfies CreateStudyGroupRequest);
       } else if (action.type === "create-content") {
         const payload: CreateContentRequest = {
           title: name,
-          description: isBlank(form.description) ? null : form.description.trim(),
+          description,
           studyGroupId: action.group.id,
         };
         const created = await api.post<Content>("/contents", payload);
@@ -234,7 +211,7 @@ export function FileTree({ className }: { className?: string }) {
       } else if (action.type === "rename-content") {
         await api.patch(`/contents/${action.content.id}`, {
           title: name,
-          description: isBlank(form.description) ? null : form.description.trim(),
+          description,
           studyGroupId: action.group.id,
         } satisfies CreateContentRequest);
       } else if (action.type === "create-note") {
@@ -258,18 +235,16 @@ export function FileTree({ className }: { className?: string }) {
         await openNote(updated, action.group.id);
       }
       setAction(null);
-      setForm(emptyForm);
+      reset(emptyForm);
       reload();
       notify("Alterações salvas", "success");
     } catch (error) {
-      if (error instanceof ApiRequestError && error.issues) {
-        const apiErrors: FormErrors = {};
-        Object.entries(error.issues).forEach(([key, messages]) => {
-          if (key === "title" || key === "name" || key === "fileName") apiErrors.name = messages[0];
-          if (key === "description") apiErrors.description = messages[0];
-        });
-        setErrors(apiErrors);
-      }
+      applyApiIssues(error, setError, {
+        title: "name",
+        name: "name",
+        fileName: "name",
+        description: "description",
+      });
       notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar", "error");
     } finally {
       setSaving(false);
@@ -319,22 +294,21 @@ export function FileTree({ className }: { className?: string }) {
         title={action ? actionTitle(action) : ""}
       >
         {action && !isDeleteAction(action) ? (
-          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
             <Field
               label={nameLabel(action)}
               htmlFor="file-tree-name"
-              error={errors.name}
+              error={errors.name?.message}
               hint={isCreateNoteAction(action) ? "O arquivo será criado com a extensão .md." : undefined}
             >
-              <Input id="file-tree-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+              <Input id="file-tree-name" invalid={Boolean(errors.name)} {...register("name")} />
             </Field>
             {isContentAction(action) || isGroupAction(action) ? (
-              <Field label="Descrição" htmlFor="file-tree-description" error={errors.description}>
+              <Field label="Descrição" htmlFor="file-tree-description" error={errors.description?.message}>
                 <Textarea
                   id="file-tree-description"
-                  value={form.description}
                   invalid={Boolean(errors.description)}
-                  onChange={(event) => setForm({ ...form, description: event.target.value })}
+                  {...register("description")}
                 />
               </Field>
             ) : null}
@@ -342,7 +316,7 @@ export function FileTree({ className }: { className?: string }) {
               <Button type="button" variant="secondary" onClick={() => setAction(null)}>
                 Cancelar
               </Button>
-              <Button type="submit" loading={saving}>
+              <Button type="submit" loading={saving || isSubmitting}>
                 {isCreateNoteAction(action) ? "Criar" : "Salvar"}
               </Button>
             </div>

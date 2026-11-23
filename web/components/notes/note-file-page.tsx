@@ -10,13 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type { Content, Note, StudyGroup, UpdateNoteRequest } from "@/lib/api/types";
-import { isBlank } from "@/lib/validation";
-
-const MAX_NOTE_BYTES = 2 * 1024 * 1024;
-
-function byteLength(value: string) {
-  return new TextEncoder().encode(value).length;
-}
+import { noteDraftSchema } from "@/lib/schemas";
 
 export function NoteFilePage({
   groupId,
@@ -94,12 +88,9 @@ export function NoteFilePage({
   const saveActive = useCallback(async () => {
     if (!activeTab || activeTab.status === "saving" || activeTab.status === "loading") return;
 
-    if (isBlank(activeTab.draft)) {
-      setTabError(activeTab.id, "Escreva o conteúdo da nota");
-      return;
-    }
-    if (byteLength(activeTab.draft) > MAX_NOTE_BYTES) {
-      setTabError(activeTab.id, "Nota excede o tamanho máximo de 2 MB");
+    const draft = noteDraftSchema.safeParse({ markdownContent: activeTab.draft });
+    if (!draft.success) {
+      setTabError(activeTab.id, draft.error.issues[0]?.message ?? "Não foi possível salvar a nota");
       return;
     }
 

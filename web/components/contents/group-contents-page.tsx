@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
 import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus } from "lucide-react";
 import { ContentCard } from "./content-card";
@@ -31,12 +32,9 @@ import type {
   ReorderContentsRequest,
   StudyGroup,
 } from "@/lib/api/types";
-import { isBlank, validateLength } from "@/lib/validation";
-
-type ContentForm = { title: string; description: string };
-type FormErrors = Partial<Record<keyof ContentForm, string>>;
-
-const emptyForm: ContentForm = { title: "", description: "" };
+import { applyApiIssues, nullableTrimmed } from "@/lib/form";
+import { contentFormSchema } from "@/lib/schemas";
+import type { ContentFormValues } from "@/lib/schemas";
 
 export function GroupContentsPage({ groupId }: { groupId: number }) {
   const router = useRouter();
@@ -86,11 +84,19 @@ function GroupContents({ group }: { group: StudyGroup }) {
   const { notify } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Content | null>(null);
-  const [form, setForm] = useState<ContentForm>(emptyForm);
-  const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<Content | null>(null);
   const [view, setView] = useViewMode("uptake:contents-view");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<ContentFormValues>({
+    resolver: zodResolver(contentFormSchema),
+    defaultValues: { title: "", description: "" },
+  });
 
   const handleReorder = async (ids: number[]) => {
     const current = data;
@@ -113,41 +119,23 @@ function GroupContents({ group }: { group: StudyGroup }) {
 
   const openCreate = () => {
     setEditing(null);
-    setForm(emptyForm);
-    setErrors({});
+    reset({ title: "", description: "" });
     setDialogOpen(true);
   };
 
   const openEdit = (content: Content) => {
     setEditing(content);
-    setForm({
-      title: content.title,
-      description: content.description ?? "",
-    });
-    setErrors({});
+    reset({ title: content.title, description: content.description ?? "" });
     setDialogOpen(true);
   };
 
-  const validate = () => {
-    const nextErrors: FormErrors = {};
-    if (isBlank(form.title)) nextErrors.title = "Informe o título";
-    else if (!validateLength(form.title, 200)) nextErrors.title = "Máximo de 200 caracteres";
-    if (!validateLength(form.description, 2000)) nextErrors.description = "Máximo de 2000 caracteres";
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validate()) return;
-
+  const onSubmit = async (values: ContentFormValues) => {
     const payload: CreateContentRequest = {
-      title: form.title.trim(),
-      description: isBlank(form.description) ? null : form.description.trim(),
+      title: values.title,
+      description: nullableTrimmed(values.description),
       studyGroupId: group.id,
     };
 
-    setSaving(true);
     try {
       if (editing) await api.patch<Content>(`/contents/${editing.id}`, payload);
       else await api.post<Content>("/contents", payload);
@@ -155,16 +143,8 @@ function GroupContents({ group }: { group: StudyGroup }) {
       setDialogOpen(false);
       reload();
     } catch (error) {
-      if (error instanceof ApiRequestError && error.issues) {
-        const apiErrors: FormErrors = {};
-        Object.entries(error.issues).forEach(([key, messages]) => {
-          if (key in form) apiErrors[key as keyof ContentForm] = messages[0];
-        });
-        setErrors(apiErrors);
-      }
+      applyApiIssues(error, setError);
       notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar", "error");
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -265,18 +245,18 @@ function GroupContents({ group }: { group: StudyGroup }) {
       )}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title={editing ? "Editar conteúdo" : "Novo conteúdo"}>
-        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-          <Field label="Título" htmlFor="content-title" error={errors.title}>
-            <Input id="content-title" value={form.title} invalid={Boolean(errors.title)} onChange={(event) => setForm({ ...form, title: event.target.value })} />
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Field label="Título" htmlFor="content-title" error={errors.title?.message}>
+            <Input id="content-title" invalid={Boolean(errors.title)} {...register("title")} />
           </Field>
-          <Field label="Descrição" htmlFor="content-description" error={errors.description}>
-            <Textarea id="content-description" value={form.description} invalid={Boolean(errors.description)} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+          <Field label="Descrição" htmlFor="content-description" error={errors.description?.message}>
+            <Textarea id="content-description" invalid={Boolean(errors.description)} {...register("description")} />
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" loading={saving}>
+            <Button type="submit" loading={isSubmitting}>
               Salvar
             </Button>
           </div>

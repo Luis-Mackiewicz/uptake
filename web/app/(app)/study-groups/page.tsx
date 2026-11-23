@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { StudyGroupCard } from "@/components/study-groups/study-group-card";
 import { StudyGroupRow } from "@/components/study-groups/study-group-row";
 import { PageHeader } from "@/components/layout/page-header";
@@ -22,12 +23,9 @@ import { useResourceList } from "@/hooks/use-resource-list";
 import { useViewMode } from "@/hooks/use-view-mode";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type { CreateStudyGroupRequest, MessageResponse, StudyGroup } from "@/lib/api/types";
-import { isBlank, validateLength } from "@/lib/validation";
-
-type GroupForm = { name: string; description: string };
-type FormErrors = Partial<Record<keyof GroupForm, string>>;
-
-const emptyForm: GroupForm = { name: "", description: "" };
+import { applyApiIssues, nullableTrimmed } from "@/lib/form";
+import { groupFormSchema } from "@/lib/schemas";
+import type { GroupFormValues } from "@/lib/schemas";
 
 export default function StudyGroupsPage() {
   const router = useRouter();
@@ -36,15 +34,22 @@ export default function StudyGroupsPage() {
   const [view, setView] = useViewMode("uptake:groups-view");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<StudyGroup | null>(null);
-  const [form, setForm] = useState<GroupForm>(emptyForm);
-  const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<StudyGroup | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<GroupFormValues>({
+    resolver: zodResolver(groupFormSchema),
+    defaultValues: { name: "", description: "" },
+  });
 
   const openCreate = () => {
     setEditing(null);
-    setForm(emptyForm);
-    setErrors({});
+    reset({ name: "", description: "" });
     setDialogOpen(true);
   };
 
@@ -54,33 +59,16 @@ export default function StudyGroupsPage() {
 
   const openEdit = (group: StudyGroup) => {
     setEditing(group);
-    setForm({
-      name: group.name,
-      description: group.description ?? "",
-    });
-    setErrors({});
+    reset({ name: group.name, description: group.description ?? "" });
     setDialogOpen(true);
   };
 
-  const validate = () => {
-    const nextErrors: FormErrors = {};
-    if (isBlank(form.name)) nextErrors.name = "Informe o nome";
-    else if (!validateLength(form.name, 100)) nextErrors.name = "Máximo de 100 caracteres";
-    if (!validateLength(form.description, 500)) nextErrors.description = "Máximo de 500 caracteres";
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
-  };
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!validate()) return;
-
+  const onSubmit = async (values: GroupFormValues) => {
     const payload: CreateStudyGroupRequest = {
-      name: form.name.trim(),
-      description: isBlank(form.description) ? null : form.description.trim(),
+      name: values.name,
+      description: nullableTrimmed(values.description),
     };
 
-    setSaving(true);
     try {
       if (editing) await api.patch<StudyGroup>(`/study-groups/${editing.id}`, payload);
       else await api.post<StudyGroup>("/study-groups", payload);
@@ -88,16 +76,8 @@ export default function StudyGroupsPage() {
       setDialogOpen(false);
       reload();
     } catch (error) {
-      if (error instanceof ApiRequestError && error.issues) {
-        const apiErrors: FormErrors = {};
-        Object.entries(error.issues).forEach(([key, messages]) => {
-          if (key in form) apiErrors[key as keyof GroupForm] = messages[0];
-        });
-        setErrors(apiErrors);
-      }
+      applyApiIssues(error, setError);
       notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar", "error");
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -182,18 +162,18 @@ export default function StudyGroupsPage() {
       )}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title={editing ? "Editar grupo" : "Novo grupo"}>
-        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-          <Field label="Nome" htmlFor="group-name" error={errors.name}>
-            <Input id="group-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Field label="Nome" htmlFor="group-name" error={errors.name?.message}>
+            <Input id="group-name" invalid={Boolean(errors.name)} {...register("name")} />
           </Field>
-          <Field label="Descrição" htmlFor="group-description" error={errors.description}>
-            <Textarea id="group-description" value={form.description} invalid={Boolean(errors.description)} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+          <Field label="Descrição" htmlFor="group-description" error={errors.description?.message}>
+            <Textarea id="group-description" invalid={Boolean(errors.description)} {...register("description")} />
           </Field>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button type="submit" loading={saving}>
+            <Button type="submit" loading={isSubmitting}>
               Salvar
             </Button>
           </div>
