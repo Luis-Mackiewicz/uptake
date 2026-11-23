@@ -1,6 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
-import type { ReviewInterval } from "../schemas/review.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination, ReviewInterval } from "../../shared/domain.js";
 
 export const reviewSafeSelect = {
   id: true,
@@ -47,7 +46,7 @@ export const reviewRepository = {
     });
   },
 
-  async findMany(userId: number, pagination: Pagination, due: boolean) {
+  async findMany(userId: number, pagination: Pagination, due = false) {
     const where = {
       userId,
       deletedAt: null,
@@ -73,9 +72,9 @@ export const reviewRepository = {
     });
   },
 
-  async reactivate(id: number, data: ReviewInput) {
+  async reactivate(id: number, userId: number, data: ReviewInput) {
     return prisma.review.update({
-      where: { id },
+      where: { id, userId },
       data: {
         noteId: data.noteId,
         nextReviewAt: data.nextReviewAt,
@@ -88,25 +87,25 @@ export const reviewRepository = {
     });
   },
 
-  async update(id: number, data: ReviewUpdateInput) {
+  async update(id: number, userId: number, data: ReviewUpdateInput) {
     return prisma.review.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data,
       select: reviewSafeSelect,
     });
   },
 
-  async complete(id: number, data: ReviewCompleteInput) {
+  async complete(id: number, userId: number, data: ReviewCompleteInput) {
     return prisma.review.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data,
       select: reviewSafeSelect,
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.review.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: reviewSafeSelect,
     });

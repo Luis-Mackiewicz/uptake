@@ -4,7 +4,7 @@ import { contentRoutes } from "../modules/content/routes.js";
 import { examRoutes } from "../modules/exam/routes.js";
 import { noteRoutes } from "../modules/note/routes.js";
 import { pomodoroRoutes } from "../modules/pomodoro/routes.js";
-import { reviewRoutes } from "./review.routes.js";
+import { reviewRoutes } from "../modules/review/routes.js";
 import { studyCycleRoutes } from "../modules/studyCycle/routes.js";
 import { studyGroupRoutes } from "../modules/studyGroup/routes.js";
 

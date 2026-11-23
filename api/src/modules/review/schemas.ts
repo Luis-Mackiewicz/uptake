@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { paginationSchema } from "./pagination.schemas.js";
-import { REVIEW_INTERVALS, type ReviewInterval } from "../shared/domain.js";
+import { paginationSchema } from "../../schemas/pagination.schemas.js";
+import { REVIEW_INTERVALS, type ReviewInterval } from "../../shared/domain.js";
 
-export { REVIEW_INTERVALS, type ReviewInterval } from "../shared/domain.js";
+export { REVIEW_INTERVALS, type ReviewInterval } from "../../shared/domain.js";
 
 const intervalDaysSchema = z
   .number()
