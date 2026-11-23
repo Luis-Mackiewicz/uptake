@@ -3,14 +3,19 @@ import {
   calculateSkip,
   toPaginated,
   type PaginatedResult,
+  type Pagination,
 } from "../../shared/domain.js";
-import { CrudService } from "../../shared/crud.service.js";
+import {
+  CrudService,
+  type CrudRepository,
+} from "../../shared/crud.service.js";
 import { assertFound } from "../../shared/guards.js";
 import type { NoteLookup } from "../../shared/ownership.js";
 import { noteLookup } from "../note/index.js";
 import { Review } from "./entities.js";
 import {
   reviewRepository,
+  type ReviewCompleteInput,
   type ReviewUpdateInput,
 } from "./repository.js";
 import type { CreateReviewData, ReviewQuery } from "./schemas.js";
@@ -19,19 +24,44 @@ type ReviewRecord = NonNullable<
   Awaited<ReturnType<typeof reviewRepository.findById>>
 >;
 
+interface ReviewRepository
+  extends CrudRepository<
+    ReviewRecord,
+    CreateReviewData,
+    ReviewUpdateInput
+  > {
+  findByNote(
+    noteId: number,
+    userId: number,
+  ): Promise<(ReviewRecord & { deletedAt: Date | null }) | null>;
+  findMany(
+    userId: number,
+    pagination: Pagination,
+    due?: boolean,
+  ): Promise<{ data: ReviewRecord[]; total: number }>;
+  reactivate(
+    id: number,
+    userId: number,
+    data: CreateReviewData,
+  ): Promise<ReviewRecord>;
+  complete(
+    id: number,
+    userId: number,
+    data: ReviewCompleteInput,
+  ): Promise<ReviewRecord>;
+}
+
 export class ReviewService extends CrudService<
   ReviewRecord,
   CreateReviewData,
-  ReviewUpdateInput
+  ReviewUpdateInput,
+  ReviewRepository
 > {
-  private readonly reviewsRepository: typeof reviewRepository;
-
   constructor(
-    repository: typeof reviewRepository = reviewRepository,
+    repository: ReviewRepository = reviewRepository,
     private readonly notes: NoteLookup = noteLookup,
   ) {
     super(repository, "Revisão não encontrada");
-    this.reviewsRepository = repository;
   }
 
   override async create(userId: number, data: CreateReviewData) {
@@ -40,7 +70,7 @@ export class ReviewService extends CrudService<
       "Anotação não encontrada",
     );
 
-    const existing = await this.reviewsRepository.findByNote(
+    const existing = await this.repository.findByNote(
       data.noteId,
       userId,
     );
@@ -50,10 +80,10 @@ export class ReviewService extends CrudService<
     }
 
     if (existing) {
-      return this.reviewsRepository.reactivate(existing.id, userId, data);
+      return this.repository.reactivate(existing.id, userId, data);
     }
 
-    return this.reviewsRepository.create(userId, data);
+    return this.repository.create(userId, data);
   }
 
   async findAllDue(
@@ -65,7 +95,7 @@ export class ReviewService extends CrudService<
       limit: query.limit,
       skip: calculateSkip(query.page, query.limit),
     };
-    const { data, total } = await this.reviewsRepository.findMany(
+    const { data, total } = await this.repository.findMany(
       userId,
       pagination,
       query.due,
@@ -79,14 +109,14 @@ export class ReviewService extends CrudService<
     data: ReviewUpdateInput,
   ) {
     await this.findById(userId, id);
-    return this.reviewsRepository.update(id, userId, data);
+    return this.repository.update(id, userId, data);
   }
 
   async complete(userId: number, id: number) {
     const record = await this.findById(userId, id);
     const review = new Review(record.intervalDays, record.reviewCount);
 
-    return this.reviewsRepository.complete(id, userId, review.advance());
+    return this.repository.complete(id, userId, review.advance());
   }
 }
 

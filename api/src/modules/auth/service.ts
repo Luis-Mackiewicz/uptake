@@ -4,15 +4,40 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "../../errors/AppError.js";
-import { userRepository } from "./repository.js";
+import {
+  userRepository,
+  type CreateUserInput,
+  type UpdateUserInput,
+} from "./repository.js";
 import type {
   CreateUserData,
   LoginData,
   UpdateUserData,
 } from "./schemas.js";
 
+type UserRecord = NonNullable<
+  Awaited<ReturnType<typeof userRepository.findActiveById>>
+>;
+
+interface UserRepository {
+  findByEmailOrCpfIncludingDeleted(
+    email: string,
+    cpf: string,
+  ): Promise<{ id: number; deletedAt: Date | null } | null>;
+  findActiveByEmailWithPassword(
+    email: string,
+  ): Promise<{ id: number; email: string; passwordHash: string } | null>;
+  findActiveById(id: number): Promise<UserRecord | null>;
+  findActiveByCpf(cpf: string, excludeId: number): Promise<{ id: number } | null>;
+  create(data: CreateUserInput): Promise<UserRecord>;
+  reactivate(id: number, data: CreateUserInput): Promise<UserRecord>;
+  update(id: number, data: UpdateUserInput): Promise<UserRecord>;
+}
+
 export class AuthService {
-  constructor(private readonly repository: typeof userRepository = userRepository) {}
+  constructor(
+    private readonly repository: UserRepository = userRepository,
+  ) {}
 
   async register(data: CreateUserData) {
     const existing = await this.repository.findByEmailOrCpfIncludingDeleted(
