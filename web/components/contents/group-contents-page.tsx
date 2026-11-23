@@ -20,8 +20,9 @@ import { SortableProvider } from "@/components/ui/sortable";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { ViewToggle, type ContentView } from "@/components/ui/view-toggle";
+import { ViewToggle } from "@/components/ui/view-toggle";
 import { useResourceList } from "@/hooks/use-resource-list";
+import { useViewMode } from "@/hooks/use-view-mode";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type {
   Content,
@@ -89,16 +90,7 @@ function GroupContents({ group }: { group: StudyGroup }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<Content | null>(null);
-  const [view, setView] = useState<ContentView>(() => {
-    if (typeof window === "undefined") return "table";
-    const saved = window.localStorage.getItem("uptake:contents-view");
-    return saved === "cards" ? "cards" : "table";
-  });
-
-  const changeView = (next: ContentView) => {
-    setView(next);
-    window.localStorage.setItem("uptake:contents-view", next);
-  };
+  const [view, setView] = useViewMode("uptake:contents-view");
 
   const handleReorder = async (ids: number[]) => {
     const current = data;
@@ -200,7 +192,7 @@ function GroupContents({ group }: { group: StudyGroup }) {
         description="Cadastre os temas estudados neste grupo."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <ViewToggle value={view} onChange={changeView} />
+            <ViewToggle value={view} onChange={setView} />
             <Link href="/study-groups">
               <Button variant="secondary">
                 <ArrowLeft size={16} aria-hidden />
