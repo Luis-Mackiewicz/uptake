@@ -12,7 +12,7 @@ Este documento complementa a seção 8 do [PRD](./PRD.md) e registra as decisõe
 6. **Exclusão lógica (RD-04):** nenhum `DELETE` físico. Excluir um grupo marca `deletedAt` nele e, em cascata lógica, em seus conteúdos e notas. Vínculos em `ExamNote` são preservados como histórico, mas notas excluídas não aparecem nas listagens. Por isso todas as relações usam `onDelete: Restrict`. Como as chaves únicas continuam valendo para linhas excluídas, um cadastro repetido **reativa** a linha existente (limpa `deletedAt`) em vez de inserir duplicata.
 7. **Música ambiente** (RF-11) fica em `User.musicUrl`; não há tabela própria.
 8. **Google Calendar** (RF-13): a conexão OAuth por usuário fica em `GoogleCalendarConnection`, com tokens criptografados pela aplicação. O `googleEventId` em `Exam` guarda o evento remoto correspondente.
-9. **Paginação:** padrão de 10 itens por página, máximo de 50, para todas as listagens (RT-02).
+9. **Paginação:** `page` começa em 1, padrão de 20 itens por página e máximo de 100, para todas as listagens (RT-02).
 
 ## Dicionário de nomes
 
