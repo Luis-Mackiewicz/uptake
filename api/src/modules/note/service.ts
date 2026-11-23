@@ -1,5 +1,5 @@
-import { ConflictError, ValidationError } from "../../shared/errors.js";
-import { MAX_NOTE_SIZE_BYTES, type Pagination, toPaginated } from "../../shared/domain.js";
+import { ConflictError } from "../../shared/errors.js";
+import { type Pagination, toPaginated } from "../../shared/domain.js";
 import {
   CrudService,
   type CrudRepository,
@@ -13,6 +13,7 @@ import {
   type CreateNoteData,
   type UpdateNoteData,
 } from "./schemas.js";
+import { NoteFile } from "./entities.js";
 import { noteRepository, type NoteInput } from "./repository.js";
 
 type NoteRecord = NonNullable<
@@ -20,7 +21,7 @@ type NoteRecord = NonNullable<
 >;
 
 type NoteRepository = Omit<
-  CrudRepository<NoteRecord, NoteInput, UpdateNoteData>,
+  CrudRepository<NoteRecord, NoteInput, NoteInput>,
   "findMany"
 > & {
   findMany(
@@ -49,7 +50,7 @@ type NoteRepository = Omit<
 export class NoteService extends CrudService<
   NoteRecord,
   NoteInput,
-  UpdateNoteData,
+  NoteInput,
   NoteRepository
 > {
   constructor(
@@ -130,7 +131,7 @@ export class NoteService extends CrudService<
     const updated = await this.repository.update(id, userId, {
       ...input,
       position,
-    } as UpdateNoteData & { position: number });
+    });
     await this.repository.normalizePositions(userId, current.contentId);
     return updated;
   }
@@ -161,14 +162,8 @@ export class NoteService extends CrudService<
     await this.repository.reorder(userId, contentId, orderedIds);
   }
 
-  private withSize(data: UpdateNoteData) {
-    const sizeBytes = Buffer.byteLength(data.markdownContent, "utf8");
-
-    if (sizeBytes > MAX_NOTE_SIZE_BYTES) {
-      throw new ValidationError("Nota excede o tamanho máximo de 2 MB");
-    }
-
-    return { ...data, sizeBytes };
+  private withSize(data: UpdateNoteData): NoteInput {
+    return new NoteFile(data).toInput();
   }
 
   private async ensureContent(userId: number, contentId: number) {

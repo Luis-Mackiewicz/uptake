@@ -9,14 +9,14 @@ import type { StudyGroupLookup } from "../../shared/ownership.js";
 import { mergeReorderedIds } from "../../shared/reorder.js";
 import { studyGroupLookup } from "../studyGroup/index.js";
 import type { CreateContentData, UpdateContentData } from "./schemas.js";
-import { contentRepository } from "./repository.js";
+import { contentRepository, type ContentInput } from "./repository.js";
 
 type ContentRecord = NonNullable<
   Awaited<ReturnType<typeof contentRepository.findById>>
 >;
 
 type ContentRepository = Omit<
-  CrudRepository<ContentRecord, CreateContentData, UpdateContentData>,
+  CrudRepository<ContentRecord, CreateContentData, ContentInput>,
   "findMany"
 > & {
   findMany(
@@ -41,7 +41,7 @@ type ContentRepository = Omit<
 export class ContentService extends CrudService<
   ContentRecord,
   CreateContentData,
-  UpdateContentData,
+  ContentInput,
   ContentRepository
 > {
   constructor(
@@ -87,7 +87,7 @@ export class ContentService extends CrudService<
     const updated = await this.repository.update(id, userId, {
       ...data,
       position,
-    } as UpdateContentData & { position: number });
+    });
     await this.repository.normalizePositions(userId, current.studyGroupId);
     return updated;
   }

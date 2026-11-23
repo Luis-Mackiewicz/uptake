@@ -16,14 +16,11 @@ export async function studyCycleRoutes(app: FastifyInstance) {
     privateApp.get("/exams/:examId/cycles", async (request) => {
       const { examId } = parseSchema(examIdParamSchema, request.params);
       const pagination = parsePagination(request.query);
-      const cycles = await studyCycleService.findAllByExam(
+      return studyCycleService.findAllByExam(
         request.userId,
         examId,
+        pagination,
       );
-      return {
-        data: cycles.slice(pagination.skip, pagination.skip + pagination.limit),
-        total: cycles.length,
-      };
     });
 
     privateApp.post("/exams/:examId/cycles", async (request, reply) => {

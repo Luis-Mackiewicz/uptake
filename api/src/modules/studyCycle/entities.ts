@@ -19,6 +19,25 @@ export class StudyCycle {
     );
   }
 
+  get currentRound(): number {
+    return this.#currentRound;
+  }
+
+  set currentRound(value: number) {
+    this.#currentRound = assertPositiveInteger(
+      value,
+      "Rodada do ciclo inválida",
+    );
+  }
+
+  get nextItemOrder(): number {
+    return this.#nextItemOrder;
+  }
+
+  set nextItemOrder(value: number) {
+    this.#nextItemOrder = assertPositiveInteger(value, "Próxima posição inválida");
+  }
+
   advance(items: CyclePosition[]) {
     if (items.length === 0) {
       return null;
@@ -30,14 +49,14 @@ export class StudyCycle {
     const nextIndex = foundIndex === -1 ? 0 : (foundIndex + 1) % items.length;
 
     if (foundIndex !== -1 && foundIndex === items.length - 1) {
-      this.#currentRound += 1;
+      this.currentRound += 1;
     }
 
-    this.#nextItemOrder = items[nextIndex].position;
+    this.nextItemOrder = items[nextIndex].position;
 
     return {
-      currentRound: this.#currentRound,
-      nextItemOrder: this.#nextItemOrder,
+      currentRound: this.currentRound,
+      nextItemOrder: this.nextItemOrder,
     };
   }
 }

@@ -1,3 +1,4 @@
+import { type Pagination, toPaginated } from "../../shared/domain.js";
 import { NotFoundError, ValidationError } from "../../shared/errors.js";
 import { assertFound } from "../../shared/guards.js";
 import type { ContentLookup } from "../../shared/ownership.js";
@@ -19,9 +20,14 @@ export class StudyCycleService {
     private readonly contents: ContentLookup = contentLookup,
   ) {}
 
-  async findAllByExam(userId: number, examId: number) {
+  async findAllByExam(userId: number, examId: number, pagination: Pagination) {
     await this.ensureExam(userId, examId);
-    return this.repository.findManyByExam(examId);
+    const cycles = await this.repository.findManyByExam(examId);
+    const data = cycles.slice(
+      pagination.skip,
+      pagination.skip + pagination.limit,
+    );
+    return toPaginated(data, cycles.length, pagination);
   }
 
   async findById(userId: number, examId: number, cycleId: number) {
