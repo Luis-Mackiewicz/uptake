@@ -75,6 +75,7 @@ erDiagram
         string title
         string description "optional"
         int studyGroupId FK
+        int position "ordem no grupo"
         int userId FK
         datetime deletedAt "optional"
     }
@@ -86,6 +87,7 @@ erDiagram
         string mimeType
         int sizeBytes
         int contentId FK
+        int position "ordem no conteúdo"
         int userId FK
         datetime deletedAt "optional"
     }
@@ -178,6 +180,7 @@ erDiagram
 - Filtro obrigatório em toda listagem: `userId` + `deletedAt: null`.
 - `@@index([userId, deletedAt])` nas entidades do usuário.
 - `@@unique([userId, name])` em `StudyGroup`; `@@unique([contentId, fileName])` em `Note`; `@@unique([userId, noteId])` em `Review`; `@@unique([studyCycleId, position])` em `StudyCycleItem`.
+- `@@index([studyGroupId, position])` em `Content` e `@@index([contentId, position])` em `Note`. `position` não é único porque a exclusão lógica preserva linhas antigas.
 - `@@id([examId, noteId])` impede vínculo duplicado entre prova e nota.
 - `email` e `cpf` são únicos em `User`; `passwordHash` nunca é retornado pela API.
 

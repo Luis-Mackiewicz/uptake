@@ -169,14 +169,14 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Prioridade:** Must
 **Telas:** #5
 **Descrição (proposta):** o usuário registra conteúdos de estudo dentro de um grupo.
-**Critérios:** segue RT-01 a RT-04. O conteúdo pertence a um grupo de estudo (RD-01). A listagem acontece na tela do grupo; a API aceita `GET /contents?studyGroupId=<id>` para filtrar com validação de propriedade.
+**Critérios:** segue RT-01 a RT-04. O conteúdo pertence a um grupo de estudo (RD-01). A listagem acontece na tela do grupo; a API aceita `GET /contents?studyGroupId=<id>` para filtrar com validação de propriedade. A tela oferece visão em tabela ou cards e reordenação persistida por arraste via `PATCH /contents/reorder`.
 
 ### RF-06 CRUD de Arquivos
 
 **Prioridade:** Must
 **Telas:** #9
 **Descrição (proposta):** o usuário anexa e consulta arquivos ligados a um conteúdo.
-**Critérios:** segue RT-01 a RT-04. O arquivo pertence a um conteúdo (RD-02).
+**Critérios:** segue RT-01 a RT-04. O arquivo pertence a um conteúdo (RD-02). A listagem aceita `GET /notes?contentId=<id>`; ao filtrar por conteúdo, a ordem pode ser alterada por arraste e persistida com `PATCH /notes/reorder`. O editor usa CodeMirror com toolbar Markdown para título, negrito, itálico, código, link, listas e citação.
 
 ### RF-07 CRUD de Provas
 
