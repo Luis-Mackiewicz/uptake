@@ -35,3 +35,9 @@ export function toPaginated<T>(
 
 export const REVIEW_INTERVALS = [1, 3, 7, 15, 30, 60] as const;
 export type ReviewInterval = (typeof REVIEW_INTERVALS)[number];
+export const REVIEW_INTERVAL_MESSAGE =
+  "Intervalo deve ser 1, 3, 7, 15, 30 ou 60 dias";
+
+export function isReviewInterval(value: number): value is ReviewInterval {
+  return REVIEW_INTERVALS.includes(value as ReviewInterval);
+}

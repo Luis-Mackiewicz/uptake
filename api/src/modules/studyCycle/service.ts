@@ -102,11 +102,7 @@ export class StudyCycleService extends CrudService<
   async advance(userId: number, cycleId: number) {
     const record = await this.findById(userId, cycleId);
     const items = await this.cyclesRepository.findItems(cycleId);
-    const cycle = new StudyCycle(
-      record.id,
-      record.currentRound,
-      record.nextItemOrder,
-    );
+    const cycle = new StudyCycle(record.currentRound, record.nextItemOrder);
     const next = cycle.advance(items);
 
     if (!next) {
@@ -114,16 +110,13 @@ export class StudyCycleService extends CrudService<
     }
 
     const updatedCycle = await this.cyclesRepository.updateState(
-      cycle.id,
+      record.id,
       userId,
-      {
-        currentRound: next.currentRound,
-        nextItemOrder: next.nextItemOrder,
-      },
+      next,
     );
     const nextItem = await this.cyclesRepository.findItemByPosition(
-      cycle.id,
-      next.nextPosition,
+      record.id,
+      next.nextItemOrder,
     );
 
     return { cycle: updatedCycle, nextItem };

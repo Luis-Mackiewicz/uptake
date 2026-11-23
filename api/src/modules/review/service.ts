@@ -3,7 +3,6 @@ import {
   calculateSkip,
   toPaginated,
   type PaginatedResult,
-  type ReviewInterval,
 } from "../../shared/domain.js";
 import { CrudService } from "../../shared/crud.service.js";
 import { assertFound } from "../../shared/guards.js";
@@ -91,11 +90,7 @@ export class ReviewService extends CrudService<
 
   async complete(userId: number, id: number) {
     const record = await this.findById(userId, id);
-    const review = new Review(
-      record.id,
-      record.intervalDays as ReviewInterval,
-      record.reviewCount,
-    );
+    const review = new Review(record.intervalDays, record.reviewCount);
 
     return this.reviewsRepository.complete(id, userId, review.advance());
   }

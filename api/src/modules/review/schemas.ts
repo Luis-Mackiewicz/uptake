@@ -1,17 +1,18 @@
 import { z } from "zod";
 import { paginationSchema } from "../../schemas/pagination.schemas.js";
-import { REVIEW_INTERVALS, type ReviewInterval } from "../../shared/domain.js";
+import {
+  isReviewInterval,
+  REVIEW_INTERVAL_MESSAGE,
+  REVIEW_INTERVALS,
+  type ReviewInterval,
+} from "../../shared/domain.js";
 
 export { REVIEW_INTERVALS, type ReviewInterval } from "../../shared/domain.js";
 
 const intervalDaysSchema = z
   .number()
   .int()
-  .refine(
-    (value): value is ReviewInterval =>
-      REVIEW_INTERVALS.includes(value as ReviewInterval),
-    { message: "Intervalo deve ser 1, 3, 7, 15, 30 ou 60 dias" },
-  );
+  .refine(isReviewInterval, { message: REVIEW_INTERVAL_MESSAGE });
 
 const dateSchema = z.coerce.date({ message: "Data inválida" });
 
