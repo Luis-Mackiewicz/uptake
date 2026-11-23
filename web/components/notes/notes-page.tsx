@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
-import { NoteListItem } from "@/components/notes/note-list-item";
+import { NoteCard } from "@/components/notes/note-card";
+import { NoteTableRow } from "@/components/notes/note-table-row";
 import { NoteWorkspace } from "@/components/notes/note-workspace";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,10 +17,13 @@ import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import { SortableProvider } from "@/components/ui/sortable";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { ViewToggle } from "@/components/ui/view-toggle";
 import { useNoteTabs } from "@/hooks/use-note-tabs";
 import { useResourceList } from "@/hooks/use-resource-list";
+import { useViewMode } from "@/hooks/use-view-mode";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type {
   Content,
@@ -54,6 +58,7 @@ export function NotesPageContent() {
   const groupsQuery = useResourceList<StudyGroup>("/study-groups", { limit: 100 });
   const { notify } = useToast();
   const workspace = useNoteTabs();
+  const [view, setView] = useViewMode("uptake:notes-view");
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<NoteForm>(emptyForm);
@@ -267,10 +272,15 @@ export function NotesPageContent() {
       <PageHeader
         title="Notas"
         description="Edite anotações Markdown em várias abas."
-        actions={<Button onClick={openCreate} disabled={!contents.length}>Nova nota</Button>}
+        actions={
+          <div className="flex items-center gap-2">
+            <ViewToggle value={view} onChange={setView} />
+            <Button onClick={openCreate} disabled={!contents.length}>Nova nota</Button>
+          </div>
+        }
       />
 
-      <div className="grid gap-4 lg:grid-cols-[20rem_minmax(0,1fr)]">
+      <div className="grid gap-4 lg:grid-cols-[24rem_minmax(0,1fr)]">
         <Card className="flex min-h-[560px] flex-col p-0">
           <div className="space-y-3 border-b border-neutral-200 p-3">
             <div>
@@ -303,23 +313,60 @@ export function NotesPageContent() {
           <div className="min-h-0 flex-1 overflow-auto">
             {visibleNotes.length ? (
               <SortableProvider ids={noteIds} onReorder={(ids) => void handleReorderNotes(ids)}>
-                {visibleNotes.map((note) => {
-                  const tab = workspace.tabs.find((item) => item.id === note.id);
-                  const content = contents.find((item) => item.id === note.contentId);
-                  return (
-                    <NoteListItem
-                      key={note.id}
-                      note={note}
-                      isActive={workspace.activeId === note.id}
-                      isOpen={Boolean(tab)}
-                      isDirty={Boolean(tab && tab.draft !== tab.savedContent)}
-                      canDrag={canDragNotes}
-                      contentLabel={content ? contentLabel(content) : `#${note.contentId}`}
-                      onOpen={(item) => void handleOpenNote(item)}
-                      onDelete={setDeleting}
-                    />
-                  );
-                })}
+                {view === "table" ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-8 px-2">
+                          <span className="sr-only">Arrastar</span>
+                        </TableHead>
+                        <TableHead>Nota</TableHead>
+                        <TableHead className="w-10 text-right">
+                          <span className="sr-only">Ações</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {visibleNotes.map((note) => {
+                        const tab = workspace.tabs.find((item) => item.id === note.id);
+                        const content = contents.find((item) => item.id === note.contentId);
+                        return (
+                          <NoteTableRow
+                            key={note.id}
+                            note={note}
+                            isActive={workspace.activeId === note.id}
+                            isOpen={Boolean(tab)}
+                            isDirty={Boolean(tab && tab.draft !== tab.savedContent)}
+                            canDrag={canDragNotes}
+                            contentLabel={content ? contentLabel(content) : `#${note.contentId}`}
+                            onOpen={(item) => void handleOpenNote(item)}
+                            onDelete={setDeleting}
+                          />
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-1">
+                    {visibleNotes.map((note) => {
+                      const tab = workspace.tabs.find((item) => item.id === note.id);
+                      const content = contents.find((item) => item.id === note.contentId);
+                      return (
+                        <NoteCard
+                          key={note.id}
+                          note={note}
+                          isActive={workspace.activeId === note.id}
+                          isOpen={Boolean(tab)}
+                          isDirty={Boolean(tab && tab.draft !== tab.savedContent)}
+                          canDrag={canDragNotes}
+                          contentLabel={content ? contentLabel(content) : `#${note.contentId}`}
+                          onOpen={(item) => void handleOpenNote(item)}
+                          onDelete={setDeleting}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </SortableProvider>
             ) : (
               <EmptyState
