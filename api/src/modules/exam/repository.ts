@@ -12,7 +12,31 @@ export const examSafeSelect = {
   userId: true,
   createdAt: true,
   updatedAt: true,
+  notes: {
+    select: { noteId: true },
+  },
 } as const;
+
+type ExamWithNotes = {
+  id: number;
+  title: string;
+  description: string | null;
+  examDate: Date;
+  location: string | null;
+  studyGroupId: number | null;
+  googleEventId: string | null;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  notes: { noteId: number }[];
+};
+
+export type SafeExam = Omit<ExamWithNotes, "notes"> & { noteIds: number[] };
+
+function toSafeExam(record: ExamWithNotes): SafeExam {
+  const { notes, ...exam } = record;
+  return { ...exam, noteIds: notes.map((item) => item.noteId) };
+}
 
 export interface ExamInput {
   title: string;
@@ -47,10 +71,11 @@ function activeExamWhere(userId: number) {
 
 export const examRepository = {
   async findById(id: number, userId: number) {
-    return prisma.exam.findFirst({
+    const exam = await prisma.exam.findFirst({
       where: { id, ...activeExamWhere(userId) },
       select: examSafeSelect,
     });
+    return exam ? toSafeExam(exam) : null;
   },
 
   async findMany(userId: number, pagination: Pagination) {
@@ -65,11 +90,11 @@ export const examRepository = {
       }),
       prisma.exam.count({ where }),
     ]);
-    return { data, total };
+    return { data: data.map(toSafeExam), total };
   },
 
   async create(userId: number, data: ExamInput) {
-    return prisma.exam.create({
+    const exam = await prisma.exam.create({
       data: {
         title: data.title,
         description: data.description ?? null,
@@ -85,10 +110,11 @@ export const examRepository = {
       },
       select: examSafeSelect,
     });
+    return toSafeExam(exam);
   },
 
   async update(id: number, userId: number, data: ExamInput) {
-    return prisma.exam.update({
+    const exam = await prisma.exam.update({
       where: { id, userId, deletedAt: null },
       data: {
         title: data.title,
@@ -105,13 +131,15 @@ export const examRepository = {
       },
       select: examSafeSelect,
     });
+    return toSafeExam(exam);
   },
 
   async softDelete(id: number, userId: number) {
-    return prisma.exam.update({
+    const exam = await prisma.exam.update({
       where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: examSafeSelect,
     });
+    return toSafeExam(exam);
   },
 };
