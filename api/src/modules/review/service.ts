@@ -11,7 +11,6 @@ import { noteLookup } from "../note/index.js";
 import { Review } from "./entities.js";
 import {
   reviewRepository,
-  type ReviewInput,
   type ReviewUpdateInput,
 } from "./repository.js";
 import type { CreateReviewData, ReviewQuery } from "./schemas.js";
@@ -22,7 +21,7 @@ type ReviewRecord = NonNullable<
 
 export class ReviewService extends CrudService<
   ReviewRecord,
-  ReviewInput,
+  CreateReviewData,
   ReviewUpdateInput
 > {
   private readonly reviewsRepository: typeof reviewRepository;
@@ -41,11 +40,6 @@ export class ReviewService extends CrudService<
       "Anotação não encontrada",
     );
 
-    const input: ReviewInput = {
-      noteId: data.noteId,
-      nextReviewAt: data.nextReviewAt ?? new Date(),
-      intervalDays: data.intervalDays ?? 1,
-    };
     const existing = await this.reviewsRepository.findByNote(
       data.noteId,
       userId,
@@ -56,10 +50,10 @@ export class ReviewService extends CrudService<
     }
 
     if (existing) {
-      return this.reviewsRepository.reactivate(existing.id, userId, input);
+      return this.reviewsRepository.reactivate(existing.id, userId, data);
     }
 
-    return this.reviewsRepository.create(userId, input);
+    return this.reviewsRepository.create(userId, data);
   }
 
   async findAllDue(

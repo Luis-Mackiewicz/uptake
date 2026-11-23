@@ -1,5 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import type { Pagination, ReviewInterval } from "../../shared/domain.js";
+import type { CreateReviewData } from "./schemas.js";
 
 export const reviewSafeSelect = {
   id: true,
@@ -29,6 +30,14 @@ export interface ReviewCompleteInput {
   nextReviewAt: Date;
   intervalDays: ReviewInterval;
   reviewCount: number;
+}
+
+function toReviewInput(data: CreateReviewData): ReviewInput {
+  return {
+    noteId: data.noteId,
+    nextReviewAt: data.nextReviewAt ?? new Date(),
+    intervalDays: data.intervalDays ?? 1,
+  };
 }
 
 export const reviewRepository = {
@@ -65,20 +74,22 @@ export const reviewRepository = {
     return { data, total };
   },
 
-  async create(userId: number, data: ReviewInput) {
+  async create(userId: number, data: CreateReviewData) {
     return prisma.review.create({
-      data: { ...data, userId },
+      data: { ...toReviewInput(data), userId },
       select: reviewSafeSelect,
     });
   },
 
-  async reactivate(id: number, userId: number, data: ReviewInput) {
+  async reactivate(id: number, userId: number, data: CreateReviewData) {
+    const input = toReviewInput(data);
+
     return prisma.review.update({
       where: { id, userId },
       data: {
-        noteId: data.noteId,
-        nextReviewAt: data.nextReviewAt,
-        intervalDays: data.intervalDays,
+        noteId: input.noteId,
+        nextReviewAt: input.nextReviewAt,
+        intervalDays: input.intervalDays,
         lastReviewedAt: null,
         reviewCount: 0,
         deletedAt: null,
