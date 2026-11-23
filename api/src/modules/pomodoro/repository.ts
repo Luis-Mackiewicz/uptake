@@ -19,16 +19,32 @@ export interface CreatePomodoroInput {
   breakMinutes: number;
 }
 
+function activeSessionWhere(userId: number) {
+  return {
+    userId,
+    deletedAt: null,
+    OR: [
+      { contentId: null },
+      {
+        content: {
+          deletedAt: null,
+          studyGroup: { deletedAt: null },
+        },
+      },
+    ],
+  };
+}
+
 export const pomodoroSessionRepository = {
   async findById(id: number, userId: number) {
     return prisma.pomodoroSession.findFirst({
-      where: { id, userId, deletedAt: null },
+      where: { id, ...activeSessionWhere(userId) },
       select: pomodoroSessionSafeSelect,
     });
   },
 
   async findMany(userId: number, pagination: Pagination) {
-    const where = { userId, deletedAt: null };
+    const where = activeSessionWhere(userId);
     const [data, total] = await prisma.$transaction([
       prisma.pomodoroSession.findMany({
         where,

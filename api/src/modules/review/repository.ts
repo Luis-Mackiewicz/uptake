@@ -40,10 +40,25 @@ function toReviewInput(data: CreateReviewData): ReviewInput {
   };
 }
 
+function activeReviewWhere(userId: number, due = false) {
+  return {
+    userId,
+    deletedAt: null,
+    note: {
+      deletedAt: null,
+      content: {
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
+    },
+    ...(due ? { nextReviewAt: { lte: new Date() } } : {}),
+  };
+}
+
 export const reviewRepository = {
   async findById(id: number, userId: number) {
     return prisma.review.findFirst({
-      where: { id, userId, deletedAt: null },
+      where: { id, ...activeReviewWhere(userId) },
       select: reviewSafeSelect,
     });
   },
@@ -56,11 +71,7 @@ export const reviewRepository = {
   },
 
   async findMany(userId: number, pagination: Pagination, due = false) {
-    const where = {
-      userId,
-      deletedAt: null,
-      ...(due ? { nextReviewAt: { lte: new Date() } } : {}),
-    };
+    const where = activeReviewWhere(userId, due);
     const [data, total] = await prisma.$transaction([
       prisma.review.findMany({
         where,

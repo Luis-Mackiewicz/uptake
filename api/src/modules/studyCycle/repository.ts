@@ -93,7 +93,11 @@ export const studyCycleRepository = {
 
   async findItems(studyCycleId: number) {
     return prisma.studyCycleItem.findMany({
-      where: { studyCycleId, deletedAt: null },
+      where: {
+        studyCycleId,
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
       select: studyCycleItemSafeSelect,
       orderBy: { position: "asc" },
     });
@@ -101,7 +105,12 @@ export const studyCycleRepository = {
 
   async findItemById(id: number, studyCycleId: number) {
     return prisma.studyCycleItem.findFirst({
-      where: { id, studyCycleId, deletedAt: null },
+      where: {
+        id,
+        studyCycleId,
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
       select: studyCycleItemSafeSelect,
     });
   },
@@ -116,6 +125,7 @@ export const studyCycleRepository = {
         studyCycleId,
         position,
         deletedAt: null,
+        studyGroup: { deletedAt: null },
         ...(excludeId ? { id: { not: excludeId } } : {}),
       },
       select: studyCycleItemSafeSelect,
@@ -151,7 +161,11 @@ export const studyCycleRepository = {
 
   async normalizeItemPositions(studyCycleId: number) {
     const items = await prisma.studyCycleItem.findMany({
-      where: { studyCycleId, deletedAt: null },
+      where: {
+        studyCycleId,
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
       select: { id: true },
       orderBy: { position: "asc" },
     });

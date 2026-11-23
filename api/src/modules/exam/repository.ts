@@ -23,16 +23,38 @@ export interface ExamInput {
   noteIds: number[];
 }
 
+function activeExamWhere(userId: number) {
+  return {
+    userId,
+    deletedAt: null,
+    OR: [
+      { studyGroupId: null },
+      { studyGroup: { deletedAt: null } },
+    ],
+    notes: {
+      every: {
+        note: {
+          deletedAt: null,
+          content: {
+            deletedAt: null,
+            studyGroup: { deletedAt: null },
+          },
+        },
+      },
+    },
+  };
+}
+
 export const examRepository = {
   async findById(id: number, userId: number) {
     return prisma.exam.findFirst({
-      where: { id, userId, deletedAt: null },
+      where: { id, ...activeExamWhere(userId) },
       select: examSafeSelect,
     });
   },
 
   async findMany(userId: number, pagination: Pagination) {
-    const where = { userId, deletedAt: null };
+    const where = activeExamWhere(userId);
     const [data, total] = await prisma.$transaction([
       prisma.exam.findMany({
         where,

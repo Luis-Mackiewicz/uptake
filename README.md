@@ -47,7 +47,7 @@ npm start
 
 - Rotas protegidas exigem `Authorization: Bearer <token>`; token ausente retorna `401`.
 - Paginação usa `page=1` e `limit=20` por padrão, com `limit` máximo de `100`.
-- Grupos, conteúdos e notas usam exclusão lógica: remover um grupo oculta conteúdos e notas; reativar o grupo restaura essa cadeia.
+- Grupos, conteúdos e notas usam exclusão lógica: remover um grupo oculta conteúdos, notas, provas, sessões de pomodoro, revisões e itens de ciclo relacionados; reativar o grupo restaura essa cadeia.
 - Itens do ciclo também usam exclusão lógica para não violar a unicidade de posição.
 - `sizeBytes` é calculado no servidor a partir de `markdownContent`, com limite de 2 MB.
 - `PATCH` continua substituindo completamente o recurso, preservando o contrato HTTP existente.
