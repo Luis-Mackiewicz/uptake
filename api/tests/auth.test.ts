@@ -11,7 +11,8 @@ type UserRecord = NonNullable<
 
 const user: UserRecord = {
   id: 1,
-  name: "Ana",
+  firstName: "Ana",
+  lastName: "Souza",
   email: "ana@example.com",
   cpf: "52998224725",
   musicUrl: null,
@@ -53,7 +54,8 @@ function createRepository(passwordHash: string): AuthRepository {
 test("register reactivates a previously deleted user", async () => {
   const service = new AuthService(createRepository("ignored"));
   const result = await service.register({
-    name: "Ana",
+    firstName: "Ana",
+    lastName: "Souza",
     email: "ana@example.com",
     cpf: "52998224725",
     password: "Senha123",
@@ -62,7 +64,8 @@ test("register reactivates a previously deleted user", async () => {
   assert.equal(result.id, 1);
   await assert.rejects(
     service.register({
-      name: "Ana",
+      firstName: "Ana",
+      lastName: "Souza",
       email: "ana@example.com",
       cpf: "52998224725",
       password: "Senha123",

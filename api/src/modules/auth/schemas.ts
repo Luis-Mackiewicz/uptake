@@ -43,7 +43,16 @@ const musicUrlSchema = z
 
 export const createUserSchema = z
   .object({
-    name: z.string().trim().min(1, "Nome é obrigatório"),
+    firstName: z
+      .string()
+      .trim()
+      .min(1, "Nome é obrigatório")
+      .max(191, "Nome é muito longo"),
+    lastName: z
+      .string()
+      .trim()
+      .min(1, "Sobrenome é obrigatório")
+      .max(191, "Sobrenome é muito longo"),
     email: z.string().trim().toLowerCase().email("E-mail inválido"),
     cpf: cpfSchema,
     password: passwordSchema,
@@ -60,7 +69,16 @@ export const loginSchema = z
 
 export const updateUserSchema = z
   .object({
-    name: z.string().trim().min(1, "Nome não pode ser vazio"),
+    firstName: z
+      .string()
+      .trim()
+      .min(1, "Nome não pode ser vazio")
+      .max(191, "Nome é muito longo"),
+    lastName: z
+      .string()
+      .trim()
+      .min(1, "Sobrenome não pode ser vazio")
+      .max(191, "Sobrenome é muito longo"),
     cpf: cpfSchema,
     password: passwordSchema,
     musicUrl: musicUrlSchema,

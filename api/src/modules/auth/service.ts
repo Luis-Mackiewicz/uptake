@@ -51,7 +51,8 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(data.password, 10);
     const userData = {
-      name: data.name,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       cpf: data.cpf,
       passwordHash,
@@ -101,7 +102,8 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(data.password, 10);
 
     return this.repository.update(userId, {
-      name: data.name,
+      firstName: data.firstName,
+      lastName: data.lastName,
       cpf: data.cpf,
       passwordHash,
       musicUrl: data.musicUrl,

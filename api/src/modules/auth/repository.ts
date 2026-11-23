@@ -2,7 +2,8 @@ import { prisma } from "../../lib/prisma.js";
 
 export const userSafeSelect = {
   id: true,
-  name: true,
+  firstName: true,
+  lastName: true,
   email: true,
   cpf: true,
   musicUrl: true,
@@ -11,7 +12,8 @@ export const userSafeSelect = {
 } as const;
 
 export interface CreateUserInput {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   cpf: string;
   passwordHash: string;
@@ -19,7 +21,8 @@ export interface CreateUserInput {
 }
 
 export interface UpdateUserInput {
-  name: string;
+  firstName: string;
+  lastName: string;
   cpf: string;
   passwordHash: string;
   musicUrl?: string | null;
