@@ -1,24 +1,19 @@
 import { z } from "zod";
 import { ValidationError } from "../errors/AppError.js";
+import {
+  DEFAULT_PAGE_SIZE,
+  MAX_PAGE_SIZE,
+  calculateSkip,
+  type Pagination,
+} from "../shared/domain.js";
+
+export type { Pagination, PaginatedResult } from "../shared/domain.js";
+export { toPaginated } from "../shared/domain.js";
 
 export const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(100).default(20),
+  limit: z.coerce.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
 });
-
-export interface Pagination {
-  page: number;
-  limit: number;
-  skip: number;
-}
-
-export interface PaginatedResult<T> {
-  data: T[];
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
 
 export function parsePagination(query: unknown): Pagination {
   const result = paginationSchema.safeParse(query ?? {});
@@ -31,19 +26,5 @@ export function parsePagination(query: unknown): Pagination {
 
   const { page, limit } = result.data;
 
-  return { page, limit, skip: (page - 1) * limit };
-}
-
-export function toPaginated<T>(
-  data: T[],
-  total: number,
-  pagination: Pagination,
-): PaginatedResult<T> {
-  return {
-    data,
-    page: pagination.page,
-    limit: pagination.limit,
-    total,
-    totalPages: Math.ceil(total / pagination.limit),
-  };
+  return { page, limit, skip: calculateSkip(page, limit) };
 }
