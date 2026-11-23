@@ -4,7 +4,6 @@ import { LayoutGrid, List } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export type ViewMode = "table" | "cards";
-export type ContentView = ViewMode;
 
 interface ViewToggleProps {
   value: ViewMode;

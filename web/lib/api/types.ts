@@ -40,10 +40,6 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  token: string;
-}
-
 export interface UpdateProfileRequest {
   firstName: string;
   lastName: string;
@@ -189,15 +185,4 @@ export interface UpdateStudyCycleRequest {
 export interface ReorderStudyCyclesRequest {
   priority: CyclePriority;
   ids: number[];
-}
-
-export interface StudyCycleContent {
-  contentId: number;
-  position: number;
-  minutesPerSession: number;
-}
-
-export interface AdvanceCycleResponse {
-  cycle: StudyCycle;
-  nextContent: StudyCycleContent | null;
 }

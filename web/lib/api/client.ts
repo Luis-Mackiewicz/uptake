@@ -1,6 +1,6 @@
 import type { ApiErrorPayload } from "@/lib/api/types";
 
-export const TOKEN_KEY = "uptake:token";
+const TOKEN_KEY = "uptake:token";
 export const TOKEN_EVENT = "uptake:token-change";
 export const UNAUTHORIZED_EVENT = "uptake:unauthorized";
 const API_PREFIX = "/api";

@@ -7,7 +7,7 @@ import { playPomodoroChime, unlockPomodoroChime } from "./use-pomodoro-chime";
 
 export type PomodoroPhase = "focus" | "shortBreak" | "longBreak";
 
-export interface PomodoroSettings {
+interface PomodoroSettings {
   focusMinutes: number;
   shortBreakMinutes: number;
   longBreakMinutes: number;
@@ -19,14 +19,10 @@ interface PomodoroContextValue {
   remainingSeconds: number;
   totalSeconds: number;
   focusCount: number;
-  settings: PomodoroSettings;
   start: () => void;
   pause: () => void;
   selectPhase: (phase: PomodoroPhase) => void;
   setPhaseDuration: (phase: PomodoroPhase, seconds: number) => void;
-  skip: () => void;
-  reset: () => void;
-  updateSettings: (settings: PomodoroSettings) => void;
 }
 
 export const pomodoroPhaseLimits: Record<PomodoroPhase, number> = {
@@ -35,18 +31,13 @@ export const pomodoroPhaseLimits: Record<PomodoroPhase, number> = {
   longBreak: 120,
 };
 
-export const pomodoroPhaseLabels: Record<PomodoroPhase, string> = {
-  focus: "Foco",
-  shortBreak: "Pausa curta",
-  longBreak: "Pausa longa",
-};
-
 const defaultSettings: PomodoroSettings = {
   focusMinutes: 25,
   shortBreakMinutes: 5,
   longBreakMinutes: 15,
 };
 
+const settings = defaultSettings;
 const longBreakEvery = 4;
 const PomodoroContext = createContext<PomodoroContextValue | null>(null);
 
@@ -89,7 +80,6 @@ function nextState(
 
 export function PomodoroProvider({ children }: { children: ReactNode }) {
   const { notify } = useToast();
-  const [settings, setSettings] = useState<PomodoroSettings>(defaultSettings);
   const [customSeconds, setCustomSeconds] = useState<Partial<Record<PomodoroPhase, number>>>({});
   const [phase, setPhase] = useState<PomodoroPhase>("focus");
   const [running, setRunning] = useState(false);
@@ -126,7 +116,7 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
     setFocusCount(next.focusCount);
     setRemainingSeconds(next.remainingSeconds);
     signal(message);
-  }, [customSeconds, focusCount, phase, settings, signal]);
+  }, [customSeconds, focusCount, phase, signal]);
 
   useEffect(() => {
     if (!running || endsAtRef.current === null) return;
@@ -179,7 +169,7 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
       setPhase(target);
       setRemainingSeconds(durationFor(target, settings, customSeconds));
     },
-    [customSeconds, settings],
+    [customSeconds],
   );
 
   const setPhaseDuration = useCallback(
@@ -193,35 +183,6 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
     [phase],
   );
 
-  const skip = useCallback(() => {
-    endsAtRef.current = null;
-    completionRef.current = null;
-    setRunning(false);
-
-    const next = nextState(phase, focusCount, settings, customSeconds, false);
-    setPhase(next.phase);
-    setFocusCount(next.focusCount);
-    setRemainingSeconds(next.remainingSeconds);
-  }, [customSeconds, focusCount, phase, settings]);
-
-  const reset = useCallback(() => {
-    endsAtRef.current = null;
-    completionRef.current = null;
-    setRunning(false);
-    setRemainingSeconds(durationFor(phase, settings, customSeconds));
-  }, [customSeconds, phase, settings]);
-
-  const updateSettings = useCallback((next: PomodoroSettings) => {
-    endsAtRef.current = null;
-    completionRef.current = null;
-    setRunning(false);
-    setSettings(next);
-    setCustomSeconds({});
-    setPhase("focus");
-    setFocusCount(0);
-    setRemainingSeconds(durationFor("focus", next));
-  }, []);
-
   const value = useMemo(
     () => ({
       phase,
@@ -229,14 +190,10 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
       remainingSeconds,
       totalSeconds: durationFor(phase, settings, customSeconds),
       focusCount,
-      settings,
       start,
       pause,
       selectPhase,
       setPhaseDuration,
-      skip,
-      reset,
-      updateSettings,
     }),
     [
       customSeconds,
@@ -244,14 +201,10 @@ export function PomodoroProvider({ children }: { children: ReactNode }) {
       pause,
       phase,
       remainingSeconds,
-      reset,
       running,
       selectPhase,
       setPhaseDuration,
-      settings,
-      skip,
       start,
-      updateSettings,
     ],
   );
 

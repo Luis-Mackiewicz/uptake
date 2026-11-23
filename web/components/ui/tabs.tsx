@@ -3,7 +3,7 @@
 import type { KeyboardEvent, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
-export interface TabItem {
+interface TabItem {
   id: string;
   label: string;
   hint?: string;

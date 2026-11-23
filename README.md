@@ -77,6 +77,6 @@ npm run build
 - Exames devolvem `contentIds` e `noteIds` nas respostas. Notas só podem ser vinculadas a conteúdos selecionados na prova.
 - Ciclos pertencem a uma prova e aparecem em um kanban em `/exams`, com colunas fixas Alta, Média e Baixa. `/cycles` redireciona para `/exams`.
 - Usuários usam `firstName` e `lastName`; a migração divide o nome antigo no primeiro espaço para preservar os dados.
-- A sidebar mostra uma árvore de arquivos `grupo/ → conteúdo/ → nota.md`, com criar/renomear/excluir direto na árvore. A rota `/notes` continua disponível para criar e abrir notas.
+- A sidebar mostra uma árvore de arquivos `grupo/ → conteúdo/ → nota.md`, com criar/renomear/excluir direto na árvore. Notas são criadas pela sidebar ou pela pasta do conteúdo; `/notes` redireciona para `/study-groups`.
 - Notas abrem em abas no editor de `/study-groups/{groupId}/contents/{contentId}/notes/{noteId}`, com editor CodeMirror, toolbar Markdown, preview Markdown e salvamento manual por `Ctrl/Cmd+S`. A lista da pasta permite arrastar para reordenar via `PATCH /notes/reorder`.
 - Pomodoro é um widget local na sidebar com modos `Pomodoro`, `Break` e `Long break`, relógio editável e botão `Start/Pausar`: 25/5/15 min por padrão, pausa longa a cada 4 focos, sinal com toast e beep; não registra histórico.

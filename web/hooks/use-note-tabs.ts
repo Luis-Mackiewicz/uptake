@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import type { Note } from "@/lib/api/types";
 
-export type NoteTabStatus = "idle" | "loading" | "saving" | "error";
+type NoteTabStatus = "idle" | "loading" | "saving" | "error";
 
 export interface NoteTab {
   id: number;
