@@ -67,7 +67,6 @@ erDiagram
         int id PK
         string name
         string description "optional"
-        string color "optional"
         int userId FK
         datetime deletedAt "optional"
     }
