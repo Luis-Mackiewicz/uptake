@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { NoteService } from "../src/modules/note/service.js";
-import type { CreateNoteData, UpdateNoteData } from "../src/modules/note/schemas.js";
+import {
+  listNotesQuerySchema,
+  type CreateNoteData,
+  type UpdateNoteData,
+} from "../src/modules/note/schemas.js";
 import { ValidationError } from "../src/shared/errors.js";
+import { toCrudPagination } from "../src/shared/crud.service.js";
 
 type NoteRepository = NonNullable<ConstructorParameters<typeof NoteService>[0]>;
 type NoteRecord = NonNullable<Awaited<ReturnType<NoteRepository["findById"]>>>;
@@ -19,6 +24,7 @@ function makeNote(data: CreateNoteData | UpdateNoteData): NoteRecord {
     mimeType: data.mimeType,
     sizeBytes: data.sizeBytes,
     contentId: data.contentId,
+    position: 1,
     userId: 1,
     createdAt: now,
     updatedAt: now,
@@ -27,14 +33,27 @@ function makeNote(data: CreateNoteData | UpdateNoteData): NoteRecord {
 
 function createService() {
   let persisted: CreateNoteData | UpdateNoteData | undefined;
+  let findManyContentId: number | undefined;
+  let reorderedIds: number[] | undefined;
 
   const repository: NoteRepository = {
     async findById() {
       return null;
     },
-    async findMany() {
+    async findMany(_userId, _pagination, contentId) {
+      findManyContentId = contentId;
       return { data: [], total: 0 };
     },
+    async findActiveIds() {
+      return [10, 11, 12];
+    },
+    async findNextPosition() {
+      return 4;
+    },
+    async reorder(_userId, _contentId, ids) {
+      reorderedIds = ids;
+    },
+    async normalizePositions() {},
     async create(_userId, data) {
       persisted = data;
       return makeNote(data);
@@ -68,7 +87,12 @@ function createService() {
     },
   };
 
-  return { service: new NoteService(repository, contents), persisted: () => persisted };
+  return {
+    service: new NoteService(repository, contents),
+    persisted: () => persisted,
+    findManyContentId: () => findManyContentId,
+    reorderedIds: () => reorderedIds,
+  };
 }
 
 test("note service calculates sizeBytes from markdown content", async () => {
@@ -100,4 +124,26 @@ test("note service rejects content larger than 2 MB", async () => {
     }),
     ValidationError,
   );
+});
+
+test("note service filters notes by content", async () => {
+  const { service, findManyContentId } = createService();
+
+  const result = await service.findAll(1, toCrudPagination(1, 20), 1);
+
+  assert.equal(result.total, 0);
+  assert.equal(findManyContentId(), 1);
+});
+
+test("note service merges a partial reorder with the remaining ids", async () => {
+  const { service, reorderedIds } = createService();
+
+  await service.reorder(1, 1, [11, 10]);
+
+  assert.deepEqual(reorderedIds(), [11, 10, 12]);
+});
+
+test("list notes query coerces contentId and rejects zero", () => {
+  assert.equal(listNotesQuerySchema.parse({ contentId: "3" }).contentId, 3);
+  assert.equal(listNotesQuerySchema.safeParse({ contentId: 0 }).success, false);
 });

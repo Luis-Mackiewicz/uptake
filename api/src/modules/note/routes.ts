@@ -1,11 +1,14 @@
 import type { FastifyInstance } from "fastify";
-import {
-  idParamSchema,
-  parsePagination,
-} from "../../shared/schemas.js";
+import { toCrudPagination } from "../../shared/crud.service.js";
+import { idParamSchema } from "../../shared/schemas.js";
 import { privatePlugin } from "../../shared/routes.js";
 import { parseSchema } from "../../shared/validation.js";
-import { createNoteSchema, updateNoteSchema } from "./schemas.js";
+import {
+  createNoteSchema,
+  listNotesQuerySchema,
+  reorderNotesSchema,
+  updateNoteSchema,
+} from "./schemas.js";
 import { noteService } from "./service.js";
 
 export async function noteRoutes(app: FastifyInstance) {
@@ -17,8 +20,15 @@ export async function noteRoutes(app: FastifyInstance) {
     });
 
     privateApp.get("/notes", async (request) => {
-      const pagination = parsePagination(request.query);
-      return noteService.findAll(request.userId, pagination);
+      const query = parseSchema(listNotesQuerySchema, request.query);
+      const pagination = toCrudPagination(query.page, query.limit);
+      return noteService.findAll(request.userId, pagination, query.contentId);
+    });
+
+    privateApp.patch("/notes/reorder", async (request) => {
+      const { contentId, ids } = parseSchema(reorderNotesSchema, request.body);
+      await noteService.reorder(request.userId, contentId, ids);
+      return { ids };
     });
 
     privateApp.get("/notes/:id", async (request) => {

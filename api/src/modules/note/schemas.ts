@@ -1,4 +1,9 @@
 import { z } from "zod";
+import { paginationSchema } from "../../shared/schemas.js";
+
+export const listNotesQuerySchema = paginationSchema.extend({
+  contentId: z.coerce.number().int().positive().optional(),
+});
 
 export const createNoteSchema = z
   .object({
@@ -29,6 +34,13 @@ export const createNoteSchema = z
   .strict();
 
 export const updateNoteSchema = createNoteSchema;
+
+export const reorderNotesSchema = z
+  .object({
+    contentId: z.coerce.number().int().positive(),
+    ids: z.array(z.coerce.number().int().positive()).min(1),
+  })
+  .strict();
 
 export type CreateNoteData = z.infer<typeof createNoteSchema>;
 export type UpdateNoteData = z.infer<typeof updateNoteSchema>;
