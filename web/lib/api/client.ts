@@ -1,3 +1,4 @@
+import { GENERIC_ERROR_MESSAGE, STATUS_MESSAGES } from "@/lib/api/messages";
 import type { ApiErrorPayload } from "@/lib/api/types";
 
 const TOKEN_KEY = "uptake:token";
@@ -73,7 +74,11 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       if (typeof window !== "undefined") window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
     }
 
-    throw new ApiRequestError(response.status, payload?.error ?? "Erro inesperado", payload?.issues);
+    const message =
+      response.status >= 500
+        ? GENERIC_ERROR_MESSAGE
+        : payload?.error ?? STATUS_MESSAGES[response.status] ?? "Erro inesperado";
+    throw new ApiRequestError(response.status, message, payload?.issues);
   }
 
   if (response.status === 204) return undefined as T;

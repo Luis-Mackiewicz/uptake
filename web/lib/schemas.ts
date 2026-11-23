@@ -1,8 +1,11 @@
 import { z } from "zod";
+import { CYCLE_PRIORITIES } from "@/lib/api/types";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_NOTE_BYTES = 2 * 1024 * 1024;
+const MAX_NAME_LENGTH = 191;
+const MAX_MUSIC_URL_LENGTH = 500;
 
 function isValidCpf(value: string) {
   const digits = value.replace(/\D/g, "");
@@ -18,10 +21,6 @@ function isValidCpf(value: string) {
   };
 
   return calculateDigit(9) === Number(digits[9]) && calculateDigit(10) === Number(digits[10]);
-}
-
-function isValidPassword(value: string) {
-  return value.length >= 8 && /[A-Z]/.test(value) && /[a-z]/.test(value) && /\d/.test(value);
 }
 
 function isValidUrl(value: string) {
@@ -43,13 +42,32 @@ function isValidPositiveId(value: number) {
   return Number.isInteger(value) && value > 0;
 }
 
+function isValidPositiveIdString(value: string) {
+  return isValidPositiveId(Number(value));
+}
+
+function idListSchema(maxMessage: string, duplicateMessage: string) {
+  return z
+    .array(z.string().refine(isValidPositiveIdString, "ID inválido"))
+    .max(50, maxMessage)
+    .refine((values) => new Set(values).size === values.length, duplicateMessage);
+}
+
 function hasNoSlash(value: string) {
   return !value.includes("/") && !value.includes("\\");
 }
 
 const emailSchema = z.string().trim().min(1, "Informe seu e-mail").regex(EMAIL_PATTERN, "E-mail inválido");
-const cpfSchema = z.string().refine(isValidCpf, "CPF inválido");
-const strongPasswordSchema = z.string().refine(isValidPassword, "Use 8+ caracteres com maiúscula, minúscula e número");
+const cpfSchema = z
+  .string()
+  .refine((value) => value.replace(/\D/g, "").length === 11, "CPF deve ter 11 dígitos")
+  .refine(isValidCpf, "CPF inválido");
+const strongPasswordSchema = z
+  .string()
+  .min(8, "Use no mínimo 8 caracteres")
+  .regex(/[A-Z]/, "Inclua uma letra maiúscula")
+  .regex(/[a-z]/, "Inclua uma letra minúscula")
+  .regex(/\d/, "Inclua um número");
 const confirmPasswordSchema = z.string();
 
 export const loginFormSchema = z.object({
@@ -60,8 +78,8 @@ export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export const registerFormSchema = z
   .object({
-    firstName: z.string().trim().min(1, "Informe seu nome"),
-    lastName: z.string().trim().min(1, "Informe seu sobrenome"),
+    firstName: z.string().trim().min(1, "Informe seu nome").max(MAX_NAME_LENGTH, "Máximo de 191 caracteres"),
+    lastName: z.string().trim().min(1, "Informe seu sobrenome").max(MAX_NAME_LENGTH, "Máximo de 191 caracteres"),
     email: emailSchema,
     cpf: cpfSchema,
     password: strongPasswordSchema,
@@ -75,14 +93,15 @@ export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 export const profileFormSchema = z
   .object({
-    firstName: z.string().trim().min(1, "Informe seu nome"),
-    lastName: z.string().trim().min(1, "Informe seu sobrenome"),
+    firstName: z.string().trim().min(1, "Informe seu nome").max(MAX_NAME_LENGTH, "Máximo de 191 caracteres"),
+    lastName: z.string().trim().min(1, "Informe seu sobrenome").max(MAX_NAME_LENGTH, "Máximo de 191 caracteres"),
     cpf: cpfSchema,
     password: strongPasswordSchema,
     confirmPassword: confirmPasswordSchema,
     musicUrl: z
       .string()
       .trim()
+      .max(MAX_MUSIC_URL_LENGTH, "Máximo de 500 caracteres")
       .refine((value) => value.length === 0 || isValidUrl(value), "URL inválida"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -108,7 +127,8 @@ export const noteNameSchema = z
   .trim()
   .min(1, "Informe o nome")
   .max(251, "Máximo de 251 caracteres")
-  .refine(hasNoSlash, "Não use barras no nome");
+  .refine(hasNoSlash, "Não use barras no nome")
+  .refine((value) => value.replace(/\.md$/i, "").length > 0, "Informe o nome");
 
 export const noteFormSchema = z.object({ name: noteNameSchema });
 export type NoteFormValues = z.infer<typeof noteFormSchema>;
@@ -128,17 +148,19 @@ export const examFormSchema = z.object({
   studyGroupId: z
     .string()
     .refine((value) => !value || isValidPositiveId(Number(value)), "Grupo inválido"),
-  contentIds: z.array(z.string()).max(50, "Máximo de 50 conteúdos"),
-  noteIds: z.array(z.string()).max(50, "Máximo de 50 notas"),
+  contentIds: idListSchema("Máximo de 50 conteúdos", "Conteúdos não podem se repetir"),
+  noteIds: idListSchema("Máximo de 50 notas", "Notas não podem se repetir"),
 });
 export type ExamFormValues = z.infer<typeof examFormSchema>;
 
 export const cycleFormSchema = z.object({
   name: z.string().trim().min(1, "Informe o nome").max(120, "Máximo de 120 caracteres"),
   active: z.boolean(),
-  studyGroupId: z.string().min(1, "Selecione um grupo"),
-  priority: z.string(),
-  contentIds: z.array(z.string()).max(50, "Máximo de 50 conteúdos"),
+  studyGroupId: z.string().refine(isValidPositiveIdString, "Grupo inválido"),
+  priority: z
+    .string()
+    .refine((value) => CYCLE_PRIORITIES.some((item) => String(item.value) === value), "Prioridade inválida"),
+  contentIds: idListSchema("Máximo de 50 conteúdos", "Conteúdos não podem se repetir"),
 });
 export type CycleFormValues = z.infer<typeof cycleFormSchema>;
 

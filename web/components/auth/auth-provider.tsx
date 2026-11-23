@@ -124,13 +124,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [applyToken],
   );
 
-  const register = useCallback(
-    async (data: RegisterRequest) => {
-      await api.post<User>("/auth/register", data);
-      await login({ email: data.email, password: data.password });
-    },
-    [login],
-  );
+  const register = useCallback(async (data: RegisterRequest) => {
+    await api.post<User>("/auth/register", data);
+  }, []);
 
   const updateProfile = useCallback(async (data: UpdateProfileRequest) => {
     const currentUser = await api.patch<User>("/auth/me", data);

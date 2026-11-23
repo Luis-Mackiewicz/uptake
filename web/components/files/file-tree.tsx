@@ -17,7 +17,9 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { ApiRequestError, api } from "@/lib/api/client";
+import { api } from "@/lib/api/client";
+import { friendlyApiMessage } from "@/lib/api/errors";
+import { notifyResourceChanged } from "@/lib/events";
 import type {
   Content,
   CreateContentRequest,
@@ -77,8 +79,50 @@ function nameLabel(action: FileTreeAction) {
   return action.type.includes("content") ? "Título" : "Nome";
 }
 
+function TreePagination({
+  label,
+  page,
+  totalPages,
+  total,
+  setPage,
+}: {
+  label: string;
+  page: number;
+  totalPages: number;
+  total: number;
+  setPage: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center justify-between gap-1 px-3 py-1 text-[11px] text-neutral-500">
+      <span className="truncate">
+        {label}: {page}/{totalPages} · {total}
+      </span>
+      <span className="flex shrink-0 gap-1">
+        <button
+          type="button"
+          className="rounded px-1 py-0.5 hover:bg-neutral-100 hover:text-neutral-900 disabled:opacity-40"
+          disabled={page <= 1}
+          onClick={() => setPage(page - 1)}
+        >
+          Anterior
+        </button>
+        <button
+          type="button"
+          className="rounded px-1 py-0.5 hover:bg-neutral-100 hover:text-neutral-900 disabled:opacity-40"
+          disabled={page >= totalPages}
+          onClick={() => setPage(page + 1)}
+        >
+          Próxima
+        </button>
+      </span>
+    </div>
+  );
+}
+
 export function FileTree({ className }: { className?: string }) {
-  const { tree, loading, reload } = useFileTree();
+  const { tree, loading, reload, groups, contents, notes } = useFileTree();
   const { openNote, closeTab } = useNoteTabsContext();
   const { notify } = useToast();
   const router = useRouter();
@@ -117,28 +161,35 @@ export function FileTree({ className }: { className?: string }) {
   };
 
   const openAction = (next: FileTreeAction) => {
+    if (next.type === "create-group") {
+      router.push("/study-groups/new");
+      return;
+    }
+    if (next.type === "rename-group") {
+      router.push(`/study-groups/${next.group.id}/edit`);
+      return;
+    }
+    if (next.type === "create-content") {
+      router.push(`/study-groups/${next.group.id}/contents/new`);
+      return;
+    }
+    if (next.type === "rename-content") {
+      router.push(`/study-groups/${next.group.id}/contents/${next.content.id}/edit`);
+      return;
+    }
+
     const existingName =
-      next.type === "rename-group"
-        ? next.group.name
-        : next.type === "rename-content"
-          ? next.content.title
-          : next.type === "rename-note"
-            ? next.note.fileName
-            : next.type === "delete-group"
-              ? next.group.name
-              : next.type === "delete-content"
-                ? next.content.title
-                : next.type === "delete-note"
-                  ? next.note.fileName
-                  : "";
-    const existingDescription =
-      next.type === "rename-content"
-        ? next.content.description ?? ""
-        : next.type === "rename-group"
-          ? next.group.description ?? ""
-          : "";
+      next.type === "rename-note"
+        ? next.note.fileName
+        : next.type === "delete-group"
+          ? next.group.name
+          : next.type === "delete-content"
+            ? next.content.title
+            : next.type === "delete-note"
+              ? next.note.fileName
+              : "";
     setAction(next);
-    reset({ name: existingName, description: existingDescription });
+    reset({ name: existingName, description: "" });
   };
 
   const handleDelete = async () => {
@@ -163,13 +214,14 @@ export function FileTree({ className }: { className?: string }) {
         redirectHref = action.content.href;
       }
       reload();
+      notifyResourceChanged();
       setAction(null);
       notify("Item removido", "success");
       if (pathname === targetHref || pathname.startsWith(`${targetHref}/`)) {
         router.push(redirectHref);
       }
     } catch (error) {
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível remover", "error");
+      notify(friendlyApiMessage(error, "Não foi possível remover"), "error");
     } finally {
       setSaving(false);
     }
@@ -237,6 +289,7 @@ export function FileTree({ className }: { className?: string }) {
       setAction(null);
       reset(emptyForm);
       reload();
+      notifyResourceChanged();
       notify("Alterações salvas", "success");
     } catch (error) {
       applyApiIssues(error, setError, {
@@ -245,7 +298,7 @@ export function FileTree({ className }: { className?: string }) {
         fileName: "name",
         description: "description",
       });
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar", "error");
+      notify(friendlyApiMessage(error, "Não foi possível salvar"), "error");
     } finally {
       setSaving(false);
     }
@@ -269,6 +322,9 @@ export function FileTree({ className }: { className?: string }) {
           <Plus size={14} aria-hidden />
         </button>
       </div>
+      <TreePagination label="Grupos" {...groups} />
+      <TreePagination label="Conteúdos" {...contents} />
+      <TreePagination label="Notas" {...notes} />
       {loading ? (
         <p className="px-3 py-2 text-xs text-neutral-500">Carregando arquivos...</p>
       ) : tree.length ? (

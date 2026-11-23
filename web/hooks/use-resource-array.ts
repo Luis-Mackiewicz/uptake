@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { ApiRequestError, api } from "@/lib/api/client";
+import { api } from "@/lib/api/client";
+import { friendlyApiMessage } from "@/lib/api/errors";
 
 interface PaginatedArray<T> {
   data: T[];
@@ -27,11 +28,7 @@ export function useResourceArray<T>(path: string | null) {
         setLoadedPath(path);
       } catch (caught) {
         if (!active) return;
-        setError(
-          caught instanceof ApiRequestError
-            ? caught.message
-            : "Não foi possível carregar os itens",
-        );
+        setError(friendlyApiMessage(caught, "Não foi possível carregar os itens"));
         setData([]);
         setLoadedPath(path);
       }

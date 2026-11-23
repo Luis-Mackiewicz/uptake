@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api/client";
+import { friendlyApiMessage } from "@/lib/api/errors";
 import type { Page } from "@/lib/api/types";
 import { useToast } from "@/components/ui/toast";
 
@@ -11,6 +12,7 @@ export function useResourceList<T>(path: string, params: QueryParams = {}) {
   const { notify } = useToast();
   const paramsKey = JSON.stringify(params);
   const [data, setData] = useState<Page<T> | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -19,12 +21,15 @@ export function useResourceList<T>(path: string, params: QueryParams = {}) {
 
     const load = async () => {
       try {
+        setError(null);
         const queryParams = JSON.parse(paramsKey) as QueryParams;
         const result = await api.get<Page<T>>(path, { ...queryParams, page });
         if (active) setData(result);
-      } catch {
+      } catch (caught) {
         if (active) {
-          notify("Não foi possível carregar os dados", "error");
+          const message = friendlyApiMessage(caught, "Não foi possível carregar os dados");
+          setError(message);
+          notify(message, "error");
           setData({ data: [], page, limit: 20, total: 0, totalPages: 0 });
         }
       }
@@ -40,5 +45,5 @@ export function useResourceList<T>(path: string, params: QueryParams = {}) {
     setReloadKey((current) => current + 1);
   }, []);
 
-  return { data, setData, page, setPage, reload, loading: data === null };
+  return { data, error, setData, page, setPage, reload, loading: data === null };
 }

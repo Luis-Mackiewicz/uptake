@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
-import { ApiRequestError } from "@/lib/api/client";
+import { friendlyApiMessage } from "@/lib/api/errors";
 import { applyApiIssues } from "@/lib/form";
 import { registerFormSchema } from "@/lib/schemas";
 import type { RegisterFormValues } from "@/lib/schemas";
@@ -45,11 +45,11 @@ export default function RegisterPage() {
         cpf: values.cpf.replace(/\D/g, ""),
         password: values.password,
       });
-      notify("Conta criada com sucesso", "success");
-      router.replace("/dashboard");
+      notify("Conta criada. Faça login para continuar.", "success");
+      router.replace("/login");
     } catch (error) {
       applyApiIssues(error, setError);
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível cadastrar", "error");
+      notify(friendlyApiMessage(error, "Não foi possível cadastrar"), "error");
     }
   };
 

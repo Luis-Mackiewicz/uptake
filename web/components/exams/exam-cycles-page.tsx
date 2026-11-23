@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CalendarDays, FolderOpen, MapPin, Plus, RefreshCw } from "lucide-react";
-import { CycleFormDialog } from "@/components/exams/cycle-form-dialog";
 import { ExamKanban } from "@/components/exams/exam-kanban";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -12,13 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Pagination } from "@/components/ui/pagination";
 import { useToast } from "@/components/ui/toast";
-import { useResourceArray } from "@/hooks/use-resource-array";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { ApiRequestError, api } from "@/lib/api/client";
+import { friendlyApiMessage } from "@/lib/api/errors";
 import type {
   Content,
-  CreateStudyCycleRequest,
   CyclePriority,
   Exam,
   MessageResponse,
@@ -41,18 +40,16 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
   const { notify } = useToast();
   const [exam, setExam] = useState<Exam | null>(null);
   const [examError, setExamError] = useState<string | null>(null);
-  const [cycleDialogOpen, setCycleDialogOpen] = useState(false);
-  const [editingCycle, setEditingCycle] = useState<StudyCycle | null>(null);
   const [cycleSaving, setCycleSaving] = useState(false);
   const [deletingCycle, setDeletingCycle] = useState<StudyCycle | null>(null);
 
   const groupsQuery = useResourceList<StudyGroup>("/study-groups", { limit: 100 });
   const contentsQuery = useResourceList<Content>("/contents", { limit: 100 });
-  const cyclesQuery = useResourceArray<StudyCycle>(`/exams/${examId}/cycles`);
+  const cyclesQuery = useResourceList<StudyCycle>(`/exams/${examId}/cycles`);
 
   const groups = groupsQuery.data?.data ?? [];
   const contents = contentsQuery.data?.data ?? [];
-  const cycles = cyclesQuery.data ?? [];
+  const cycles = cyclesQuery.data?.data ?? [];
 
   useEffect(() => {
     let active = true;
@@ -63,8 +60,7 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
         if (active) setExam(result);
       } catch (error) {
         if (!active) return;
-        const message =
-          error instanceof ApiRequestError ? error.message : "Não foi possível carregar a prova";
+        const message = friendlyApiMessage(error, "Não foi possível carregar a prova");
         setExamError(message);
         notify(message, "error");
         if (error instanceof ApiRequestError && error.status === 404) router.replace("/exams");
@@ -78,31 +74,11 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
   }, [examId, notify, router]);
 
   const openCycleCreate = () => {
-    setEditingCycle(null);
-    setCycleDialogOpen(true);
+    router.push(`/exams/${examId}/cycles/new`);
   };
 
   const openCycleEdit = (cycle: StudyCycle) => {
-    setEditingCycle(cycle);
-    setCycleDialogOpen(true);
-  };
-
-  const handleCycleSave = async (payload: CreateStudyCycleRequest) => {
-    setCycleSaving(true);
-    try {
-      if (editingCycle) {
-        await api.patch<StudyCycle>(`/exams/${examId}/cycles/${editingCycle.id}`, payload);
-      } else {
-        await api.post<StudyCycle>(`/exams/${examId}/cycles`, payload);
-      }
-      notify(editingCycle ? "Ciclo atualizado" : "Ciclo criado", "success");
-      setCycleDialogOpen(false);
-      cyclesQuery.reload();
-    } catch (error) {
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar", "error");
-    } finally {
-      setCycleSaving(false);
-    }
+    router.push(`/exams/${examId}/cycles/${cycle.id}/edit`);
   };
 
   const handleCycleDelete = async () => {
@@ -114,7 +90,7 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
       setDeletingCycle(null);
       cyclesQuery.reload();
     } catch (error) {
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível remover", "error");
+      notify(friendlyApiMessage(error, "Não foi possível remover"), "error");
     } finally {
       setCycleSaving(false);
     }
@@ -130,7 +106,7 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
       notify(content ? `Próximo conteúdo: ${content.title}` : "Sem conteúdos ativos", "info");
       cyclesQuery.reload();
     } catch (error) {
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível avançar", "error");
+      notify(friendlyApiMessage(error, "Não foi possível avançar"), "error");
     } finally {
       setCycleSaving(false);
     }
@@ -143,7 +119,7 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
       await api.post(`/exams/${examId}/cycles/reorder`, payload);
       cyclesQuery.reload();
     } catch (error) {
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível reordenar", "error");
+      notify(friendlyApiMessage(error, "Não foi possível reordenar"), "error");
     } finally {
       setCycleSaving(false);
     }
@@ -162,7 +138,7 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
       await api.patch(`/exams/${examId}/cycles/${cycle.id}`, payload);
       cyclesQuery.reload();
     } catch (error) {
-      notify(error instanceof ApiRequestError ? error.message : "Não foi possível mover", "error");
+      notify(friendlyApiMessage(error, "Não foi possível mover"), "error");
     } finally {
       setCycleSaving(false);
     }
@@ -272,16 +248,16 @@ export function ExamCyclesPage({ examId }: ExamCyclesPageProps) {
         />
       )}
 
-      <CycleFormDialog
-        key={`cycle-${cycleDialogOpen}-${editingCycle?.id ?? "new"}-${groups.length}`}
-        open={cycleDialogOpen}
-        cycle={editingCycle}
-        groups={groups}
-        contents={contents}
-        saving={cycleSaving}
-        onClose={() => setCycleDialogOpen(false)}
-        onSave={handleCycleSave}
-      />
+      {cyclesQuery.data ? (
+        <div className="mt-4">
+          <Pagination
+            page={cyclesQuery.page}
+            totalPages={cyclesQuery.data.totalPages}
+            total={cyclesQuery.data.total}
+            onPageChange={cyclesQuery.setPage}
+          />
+        </div>
+      ) : null}
 
       <ConfirmDialog
         open={Boolean(deletingCycle)}

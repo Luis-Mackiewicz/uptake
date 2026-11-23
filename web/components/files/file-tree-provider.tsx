@@ -1,9 +1,10 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo } from "react";
 import type { ReactNode } from "react";
 import { useResourceList } from "@/hooks/use-resource-list";
-import type { Content, Note, StudyGroup } from "@/lib/api/types";
+import type { Content, Note, Page, StudyGroup } from "@/lib/api/types";
+import { RESOURCE_CHANGED_EVENT } from "@/lib/events";
 
 export interface FileTreeNote {
   id: number;
@@ -31,10 +32,20 @@ export interface FileTreeGroup {
   contents: FileTreeContent[];
 }
 
+interface FileTreePagination {
+  page: number;
+  totalPages: number;
+  total: number;
+  setPage: (page: number) => void;
+}
+
 interface FileTreeContextValue {
   tree: FileTreeGroup[];
   loading: boolean;
   reload: () => void;
+  groups: FileTreePagination;
+  contents: FileTreePagination;
+  notes: FileTreePagination;
 }
 
 const FileTreeContext = createContext<FileTreeContextValue | null>(null);
@@ -83,13 +94,38 @@ function buildTree(groups: StudyGroup[], contents: Content[], notes: Note[]): Fi
     });
 }
 
+function toPagination(query: {
+  page: number;
+  data: Page<unknown> | null;
+  setPage: (page: number) => void;
+}): FileTreePagination {
+  return {
+    page: query.page,
+    totalPages: query.data?.totalPages ?? 0,
+    total: query.data?.total ?? 0,
+    setPage: query.setPage,
+  };
+}
+
 export function FileTreeProvider({ children }: { children: ReactNode }) {
-  const groupsQuery = useResourceList<StudyGroup>("/study-groups", { limit: 100 });
-  const contentsQuery = useResourceList<Content>("/contents", { limit: 100 });
-  const notesQuery = useResourceList<Note>("/notes", { limit: 100 });
+  const groupsQuery = useResourceList<StudyGroup>("/study-groups");
+  const contentsQuery = useResourceList<Content>("/contents");
+  const notesQuery = useResourceList<Note>("/notes");
+
   const reloadGroups = groupsQuery.reload;
   const reloadContents = contentsQuery.reload;
   const reloadNotes = notesQuery.reload;
+
+  const reload = useCallback(() => {
+    reloadGroups();
+    reloadContents();
+    reloadNotes();
+  }, [reloadGroups, reloadContents, reloadNotes]);
+
+  useEffect(() => {
+    window.addEventListener(RESOURCE_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(RESOURCE_CHANGED_EVENT, reload);
+  }, [reload]);
 
   const tree = useMemo(
     () =>
@@ -101,19 +137,16 @@ export function FileTreeProvider({ children }: { children: ReactNode }) {
     [groupsQuery.data, contentsQuery.data, notesQuery.data],
   );
 
-  const reload = useCallback(() => {
-    reloadGroups();
-    reloadContents();
-    reloadNotes();
-  }, [reloadGroups, reloadContents, reloadNotes]);
-
   const value = useMemo<FileTreeContextValue>(
     () => ({
       tree,
       loading: groupsQuery.loading || contentsQuery.loading || notesQuery.loading,
       reload,
+      groups: toPagination(groupsQuery),
+      contents: toPagination(contentsQuery),
+      notes: toPagination(notesQuery),
     }),
-    [tree, groupsQuery.loading, contentsQuery.loading, notesQuery.loading, reload],
+    [tree, groupsQuery, contentsQuery, notesQuery, reload],
   );
 
   return <FileTreeContext.Provider value={value}>{children}</FileTreeContext.Provider>;
