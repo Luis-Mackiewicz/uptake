@@ -162,7 +162,7 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Prioridade:** Must
 **Telas:** #10 (e tela de formulário de cadastro/edição, ver [pergunta em aberto 2](#11-riscos-premissas-e-perguntas-em-aberto))
 **Descrição (proposta):** o usuário organiza o estudo em grupos por matéria (ex.: História, Matemática).
-**Critérios:** segue RT-01 a RT-04.
+**Critérios:** segue RT-01 a RT-04. A listagem oferece visão em tabela ou cards, com preferência salva por tela no navegador; ao clicar em um grupo, a aplicação abre `/study-groups/:groupId/contents`.
 
 ### RF-05 CRUD de Conteúdos
 
@@ -176,14 +176,14 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Prioridade:** Must
 **Telas:** #9
 **Descrição (proposta):** o usuário anexa e consulta arquivos ligados a um conteúdo.
-**Critérios:** segue RT-01 a RT-04. O arquivo pertence a um conteúdo (RD-02). A listagem aceita `GET /notes?contentId=<id>`; ao filtrar por conteúdo, a ordem pode ser alterada por arraste e persistida com `PATCH /notes/reorder`. O editor usa CodeMirror com toolbar Markdown para título, negrito, itálico, código, link, listas e citação.
+**Critérios:** segue RT-01 a RT-04. O arquivo pertence a um conteúdo (RD-02). A lista lateral oferece visão em tabela ou cards sem alterar o workspace de abas. A listagem aceita `GET /notes?contentId=<id>`; ao filtrar por conteúdo, a ordem pode ser alterada por arraste e persistida com `PATCH /notes/reorder`. O editor usa CodeMirror com toolbar Markdown para título, negrito, itálico, código, link, listas e citação.
 
 ### RF-07 CRUD de Provas
 
 **Prioridade:** Must
 **Telas:** #6
 **Descrição:** o usuário cadastra provas, podendo anexar uma anotação e vincular ao Google Agenda (RF-13).
-**Critérios:** segue RT-01 a RT-04.
+**Critérios:** segue RT-01 a RT-04. A listagem oferece visão em tabela ou cards, exibindo título, data, grupo, local e quantidade de notas vinculadas.
 
 ### RF-08 Pomodoro
 
