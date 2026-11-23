@@ -3,20 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import {
+  ClipboardList,
+  FolderOpen,
+  LayoutDashboard,
+  NotebookPen,
+  RefreshCw,
+  Repeat2,
+  Settings,
+  type LucideIcon,
+} from "lucide-react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { PomodoroMobile } from "@/components/pomodoro/pomodoro-mobile";
 import { PomodoroWidget } from "@/components/pomodoro/pomodoro-widget";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
-const navigation = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/study-groups", label: "Grupos" },
-  { href: "/notes", label: "Notas" },
-  { href: "/exams", label: "Provas" },
-  { href: "/reviews", label: "Revisões" },
-  { href: "/cycles", label: "Ciclos" },
-  { href: "/settings", label: "Configurações" },
+const navigation: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/study-groups", label: "Grupos", icon: FolderOpen },
+  { href: "/notes", label: "Notas", icon: NotebookPen },
+  { href: "/exams", label: "Provas", icon: ClipboardList },
+  { href: "/reviews", label: "Revisões", icon: RefreshCw },
+  { href: "/cycles", label: "Ciclos", icon: Repeat2 },
+  { href: "/settings", label: "Configurações", icon: Settings },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -32,20 +42,24 @@ export function AppShell({ children }: { children: ReactNode }) {
           UPTAKE
         </Link>
         <nav className="mt-8 min-h-0 flex-1 space-y-1 overflow-y-auto">
-          {navigation.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "block rounded-md px-3 py-2 text-sm font-medium transition",
-                isActive(item.href)
-                  ? "bg-lime-100 text-lime-950"
-                  : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {navigation.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition",
+                  isActive(item.href)
+                    ? "bg-lime-100 text-lime-950"
+                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
+                )}
+              >
+                <Icon size={16} aria-hidden />
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
         <div className="mt-auto shrink-0 border-t border-neutral-200 pt-4">
           <PomodoroWidget />
@@ -70,18 +84,22 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
           <nav className="flex gap-1 overflow-x-auto border-t border-neutral-100 px-4 py-2 lg:hidden">
-            {navigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium",
-                  isActive(item.href) ? "bg-lime-100 text-lime-950" : "text-neutral-600",
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navigation.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium",
+                    isActive(item.href) ? "bg-lime-100 text-lime-950" : "text-neutral-600",
+                  )}
+                >
+                  <Icon size={14} aria-hidden />
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
         </header>
 

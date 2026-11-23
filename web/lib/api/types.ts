@@ -71,6 +71,7 @@ export interface Content {
   title: string;
   description: string | null;
   studyGroupId: number;
+  position: number;
   userId: number;
   createdAt: string;
   updatedAt: string;
@@ -82,6 +83,11 @@ export interface CreateContentRequest {
   studyGroupId: number;
 }
 
+export interface ReorderContentsRequest {
+  studyGroupId: number;
+  ids: number[];
+}
+
 export interface Note {
   id: number;
   title: string;
@@ -90,6 +96,7 @@ export interface Note {
   mimeType: string;
   sizeBytes: number;
   contentId: number;
+  position: number;
   userId: number;
   createdAt: string;
   updatedAt: string;
@@ -101,6 +108,11 @@ export interface CreateNoteRequest {
   markdownContent: string;
   mimeType?: string;
   contentId: number;
+}
+
+export interface ReorderNotesRequest {
+  contentId: number;
+  ids: number[];
 }
 
 export interface Exam {
