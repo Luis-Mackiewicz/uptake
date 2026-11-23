@@ -6,6 +6,7 @@ import { authRoutes } from "./routes/auth.routes.js";
 import { contentRoutes } from "./routes/content.routes.js";
 import { examRoutes } from "./routes/exam.routes.js";
 import { noteRoutes } from "./routes/note.routes.js";
+import { pomodoroRoutes } from "./routes/pomodoro.routes.js";
 import { studyGroupRoutes } from "./routes/studyGroup.routes.js";
 
 export default async function createApp() {
@@ -46,6 +47,7 @@ export default async function createApp() {
   await app.register(contentRoutes);
   await app.register(noteRoutes);
   await app.register(examRoutes);
+  await app.register(pomodoroRoutes);
 
   app.addHook("onClose", async () => {
     await prisma.$disconnect();
