@@ -32,3 +32,11 @@
 ## Instrução
 
 Leia os arquivos da minha pasta docs sempre que precisar de contexto.
+
+## Front-end
+
+**Design:** Estilo google material, usar o "lime" do tailwindCss, white e neutral
+
+**Fontes:** Anton e inter.
+
+**Components:** Lógica dos componentes igual o shadCn, porém criar componentes pŕoprios.
