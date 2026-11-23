@@ -1,4 +1,7 @@
-import { CrudService } from "../../shared/crud.service.js";
+import {
+  CrudService,
+  type CrudRepository,
+} from "../../shared/crud.service.js";
 import { assertFound } from "../../shared/guards.js";
 import type { StudyGroupLookup } from "../../shared/ownership.js";
 import { studyGroupLookup } from "../studyGroup/index.js";
@@ -9,13 +12,20 @@ type ContentRecord = NonNullable<
   Awaited<ReturnType<typeof contentRepository.findById>>
 >;
 
-export class ContentService extends CrudService<
+type ContentRepository = CrudRepository<
   ContentRecord,
   CreateContentData,
   UpdateContentData
+>;
+
+export class ContentService extends CrudService<
+  ContentRecord,
+  CreateContentData,
+  UpdateContentData,
+  ContentRepository
 > {
   constructor(
-    repository: typeof contentRepository = contentRepository,
+    repository: ContentRepository = contentRepository,
     private readonly studyGroups: StudyGroupLookup = studyGroupLookup,
   ) {
     super(repository, "Conteúdo não encontrado");

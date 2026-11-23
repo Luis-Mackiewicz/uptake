@@ -22,9 +22,14 @@ export abstract class CrudService<
   T extends OwnedRecord,
   CreateData,
   UpdateData,
+  R extends CrudRepository<T, CreateData, UpdateData> = CrudRepository<
+    T,
+    CreateData,
+    UpdateData
+  >,
 > {
   constructor(
-    protected readonly repository: CrudRepository<T, CreateData, UpdateData>,
+    protected readonly repository: R,
     protected readonly notFoundMessage: string,
   ) {}
 

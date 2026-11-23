@@ -1,4 +1,7 @@
-import { CrudService } from "../../shared/crud.service.js";
+import {
+  CrudService,
+  type CrudRepository,
+} from "../../shared/crud.service.js";
 import { assertFound } from "../../shared/guards.js";
 import type { ContentLookup } from "../../shared/ownership.js";
 import { contentLookup } from "../content/index.js";
@@ -9,19 +12,26 @@ type PomodoroRecord = NonNullable<
   Awaited<ReturnType<typeof pomodoroSessionRepository.findById>>
 >;
 
+interface PomodoroRepository
+  extends CrudRepository<
+    PomodoroRecord,
+    CreatePomodoroSessionData,
+    CreatePomodoroSessionData
+  > {
+  finish(id: number, userId: number): Promise<PomodoroRecord>;
+}
+
 export class PomodoroService extends CrudService<
   PomodoroRecord,
   CreatePomodoroSessionData,
-  CreatePomodoroSessionData
+  CreatePomodoroSessionData,
+  PomodoroRepository
 > {
-  private readonly sessionsRepository: typeof pomodoroSessionRepository;
-
   constructor(
-    repository: typeof pomodoroSessionRepository = pomodoroSessionRepository,
+    repository: PomodoroRepository = pomodoroSessionRepository,
     private readonly contents: ContentLookup = contentLookup,
   ) {
     super(repository, "Sessão de pomodoro não encontrada");
-    this.sessionsRepository = repository;
   }
 
   override async create(userId: number, data: CreatePomodoroSessionData) {
@@ -37,7 +47,7 @@ export class PomodoroService extends CrudService<
 
   async finish(userId: number, id: number) {
     await this.findById(userId, id);
-    return this.sessionsRepository.finish(id, userId);
+    return this.repository.finish(id, userId);
   }
 }
 

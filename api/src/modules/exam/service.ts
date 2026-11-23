@@ -1,5 +1,8 @@
 import { NotFoundError } from "../../errors/AppError.js";
-import { CrudService } from "../../shared/crud.service.js";
+import {
+  CrudService,
+  type CrudRepository,
+} from "../../shared/crud.service.js";
 import { assertFound } from "../../shared/guards.js";
 import type {
   NoteLookup,
@@ -14,13 +17,20 @@ type ExamRecord = NonNullable<
   Awaited<ReturnType<typeof examRepository.findById>>
 >;
 
-export class ExamService extends CrudService<
+type ExamRepository = CrudRepository<
   ExamRecord,
   CreateExamData,
   UpdateExamData
+>;
+
+export class ExamService extends CrudService<
+  ExamRecord,
+  CreateExamData,
+  UpdateExamData,
+  ExamRepository
 > {
   constructor(
-    repository: typeof examRepository = examRepository,
+    repository: ExamRepository = examRepository,
     private readonly studyGroups: StudyGroupLookup = studyGroupLookup,
     private readonly notes: NoteLookup = noteLookup,
   ) {
