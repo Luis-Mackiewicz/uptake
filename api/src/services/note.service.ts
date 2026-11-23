@@ -1,5 +1,5 @@
 import { ConflictError, NotFoundError } from "../errors/AppError.js";
-import { contentRepository } from "../repositories/content.repository.js";
+import { contentRepository } from "../modules/content/repository.js";
 import { noteRepository } from "../repositories/note.repository.js";
 import type { CreateNoteData, UpdateNoteData } from "../schemas/note.schemas.js";
 import {

@@ -1,12 +1,12 @@
 import type { FastifyInstance } from "fastify";
 import { authRoutes } from "../modules/auth/routes.js";
-import { contentRoutes } from "./content.routes.js";
+import { contentRoutes } from "../modules/content/routes.js";
 import { examRoutes } from "./exam.routes.js";
 import { noteRoutes } from "./note.routes.js";
 import { pomodoroRoutes } from "./pomodoro.routes.js";
 import { reviewRoutes } from "./review.routes.js";
 import { studyCycleRoutes } from "./studyCycle.routes.js";
-import { studyGroupRoutes } from "./studyGroup.routes.js";
+import { studyGroupRoutes } from "../modules/studyGroup/routes.js";
 
 export async function registerRoutes(app: FastifyInstance): Promise<void> {
   await app.register(authRoutes);

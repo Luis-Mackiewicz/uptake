@@ -1,5 +1,5 @@
 import { NotFoundError } from "../errors/AppError.js";
-import { contentRepository } from "../repositories/content.repository.js";
+import { contentRepository } from "../modules/content/repository.js";
 import { pomodoroSessionRepository } from "../repositories/pomodoroSession.repository.js";
 import {
   toPaginated,

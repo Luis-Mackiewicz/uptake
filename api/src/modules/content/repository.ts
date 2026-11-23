@@ -1,5 +1,6 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination } from "../../shared/domain.js";
+import type { ContentLookup } from "../../shared/ownership.js";
 
 export const contentSafeSelect = {
   id: true,
@@ -52,9 +53,9 @@ export const contentRepository = {
     });
   },
 
-  async update(id: number, data: ContentInput) {
+  async update(id: number, userId: number, data: ContentInput) {
     return prisma.content.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: {
         title: data.title,
         description: data.description,
@@ -64,11 +65,15 @@ export const contentRepository = {
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.content.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: contentSafeSelect,
     });
   },
+};
+
+export const contentLookup: ContentLookup = {
+  findById: (id, userId) => contentRepository.findById(id, userId),
 };

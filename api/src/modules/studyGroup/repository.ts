@@ -1,5 +1,6 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination } from "../../shared/domain.js";
+import type { StudyGroupLookup } from "../../shared/ownership.js";
 
 export const studyGroupSafeSelect = {
   id: true,
@@ -63,9 +64,9 @@ export const studyGroupRepository = {
     });
   },
 
-  async reactivate(id: number, data: StudyGroupInput) {
+  async reactivate(id: number, userId: number, data: StudyGroupInput) {
     return prisma.studyGroup.update({
-      where: { id },
+      where: { id, userId },
       data: {
         name: data.name,
         description: data.description ?? null,
@@ -76,9 +77,9 @@ export const studyGroupRepository = {
     });
   },
 
-  async update(id: number, data: StudyGroupInput) {
+  async update(id: number, userId: number, data: StudyGroupInput) {
     return prisma.studyGroup.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: {
         name: data.name,
         description: data.description,
@@ -88,11 +89,15 @@ export const studyGroupRepository = {
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.studyGroup.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: studyGroupSafeSelect,
     });
   },
+};
+
+export const studyGroupLookup: StudyGroupLookup = {
+  findById: (id, userId) => studyGroupRepository.findById(id, userId),
 };

@@ -1,7 +1,7 @@
 import { NotFoundError } from "../errors/AppError.js";
 import { examRepository } from "../repositories/exam.repository.js";
 import { noteRepository } from "../repositories/note.repository.js";
-import { studyGroupRepository } from "../repositories/studyGroup.repository.js";
+import { studyGroupRepository } from "../modules/studyGroup/repository.js";
 import type { CreateExamData, UpdateExamData } from "../schemas/exam.schemas.js";
 import {
   toPaginated,

@@ -1,5 +1,5 @@
 import { ConflictError, NotFoundError } from "../errors/AppError.js";
-import { studyGroupRepository } from "../repositories/studyGroup.repository.js";
+import { studyGroupRepository } from "../modules/studyGroup/repository.js";
 import { studyCycleRepository } from "../repositories/studyCycle.repository.js";
 import {
   toPaginated,
