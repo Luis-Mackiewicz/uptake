@@ -1,8 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import { authRoutes } from "../modules/auth/routes.js";
 import { contentRoutes } from "../modules/content/routes.js";
-import { examRoutes } from "./exam.routes.js";
-import { noteRoutes } from "./note.routes.js";
+import { examRoutes } from "../modules/exam/routes.js";
+import { noteRoutes } from "../modules/note/routes.js";
 import { pomodoroRoutes } from "./pomodoro.routes.js";
 import { reviewRoutes } from "./review.routes.js";
 import { studyCycleRoutes } from "./studyCycle.routes.js";

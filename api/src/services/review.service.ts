@@ -1,5 +1,5 @@
 import { ConflictError, NotFoundError } from "../errors/AppError.js";
-import { noteRepository } from "../repositories/note.repository.js";
+import { noteRepository } from "../modules/note/repository.js";
 import { reviewRepository } from "../repositories/review.repository.js";
 import {
   toPaginated,

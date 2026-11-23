@@ -1,5 +1,6 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination } from "../../shared/domain.js";
+import type { NoteLookup } from "../../shared/ownership.js";
 
 export const noteSafeSelect = {
   id: true,
@@ -31,9 +32,15 @@ export const noteRepository = {
     });
   },
 
-  async findByFileName(contentId: number, fileName: string, excludeId?: number) {
+  async findByFileName(
+    userId: number,
+    contentId: number,
+    fileName: string,
+    excludeId?: number,
+  ) {
     return prisma.note.findFirst({
       where: {
+        userId,
         contentId,
         fileName,
         ...(excludeId ? { id: { not: excludeId } } : {}),
@@ -72,9 +79,9 @@ export const noteRepository = {
     });
   },
 
-  async reactivate(id: number, data: NoteInput) {
+  async reactivate(id: number, userId: number, data: NoteInput) {
     return prisma.note.update({
-      where: { id },
+      where: { id, userId },
       data: {
         title: data.title,
         fileName: data.fileName,
@@ -88,9 +95,9 @@ export const noteRepository = {
     });
   },
 
-  async update(id: number, data: NoteInput) {
+  async update(id: number, userId: number, data: NoteInput) {
     return prisma.note.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: {
         title: data.title,
         fileName: data.fileName,
@@ -103,11 +110,15 @@ export const noteRepository = {
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.note.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: noteSafeSelect,
     });
   },
+};
+
+export const noteLookup: NoteLookup = {
+  findById: (id, userId) => noteRepository.findById(id, userId),
 };

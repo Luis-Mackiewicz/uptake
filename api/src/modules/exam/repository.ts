@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination } from "../../shared/domain.js";
 
 export const examSafeSelect = {
   id: true,
@@ -65,9 +65,9 @@ export const examRepository = {
     });
   },
 
-  async update(id: number, data: ExamInput) {
+  async update(id: number, userId: number, data: ExamInput) {
     return prisma.exam.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: {
         title: data.title,
         description: data.description ?? null,
@@ -85,9 +85,9 @@ export const examRepository = {
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.exam.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: examSafeSelect,
     });
