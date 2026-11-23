@@ -1,0 +1,871 @@
+{
+  "info": {
+    "_postman_id": "3f8a2c41-6d9b-4d2c-9e77-uptake000001",
+    "name": "Uptake API",
+    "description": "Coleção completa da API Uptake. Importe também o environment Uptake Local. Rode Auth > Login primeiro para preencher {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "groupId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "contentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "noteId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "examId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "cycleId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/"
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/register"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Ana\",\n  \"lastName\": \"Silva\",\n  \"email\": \"ana@example.com\",\n  \"cpf\": \"52998224725\",\n  \"password\": \"Senha123\",\n  \"musicUrl\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"userId\", data.id);",
+                  "  if (data.token) target.set(\"userId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"ana@example.com\",\n  \"password\": \"Senha123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  target.set(\"token\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me"
+            }
+          }
+        },
+        {
+          "name": "Update profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Ana\",\n  \"lastName\": \"Silva\",\n  \"cpf\": \"52998224725\",\n  \"password\": \"Senha123\",\n  \"musicUrl\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Study Groups",
+      "item": [
+        {
+          "name": "Create group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/study-groups"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Matemática\",\n  \"description\": \"Grupo de estudos de matemática\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"groupId\", data.id);",
+                  "  if (data.token) target.set(\"groupId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List groups",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/study-groups?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Get group",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/study-groups/{{groupId}}"
+            }
+          }
+        },
+        {
+          "name": "Update group",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/study-groups/{{groupId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Matemática avançada\",\n  \"description\": \"Grupo atualizado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete group",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/study-groups/{{groupId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contents",
+      "item": [
+        {
+          "name": "Create content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/contents"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Álgebra linear\",\n  \"description\": \"Conteúdo de álgebra linear\",\n  \"studyGroupId\": \"{{groupId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"contentId\", data.id);",
+                  "  if (data.token) target.set(\"contentId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List contents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contents?studyGroupId={{groupId}}&page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Get content",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contents/{{contentId}}"
+            }
+          }
+        },
+        {
+          "name": "Reorder contents",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/contents/reorder"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studyGroupId\": \"{{groupId}}\",\n  \"ids\": [\n    \"{{contentId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update content",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/contents/{{contentId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Álgebra linear atualizada\",\n  \"description\": \"Descrição atualizada\",\n  \"studyGroupId\": \"{{groupId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete content",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contents/{{contentId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notes",
+      "item": [
+        {
+          "name": "Create note",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notes"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Resumo de vetores\",\n  \"contentId\": \"{{contentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"noteId\", data.id);",
+                  "  if (data.token) target.set(\"noteId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List notes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notes?contentId={{contentId}}&page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Reorder notes",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notes/reorder"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"ids\": [\n    \"{{noteId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get note",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notes/{{noteId}}"
+            }
+          }
+        },
+        {
+          "name": "Update note",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notes/{{noteId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Resumo de vetores\",\n  \"fileName\": \"resumo-de-vetores.md\",\n  \"markdownContent\": \"# Resumo\\n\\nConteúdo da nota.\",\n  \"contentId\": \"{{contentId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete note",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notes/{{noteId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Exams",
+      "item": [
+        {
+          "name": "Create exam",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exams"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prova de álgebra linear\",\n  \"description\": \"Primeira prova\",\n  \"examDate\": \"2026-12-10\",\n  \"location\": \"Sala 1\",\n  \"studyGroupId\": \"{{groupId}}\",\n  \"contentIds\": [\n    \"{{contentId}}\"\n  ],\n  \"noteIds\": [\n    \"{{noteId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"examId\", data.id);",
+                  "  if (data.token) target.set(\"examId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List exams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Get exam",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}"
+            }
+          }
+        },
+        {
+          "name": "Update exam",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prova de álgebra linear\",\n  \"description\": \"Prova atualizada\",\n  \"examDate\": \"2026-12-10\",\n  \"location\": \"Sala 2\",\n  \"studyGroupId\": \"{{groupId}}\",\n  \"contentIds\": [\n    \"{{contentId}}\"\n  ],\n  \"noteIds\": [\n    \"{{noteId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete exam",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Study Cycles",
+      "item": [
+        {
+          "name": "List cycles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Create cycle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ciclo principal\",\n  \"active\": true,\n  \"studyGroupId\": \"{{groupId}}\",\n  \"priority\": 2,\n  \"contentIds\": [\n    \"{{contentId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"cycleId\", data.id);",
+                  "  if (data.token) target.set(\"cycleId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reorder cycles",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles/reorder"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": 2,\n  \"ids\": [\n    \"{{cycleId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get cycle",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles/{{cycleId}}"
+            }
+          }
+        },
+        {
+          "name": "Update cycle",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles/{{cycleId}}"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ciclo principal atualizado\",\n  \"active\": true,\n  \"studyGroupId\": \"{{groupId}}\",\n  \"priority\": 1,\n  \"contentIds\": [\n    \"{{contentId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete cycle",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles/{{cycleId}}"
+            }
+          }
+        },
+        {
+          "name": "Advance cycle",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/exams/{{examId}}/cycles/{{cycleId}}/advance"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pomodoro",
+      "item": [
+        {
+          "name": "Create session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pomodoro-sessions"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contentId\": \"{{contentId}}\",\n  \"focusMinutes\": 25,\n  \"breakMinutes\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  const target = pm.environment.name ? pm.environment : pm.collectionVariables;",
+                  "  if (data.id) target.set(\"sessionId\", data.id);",
+                  "  if (data.token) target.set(\"sessionId\", data.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pomodoro-sessions?page=1&limit=20"
+            }
+          }
+        },
+        {
+          "name": "Get session",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pomodoro-sessions/{{sessionId}}"
+            }
+          }
+        },
+        {
+          "name": "Finish session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pomodoro-sessions/{{sessionId}}/finish"
+            }
+          }
+        },
+        {
+          "name": "Delete session",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pomodoro-sessions/{{sessionId}}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

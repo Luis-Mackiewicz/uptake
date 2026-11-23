@@ -11,6 +11,41 @@ A API em `api/src` é organizada por features:
 
 As features implementadas são `auth`, `studyGroup`, `content`, `note`, `exam`, `pomodoro` e `studyCycle`. Os módulos preservam o contrato HTTP existente e filtram todas as consultas pelo `userId` autenticado. A antiga feature `review` foi removida; `/reviews` redireciona para o dashboard.
 
+## Setup com Docker Compose
+
+```bash
+cp .env.example .env
+cp api/.env.example api/.env
+```
+
+Ajuste `MYSQL_ROOT_PASSWORD` no `.env` da raiz e `JWT_SECRET` no `api/.env`. O Compose usa `api/.env` para as variáveis de JWT; `DATABASE_URL` e `PORT` do container são definidas pelo Compose. Depois suba todos os serviços:
+
+```bash
+docker compose up --build
+```
+
+O Nginx é o único ponto de entrada:
+
+- Aplicação: `http://localhost`
+- API e Postman: `http://localhost/api`
+- Health check da API: `http://localhost/api/`
+
+Se a porta 80 estiver ocupada, defina `NGINX_HTTP_PORT=8080` no `.env` e use `http://localhost:8080`. O MySQL fica apenas na rede interna; para acessá-lo, use `docker compose exec db mysql -uroot -p`.
+
+Para derrubar os containers:
+
+```bash
+docker compose down
+```
+
+Para apagar também o volume do banco:
+
+```bash
+docker compose down -v
+```
+
+Na primeira subida, o serviço `migrate` aplica as migrations antes da API iniciar. Não existe seed automático: crie o primeiro usuário em `POST /auth/register` ou pela tela de cadastro.
+
 ## Setup local da API
 
 Pré-requisitos: Node.js 22+ e MySQL/MariaDB local.

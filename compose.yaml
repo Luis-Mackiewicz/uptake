@@ -1,3 +1,7 @@
+name: uptake
+
+x-database-url: &database_url "mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}"
+
 services:
   db:
     image: mysql:8.4
@@ -5,10 +9,106 @@ services:
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    ports:
-      - "127.0.0.1:3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - uptake
+
+  migrate:
+    build:
+      context: ./api
+      target: build
+    environment:
+      DATABASE_URL: *database_url
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    command: ["npm", "run", "db:migrate"]
+    networks:
+      - uptake
+
+  api:
+    build:
+      context: ./api
+      target: runtime
+    restart: unless-stopped
+    env_file:
+      - ./api/.env
+    environment:
+      DATABASE_URL: *database_url
+      PORT: "3500"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3500/').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - uptake
+
+  web:
+    build:
+      context: ./web
+    restart: unless-stopped
+    environment:
+      API_PROXY_TARGET: http://api:3500
+      PORT: "3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - uptake
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    networks:
+      - uptake
 
 volumes:
   db_data:
+
+networks:
+  uptake:
+    driver: bridge
