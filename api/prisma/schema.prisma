@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +5,199 @@ generator client {
 
 datasource db {
   provider = "mysql"
+}
+
+model User {
+  id                       Int                       @id @default(autoincrement())
+  name                     String
+  email                    String                    @unique
+  cpf                      String                    @unique @db.Char(11)
+  passwordHash             String
+  musicUrl                 String?                   @db.VarChar(500)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  deletedAt                DateTime?
+  studyGroups              StudyGroup[]
+  contents                 Content[]
+  notes                    Note[]
+  exams                    Exam[]
+  pomodoroSessions         PomodoroSession[]
+  studyCycles              StudyCycle[]
+  reviews                  Review[]
+  googleCalendarConnection GoogleCalendarConnection?
+
+  @@index([deletedAt])
+}
+
+model StudyGroup {
+  id          Int              @id @default(autoincrement())
+  name        String
+  description String?          @db.VarChar(500)
+  color       String?          @db.Char(7)
+  userId      Int
+  user        User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  contents    Content[]
+  exams       Exam[]
+  cycleItems  StudyCycleItem[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([userId, name])
+  @@index([userId, deletedAt])
+}
+
+model Content {
+  id               Int               @id @default(autoincrement())
+  title            String
+  description      String?
+  studyGroupId     Int
+  studyGroup       StudyGroup        @relation(fields: [studyGroupId], references: [id], onDelete: Restrict)
+  userId           Int
+  user             User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  notes            Note[]
+  pomodoroSessions PomodoroSession[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+
+  @@index([userId, deletedAt])
+  @@index([studyGroupId, deletedAt])
+}
+
+model Note {
+  id              Int        @id @default(autoincrement())
+  title           String
+  fileName        String
+  markdownContent String     @db.LongText
+  mimeType        String     @default("text/markdown") @db.VarChar(100)
+  sizeBytes       Int        @default(0)
+  contentId       Int
+  content         Content    @relation(fields: [contentId], references: [id], onDelete: Restrict)
+  userId          Int
+  user            User       @relation(fields: [userId], references: [id], onDelete: Restrict)
+  exams           ExamNote[]
+  reviews         Review[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  deletedAt       DateTime?
+
+  @@unique([contentId, fileName])
+  @@index([userId, deletedAt])
+}
+
+model Exam {
+  id            Int         @id @default(autoincrement())
+  title         String
+  description   String?     @db.VarChar(500)
+  examDate      DateTime    @db.Date
+  location      String?     @db.VarChar(255)
+  studyGroupId  Int?
+  studyGroup    StudyGroup? @relation(fields: [studyGroupId], references: [id], onDelete: Restrict)
+  googleEventId String?     @db.VarChar(255)
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  notes         ExamNote[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  @@index([userId, deletedAt])
+  @@index([studyGroupId, examDate])
+  @@index([examDate])
+}
+
+model ExamNote {
+  examId    Int
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Restrict)
+  noteId    Int
+  note      Note     @relation(fields: [noteId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now())
+
+  @@id([examId, noteId])
+  @@index([noteId])
+}
+
+model PomodoroSession {
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  contentId    Int?
+  content      Content?  @relation(fields: [contentId], references: [id], onDelete: Restrict)
+  focusMinutes Int       @default(25)
+  breakMinutes Int       @default(5)
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  completed    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  deletedAt    DateTime?
+
+  @@index([userId, deletedAt])
+  @@index([contentId])
+}
+
+model StudyCycle {
+  id            Int              @id @default(autoincrement())
+  name          String           @db.VarChar(120)
+  active        Boolean          @default(true)
+  currentRound  Int              @default(1)
+  nextItemOrder Int              @default(1)
+  userId        Int
+  user          User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items         StudyCycleItem[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  deletedAt     DateTime?
+
+  @@index([userId, deletedAt])
+}
+
+model StudyCycleItem {
+  id                Int        @id @default(autoincrement())
+  studyCycleId      Int
+  studyCycle        StudyCycle @relation(fields: [studyCycleId], references: [id], onDelete: Restrict)
+  studyGroupId      Int
+  studyGroup        StudyGroup @relation(fields: [studyGroupId], references: [id], onDelete: Restrict)
+  position          Int
+  minutesPerSession Int        @default(25)
+  createdAt         DateTime   @default(now())
+  deletedAt         DateTime?
+
+  @@unique([studyCycleId, position])
+  @@index([studyGroupId])
+}
+
+model Review {
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  noteId         Int
+  note           Note      @relation(fields: [noteId], references: [id], onDelete: Restrict)
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime
+  intervalDays   Int       @default(1)
+  reviewCount    Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  @@unique([userId, noteId])
+  @@index([nextReviewAt])
+  @@index([userId, deletedAt])
+}
+
+model GoogleCalendarConnection {
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @unique
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  googleEmail           String    @db.VarChar(255)
+  encryptedAccessToken  String    @db.Text
+  encryptedRefreshToken String    @db.Text
+  tokenExpiresAt        DateTime
+  syncedAt              DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime?
+
+  @@index([deletedAt])
 }
