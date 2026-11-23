@@ -40,5 +40,5 @@ export function useResourceList<T>(path: string, params: QueryParams = {}) {
     setReloadKey((current) => current + 1);
   }, []);
 
-  return { data, page, setPage, reload, loading: data === null };
+  return { data, setData, page, setPage, reload, loading: data === null };
 }
