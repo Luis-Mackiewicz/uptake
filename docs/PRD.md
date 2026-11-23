@@ -81,12 +81,12 @@
 | 2   | Login                                                  | `/login`         | Público     | RF-01          |
 | 3   | Cadastro                                               | `/cadastro`      | Público     | RF-02          |
 | 4   | Dashboard inicial                                      | `/dashboard`     | Autenticado | RF-14          |
-| 5   | Conteúdo                                               | `/conteudos`     | Autenticado | RF-05          |
+| 5   | Conteúdos de um grupo                                  | `/study-groups/:groupId/contents` | Autenticado | RF-05 |
 | 6   | Provas (pode anexar a uma anotação e ao Google Agenda) | `/provas`        | Autenticado | RF-07, RF-13   |
 | 7   | Integração com o Google Agenda                         | `/agenda`        | Autenticado | RF-13          |
 | 8   | Configurações (inclui edição de perfil)                | `/configuracoes` | Autenticado | RF-03          |
 | 9   | Arquivo específico                                     | `/arquivos/:id`  | Autenticado | RF-06          |
-| 10  | Grupo de estudo (ex.: História, Matemática)            | `/grupos/:id`    | Autenticado | RF-04          |
+| 10  | Grupo de estudo (ex.: História, Matemática)            | `/study-groups`  | Autenticado | RF-04          |
 | 11  | Not found                                              | `*`              | Público     | RT-05          |
 
 ### 5.2 Fluxos principais (proposta)
@@ -169,7 +169,7 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Prioridade:** Must
 **Telas:** #5
 **Descrição (proposta):** o usuário registra conteúdos de estudo dentro de um grupo.
-**Critérios:** segue RT-01 a RT-04. O conteúdo pertence a um grupo de estudo (RD-01).
+**Critérios:** segue RT-01 a RT-04. O conteúdo pertence a um grupo de estudo (RD-01). A listagem acontece na tela do grupo; a API aceita `GET /contents?studyGroupId=<id>` para filtrar com validação de propriedade.
 
 ### RF-06 CRUD de Arquivos
 
