@@ -2,6 +2,7 @@ import {
   CrudService,
   type CrudRepository,
 } from "../../shared/crud.service.js";
+import { type Pagination, toPaginated } from "../../shared/domain.js";
 import { assertFound } from "../../shared/guards.js";
 import type { StudyGroupLookup } from "../../shared/ownership.js";
 import { studyGroupLookup } from "../studyGroup/index.js";
@@ -12,11 +13,16 @@ type ContentRecord = NonNullable<
   Awaited<ReturnType<typeof contentRepository.findById>>
 >;
 
-type ContentRepository = CrudRepository<
-  ContentRecord,
-  CreateContentData,
-  UpdateContentData
->;
+type ContentRepository = Omit<
+  CrudRepository<ContentRecord, CreateContentData, UpdateContentData>,
+  "findMany"
+> & {
+  findMany(
+    userId: number,
+    pagination: Pagination,
+    studyGroupId?: number,
+  ): Promise<{ data: ContentRecord[]; total: number }>;
+};
 
 export class ContentService extends CrudService<
   ContentRecord,
@@ -29,6 +35,22 @@ export class ContentService extends CrudService<
     private readonly studyGroups: StudyGroupLookup = studyGroupLookup,
   ) {
     super(repository, "Conteúdo não encontrado");
+  }
+
+  override async findAll(
+    userId: number,
+    pagination: Pagination,
+    studyGroupId?: number,
+  ) {
+    if (studyGroupId === undefined) return super.findAll(userId, pagination);
+
+    await this.ensureStudyGroup(userId, studyGroupId);
+    const { data, total } = await this.repository.findMany(
+      userId,
+      pagination,
+      studyGroupId,
+    );
+    return toPaginated(data, total, pagination);
   }
 
   override async create(userId: number, data: CreateContentData) {

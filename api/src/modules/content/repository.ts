@@ -31,11 +31,12 @@ export const contentRepository = {
     });
   },
 
-  async findMany(userId: number, pagination: Pagination) {
+  async findMany(userId: number, pagination: Pagination, studyGroupId?: number) {
     const where = {
       userId,
       deletedAt: null,
       studyGroup: { deletedAt: null },
+      ...(studyGroupId === undefined ? {} : { studyGroupId }),
     };
     const [data, total] = await prisma.$transaction([
       prisma.content.findMany({

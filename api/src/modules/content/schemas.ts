@@ -1,4 +1,9 @@
 import { z } from "zod";
+import { paginationSchema } from "../../shared/schemas.js";
+
+export const listContentsQuerySchema = paginationSchema.extend({
+  studyGroupId: z.coerce.number().int().positive().optional(),
+});
 
 export const createContentSchema = z
   .object({

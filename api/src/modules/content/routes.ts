@@ -1,11 +1,13 @@
 import type { FastifyInstance } from "fastify";
-import {
-  idParamSchema,
-  parsePagination,
-} from "../../shared/schemas.js";
+import { toCrudPagination } from "../../shared/crud.service.js";
+import { idParamSchema } from "../../shared/schemas.js";
 import { privatePlugin } from "../../shared/routes.js";
 import { parseSchema } from "../../shared/validation.js";
-import { createContentSchema, updateContentSchema } from "./schemas.js";
+import {
+  createContentSchema,
+  listContentsQuerySchema,
+  updateContentSchema,
+} from "./schemas.js";
 import { contentService } from "./service.js";
 
 export async function contentRoutes(app: FastifyInstance) {
@@ -17,8 +19,9 @@ export async function contentRoutes(app: FastifyInstance) {
     });
 
     privateApp.get("/contents", async (request) => {
-      const pagination = parsePagination(request.query);
-      return contentService.findAll(request.userId, pagination);
+      const query = parseSchema(listContentsQuerySchema, request.query);
+      const pagination = toCrudPagination(query.page, query.limit);
+      return contentService.findAll(request.userId, pagination, query.studyGroupId);
     });
 
     privateApp.get("/contents/:id", async (request) => {
