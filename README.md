@@ -72,3 +72,4 @@ npm run build
 - `sizeBytes` é calculado no servidor a partir de `markdownContent`, com limite de 2 MB.
 - `PATCH` continua substituindo completamente o recurso, preservando o contrato HTTP existente.
 - Exames devolvem `noteIds` nas respostas, permitindo editar o vínculo com notas no front.
+- Usuários usam `firstName` e `lastName`; a migração divide o nome antigo no primeiro espaço para preservar os dados.

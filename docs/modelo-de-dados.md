@@ -55,7 +55,8 @@ erDiagram
 
     USER {
         int id PK
-        string name
+        string firstName
+        string lastName
         string email UK
         string cpf UK
         string passwordHash

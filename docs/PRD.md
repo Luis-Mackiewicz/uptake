@@ -125,14 +125,14 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 
 **API**
 
-- Campos obrigatórios: nome, e-mail, senha e CPF
+- Campos obrigatórios: nome, sobrenome, e-mail, senha e CPF
 - Validação de CPF
 - Validação de nível de senha
 - Validação de e-mail
 
 **Interface**
 
-- Campos: nome, e-mail, senha e CPF
+- Campos: nome, sobrenome, e-mail, senha e CPF
 - Verificação dupla de senha (digitar duas vezes)
 - Validação de CPF e de e-mail
 - Redirecionamento para o login após o cadastro
