@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { FileTree } from "@/components/files/file-tree";
 import { PomodoroMobile } from "@/components/pomodoro/pomodoro-mobile";
 import { PomodoroWidget } from "@/components/pomodoro/pomodoro-widget";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Link>
             );
           })}
+          <div className="mt-5 border-t border-neutral-200 pt-4">
+            <FileTree />
+          </div>
         </nav>
         <div className="mt-auto shrink-0 border-t border-neutral-200 pt-4">
           <PomodoroWidget />
@@ -99,6 +103,14 @@ export function AppShell({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
+          <details className="border-t border-neutral-100 lg:hidden">
+            <summary className="cursor-pointer px-5 py-3 text-xs font-semibold uppercase tracking-wider text-neutral-600">
+              Explorador de arquivos
+            </summary>
+            <div className="border-t border-neutral-100 p-3">
+              <FileTree />
+            </div>
+          </details>
         </header>
 
         <main className="flex-1 p-6">{children}</main>

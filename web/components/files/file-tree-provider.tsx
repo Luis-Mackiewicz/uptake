@@ -11,11 +11,13 @@ export interface FileTreeNote {
   fileName: string;
   contentId: number;
   href: string;
+  note: Note;
 }
 
 export interface FileTreeContent {
   id: number;
   title: string;
+  description: string | null;
   studyGroupId: number;
   href: string;
   notes: FileTreeNote[];
@@ -24,6 +26,7 @@ export interface FileTreeContent {
 export interface FileTreeGroup {
   id: number;
   name: string;
+  description: string | null;
   href: string;
   contents: FileTreeContent[];
 }
@@ -53,6 +56,7 @@ function buildTree(groups: StudyGroup[], contents: Content[], notes: Note[]): Fi
           return {
             id: content.id,
             title: content.title,
+            description: content.description,
             studyGroupId: group.id,
             href: contentHref,
             notes: notes
@@ -64,11 +68,18 @@ function buildTree(groups: StudyGroup[], contents: Content[], notes: Note[]): Fi
                 fileName: note.fileName,
                 contentId: note.contentId,
                 href: `${contentHref}/notes/${note.id}`,
+                note,
               })),
           };
         });
 
-      return { id: group.id, name: group.name, href: groupHref, contents: groupContents };
+      return {
+        id: group.id,
+        name: group.name,
+        description: group.description,
+        href: groupHref,
+        contents: groupContents,
+      };
     });
 }
 
