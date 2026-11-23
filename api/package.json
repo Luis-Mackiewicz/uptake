@@ -14,12 +14,14 @@
   },
   "scripts": {
     "dev": "tsx watch src/main.ts",
+    "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/src/main.js"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "prisma": "^7.10.1",
-    "tsx": "^4.23.15"
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }
