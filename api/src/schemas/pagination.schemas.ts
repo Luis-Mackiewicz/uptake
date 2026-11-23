@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ValidationError } from "../errors/AppError.js";
+import { ValidationError } from "../shared/errors.js";
 import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,

@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
 import type { FastifyError } from "fastify";
 import { Prisma } from "../../generated/prisma/client.js";
-import { AppError, ConflictError, NotFoundError } from "../errors/AppError.js";
+import { AppError, ConflictError, NotFoundError } from "../shared/errors.js";
 
 function mapPrismaError(error: unknown): AppError | null {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {

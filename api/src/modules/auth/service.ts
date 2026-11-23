@@ -3,7 +3,7 @@ import {
   ConflictError,
   NotFoundError,
   UnauthorizedError,
-} from "../../errors/AppError.js";
+} from "../../shared/errors.js";
 import {
   userRepository,
   type CreateUserInput,

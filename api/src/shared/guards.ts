@@ -1,4 +1,4 @@
-import { NotFoundError, ValidationError } from "../errors/AppError.js";
+import { NotFoundError, ValidationError } from "./errors.js";
 import {
   isReviewInterval,
   REVIEW_INTERVAL_MESSAGE,

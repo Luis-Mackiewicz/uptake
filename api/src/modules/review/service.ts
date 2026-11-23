@@ -1,4 +1,4 @@
-import { ConflictError } from "../../errors/AppError.js";
+import { ConflictError } from "../../shared/errors.js";
 import {
   calculateSkip,
   toPaginated,

@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { ValidationError } from "../errors/AppError.js";
+import { ValidationError } from "./errors.js";
 
 export function parseSchema<T extends z.ZodType>(
   schema: T,

@@ -1,4 +1,4 @@
-import { ConflictError, NotFoundError } from "../../errors/AppError.js";
+import { ConflictError, NotFoundError } from "../../shared/errors.js";
 import {
   CrudService,
   type CrudRepository,

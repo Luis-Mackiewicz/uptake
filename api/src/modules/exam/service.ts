@@ -1,4 +1,4 @@
-import { NotFoundError } from "../../errors/AppError.js";
+import { NotFoundError } from "../../shared/errors.js";
 import {
   CrudService,
   type CrudRepository,
