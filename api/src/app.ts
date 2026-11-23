@@ -3,6 +3,7 @@ import { AppError } from "./errors/AppError.js";
 import { prisma } from "./lib/prisma.js";
 import authPlugin from "./plugins/auth.js";
 import { authRoutes } from "./routes/auth.routes.js";
+import { contentRoutes } from "./routes/content.routes.js";
 import { studyGroupRoutes } from "./routes/studyGroup.routes.js";
 
 export default async function createApp() {
@@ -40,6 +41,7 @@ export default async function createApp() {
   await app.register(authPlugin);
   await app.register(authRoutes);
   await app.register(studyGroupRoutes);
+  await app.register(contentRoutes);
 
   app.addHook("onClose", async () => {
     await prisma.$disconnect();
