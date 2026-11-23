@@ -1,4 +1,5 @@
-import { ConflictError } from "../../shared/errors.js";
+import { ConflictError, ValidationError } from "../../shared/errors.js";
+import { MAX_NOTE_SIZE_BYTES } from "../../shared/domain.js";
 import {
   CrudService,
   type CrudRepository,
@@ -42,6 +43,7 @@ export class NoteService extends CrudService<
   }
 
   override async create(userId: number, data: CreateNoteData) {
+    const input = this.withSize(data);
     await this.ensureContent(userId, data.contentId);
     const existing = await this.repository.findByFileName(
       userId,
@@ -54,13 +56,14 @@ export class NoteService extends CrudService<
     }
 
     if (existing) {
-      return this.repository.reactivate(existing.id, userId, data);
+      return this.repository.reactivate(existing.id, userId, input);
     }
 
-    return super.create(userId, data);
+    return super.create(userId, input);
   }
 
   override async update(userId: number, id: number, data: UpdateNoteData) {
+    const input = this.withSize(data);
     await this.findById(userId, id);
     await this.ensureContent(userId, data.contentId);
     const existing = await this.repository.findByFileName(
@@ -74,7 +77,17 @@ export class NoteService extends CrudService<
       throw new ConflictError("Já existe uma nota com esse nome neste conteúdo");
     }
 
-    return this.updateValidated(userId, id, data);
+    return this.updateValidated(userId, id, input);
+  }
+
+  private withSize(data: CreateNoteData | UpdateNoteData) {
+    const sizeBytes = Buffer.byteLength(data.markdownContent, "utf8");
+
+    if (sizeBytes > MAX_NOTE_SIZE_BYTES) {
+      throw new ValidationError("Nota excede o tamanho máximo de 2 MB");
+    }
+
+    return { ...data, sizeBytes };
   }
 
   private async ensureContent(userId: number, contentId: number) {

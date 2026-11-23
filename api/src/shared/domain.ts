@@ -1,5 +1,6 @@
 export const DEFAULT_PAGE_SIZE = 20;
 export const MAX_PAGE_SIZE = 100;
+export const MAX_NOTE_SIZE_BYTES = 2 * 1024 * 1024;
 
 export interface Pagination {
   page: number;

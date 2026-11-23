@@ -10,6 +10,7 @@ import { pomodoroRoutes } from "./modules/pomodoro/routes.js";
 import { reviewRoutes } from "./modules/review/routes.js";
 import { studyCycleRoutes } from "./modules/studyCycle/routes.js";
 import { studyGroupRoutes } from "./modules/studyGroup/routes.js";
+import { MAX_NOTE_SIZE_BYTES } from "./shared/domain.js";
 
 async function registerRoutes(app: FastifyInstance): Promise<void> {
   await app.register(authRoutes);
@@ -23,7 +24,10 @@ async function registerRoutes(app: FastifyInstance): Promise<void> {
 }
 
 export default async function createApp() {
-  const app = fastify({ logger: true });
+  const app = fastify({
+    logger: true,
+    bodyLimit: MAX_NOTE_SIZE_BYTES + 64 * 1024,
+  });
 
   await app.register(errorHandlerPlugin);
   await app.register(databasePlugin);
