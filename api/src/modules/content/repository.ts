@@ -21,13 +21,22 @@ export interface ContentInput {
 export const contentRepository = {
   async findById(id: number, userId: number) {
     return prisma.content.findFirst({
-      where: { id, userId, deletedAt: null },
+      where: {
+        id,
+        userId,
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
       select: contentSafeSelect,
     });
   },
 
   async findMany(userId: number, pagination: Pagination) {
-    const where = { userId, deletedAt: null };
+    const where = {
+      userId,
+      deletedAt: null,
+      studyGroup: { deletedAt: null },
+    };
     const [data, total] = await prisma.$transaction([
       prisma.content.findMany({
         where,
@@ -66,11 +75,20 @@ export const contentRepository = {
   },
 
   async softDelete(id: number, userId: number) {
-    return prisma.content.update({
-      where: { id, userId, deletedAt: null },
-      data: { deletedAt: new Date() },
-      select: contentSafeSelect,
-    });
+    const deletedAt = new Date();
+    const [, deleted] = await prisma.$transaction([
+      prisma.note.updateMany({
+        where: { contentId: id, userId, deletedAt: null },
+        data: { deletedAt },
+      }),
+      prisma.content.update({
+        where: { id, userId, deletedAt: null },
+        data: { deletedAt },
+        select: contentSafeSelect,
+      }),
+    ]);
+
+    return deleted;
   },
 };
 

@@ -27,7 +27,15 @@ export interface NoteInput {
 export const noteRepository = {
   async findById(id: number, userId: number) {
     return prisma.note.findFirst({
-      where: { id, userId, deletedAt: null },
+      where: {
+        id,
+        userId,
+        deletedAt: null,
+        content: {
+          deletedAt: null,
+          studyGroup: { deletedAt: null },
+        },
+      },
       select: noteSafeSelect,
     });
   },
@@ -50,7 +58,14 @@ export const noteRepository = {
   },
 
   async findMany(userId: number, pagination: Pagination) {
-    const where = { userId, deletedAt: null };
+    const where = {
+      userId,
+      deletedAt: null,
+      content: {
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
+    };
     const [data, total] = await prisma.$transaction([
       prisma.note.findMany({
         where,

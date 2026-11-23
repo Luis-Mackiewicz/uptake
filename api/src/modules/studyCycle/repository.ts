@@ -141,9 +141,10 @@ export const studyCycleRepository = {
     });
   },
 
-  async deleteItem(id: number) {
-    return prisma.studyCycleItem.delete({
-      where: { id },
+  async softDeleteItem(id: number) {
+    return prisma.studyCycleItem.update({
+      where: { id, deletedAt: null },
+      data: { deletedAt: new Date(), position: -id },
       select: studyCycleItemSafeSelect,
     });
   },
@@ -160,10 +161,10 @@ export const studyCycleRepository = {
     }
 
     await prisma.$transaction([
-      ...items.map((item, index) =>
+      ...items.map((item) =>
         prisma.studyCycleItem.update({
           where: { id: item.id },
-          data: { position: -(index + 1) },
+          data: { position: -item.id },
         }),
       ),
       ...items.map((item, index) =>

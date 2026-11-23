@@ -1,4 +1,5 @@
 import { prisma } from "../../lib/prisma.js";
+import { NotFoundError } from "../../shared/errors.js";
 import type { Pagination } from "../../shared/domain.js";
 import type { StudyGroupLookup } from "../../shared/ownership.js";
 
@@ -65,16 +66,43 @@ export const studyGroupRepository = {
   },
 
   async reactivate(id: number, userId: number, data: StudyGroupInput) {
-    return prisma.studyGroup.update({
+    const group = await prisma.studyGroup.findFirst({
       where: { id, userId },
-      data: {
-        name: data.name,
-        description: data.description ?? null,
-        color: data.color ?? null,
-        deletedAt: null,
-      },
-      select: studyGroupSafeSelect,
+      select: { deletedAt: true },
     });
+
+    if (!group) {
+      throw new NotFoundError("Grupo de estudo não encontrado");
+    }
+
+    const deletedAt = group.deletedAt ?? new Date();
+    const contents = await prisma.content.findMany({
+      where: { studyGroupId: id, userId },
+      select: { id: true },
+    });
+    const contentIds = contents.map((content) => content.id);
+    const [, , reactivated] = await prisma.$transaction([
+      prisma.note.updateMany({
+        where: { userId, contentId: { in: contentIds }, deletedAt },
+        data: { deletedAt: null },
+      }),
+      prisma.content.updateMany({
+        where: { userId, studyGroupId: id, deletedAt },
+        data: { deletedAt: null },
+      }),
+      prisma.studyGroup.update({
+        where: { id, userId },
+        data: {
+          name: data.name,
+          description: data.description ?? null,
+          color: data.color ?? null,
+          deletedAt: null,
+        },
+        select: studyGroupSafeSelect,
+      }),
+    ]);
+
+    return reactivated;
   },
 
   async update(id: number, userId: number, data: StudyGroupInput) {
@@ -90,11 +118,29 @@ export const studyGroupRepository = {
   },
 
   async softDelete(id: number, userId: number) {
-    return prisma.studyGroup.update({
-      where: { id, userId, deletedAt: null },
-      data: { deletedAt: new Date() },
-      select: studyGroupSafeSelect,
+    const deletedAt = new Date();
+    const contents = await prisma.content.findMany({
+      where: { studyGroupId: id, userId, deletedAt: null },
+      select: { id: true },
     });
+    const contentIds = contents.map((content) => content.id);
+    const [, , deleted] = await prisma.$transaction([
+      prisma.note.updateMany({
+        where: { userId, contentId: { in: contentIds }, deletedAt: null },
+        data: { deletedAt },
+      }),
+      prisma.content.updateMany({
+        where: { studyGroupId: id, userId, deletedAt: null },
+        data: { deletedAt },
+      }),
+      prisma.studyGroup.update({
+        where: { id, userId, deletedAt: null },
+        data: { deletedAt },
+        select: studyGroupSafeSelect,
+      }),
+    ]);
+
+    return deleted;
   },
 };
 

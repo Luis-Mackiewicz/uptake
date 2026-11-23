@@ -56,7 +56,7 @@ interface StudyCycleRepository
     id: number,
     data: StudyCycleItemInput,
   ): Promise<StudyCycleItemRecord>;
-  deleteItem(id: number): Promise<StudyCycleItemRecord>;
+  softDeleteItem(id: number): Promise<StudyCycleItemRecord>;
   normalizeItemPositions(studyCycleId: number): Promise<void>;
 }
 
@@ -136,7 +136,7 @@ export class StudyCycleService extends CrudService<
 
   async removeItem(userId: number, cycleId: number, itemId: number) {
     const item = await this.findItem(userId, cycleId, itemId);
-    await this.repository.deleteItem(itemId);
+    await this.repository.softDeleteItem(itemId);
     await this.repository.normalizeItemPositions(cycleId);
     return item;
   }
