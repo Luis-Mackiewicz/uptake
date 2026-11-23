@@ -15,6 +15,7 @@
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/**/*.test.ts",
     "build": "tsc",
     "start": "node dist/src/main.js",
     "db:generate": "prisma generate --config=prisma.config.ts",
