@@ -11,13 +11,7 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { ApiRequestError } from "@/lib/api/client";
-import {
-  isBlank,
-  isValidCpf,
-  isValidEmail,
-  isValidPassword,
-  isValidUrl,
-} from "@/lib/validation";
+import { isBlank, isValidCpf, isValidEmail, isValidPassword } from "@/lib/validation";
 
 type RegisterForm = {
   name: string;
@@ -25,7 +19,6 @@ type RegisterForm = {
   cpf: string;
   password: string;
   confirmPassword: string;
-  musicUrl: string;
 };
 type FormErrors = Partial<Record<keyof RegisterForm, string>>;
 
@@ -39,7 +32,6 @@ export default function RegisterPage() {
     cpf: "",
     password: "",
     confirmPassword: "",
-    musicUrl: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
@@ -58,7 +50,6 @@ export default function RegisterPage() {
       nextErrors.password = "Use 8+ caracteres com maiúscula, minúscula e número";
     }
     if (form.password !== form.confirmPassword) nextErrors.confirmPassword = "As senhas não conferem";
-    if (!isBlank(form.musicUrl) && !isValidUrl(form.musicUrl)) nextErrors.musicUrl = "URL inválida";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -74,7 +65,6 @@ export default function RegisterPage() {
         email: form.email.trim().toLowerCase(),
         cpf: form.cpf.replace(/\D/g, ""),
         password: form.password,
-        musicUrl: isBlank(form.musicUrl) ? null : form.musicUrl.trim(),
       });
       notify("Conta criada com sucesso", "success");
       router.replace("/dashboard");
@@ -108,9 +98,6 @@ export default function RegisterPage() {
           </Field>
           <Field label="CPF" htmlFor="cpf" error={errors.cpf}>
             <Input id="cpf" inputMode="numeric" value={form.cpf} invalid={Boolean(errors.cpf)} onChange={(event) => update("cpf", event.target.value)} />
-          </Field>
-          <Field label="URL da música" htmlFor="musicUrl" error={errors.musicUrl} hint="Opcional">
-            <Input id="musicUrl" type="url" value={form.musicUrl} invalid={Boolean(errors.musicUrl)} onChange={(event) => update("musicUrl", event.target.value)} />
           </Field>
           <Field label="Senha" htmlFor="password" error={errors.password}>
             <Input id="password" type="password" autoComplete="new-password" value={form.password} invalid={Boolean(errors.password)} onChange={(event) => update("password", event.target.value)} />
