@@ -75,8 +75,6 @@
 
 ### 5.1 Inventário de telas
 
-> **(proposta)** As rotas e o mapeamento para RF foram sugeridos. Os nomes das telas vêm do PRD anterior.
-
 | #   | Tela                                                   | Rota (proposta)  | Acesso      | RF relacionado |
 | --- | ------------------------------------------------------ | ---------------- | ----------- | -------------- |
 | 1   | Apresentação                                           | `/`              | Público     | RF-14          |
@@ -187,8 +185,6 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 **Descrição:** o usuário cadastra provas, podendo anexar uma anotação e vincular ao Google Agenda (RF-13).
 **Critérios:** segue RT-01 a RT-04.
 
-> Os 4 CRUDs acima (RF-04 a RF-07) são **proposta**, inferidos das telas do PRD anterior. Confirme se são esses os 4 recursos da rubrica.
-
 ### RF-08 Pomodoro
 
 **Prioridade:** Should
@@ -244,8 +240,6 @@ Valem para os CRUDs (RF-04 a RF-07), salvo indicação contrária.
 - **RT-06 Telas separadas (front-end):** listagem e cadastro/edição dos CRUDs ficam em telas separadas (exigência da rubrica).
 
 ## 8. Modelo de dados
-
-> **(proposta)** Depende da confirmação dos 4 recursos.
 
 - **RD-01:** Conteúdo pertence a um Grupo de estudo (N:1).
 - **RD-02:** Arquivo pertence a um Conteúdo (N:1).
