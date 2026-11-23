@@ -18,6 +18,7 @@ type ProfileForm = {
   lastName: string;
   cpf: string;
   password: string;
+  confirmPassword: string;
   musicUrl: string;
 };
 type FormErrors = Partial<Record<keyof ProfileForm, string>>;
@@ -30,6 +31,7 @@ function ProfileForm({ user }: { user: User }) {
     lastName: user.lastName,
     cpf: user.cpf,
     password: "",
+    confirmPassword: "",
     musicUrl: user.musicUrl ?? "",
   }));
   const [errors, setErrors] = useState<FormErrors>({});
@@ -46,6 +48,9 @@ function ProfileForm({ user }: { user: User }) {
     if (!isValidCpf(form.cpf)) nextErrors.cpf = "CPF inválido";
     if (!isValidPassword(form.password)) {
       nextErrors.password = "Use 8+ caracteres com maiúscula, minúscula e número";
+    }
+    if (form.password !== form.confirmPassword) {
+      nextErrors.confirmPassword = "As senhas não conferem";
     }
     if (!isBlank(form.musicUrl) && !isValidUrl(form.musicUrl)) nextErrors.musicUrl = "URL inválida";
     setErrors(nextErrors);
@@ -65,7 +70,7 @@ function ProfileForm({ user }: { user: User }) {
         password: form.password,
         musicUrl: isBlank(form.musicUrl) ? null : form.musicUrl.trim(),
       });
-      setForm((current) => ({ ...current, password: "" }));
+      setForm((current) => ({ ...current, password: "", confirmPassword: "" }));
       notify("Perfil atualizado", "success");
     } catch (error) {
       if (error instanceof ApiRequestError && error.issues) {
@@ -105,16 +110,17 @@ function ProfileForm({ user }: { user: User }) {
               <Input id="musicUrl" type="url" value={form.musicUrl} invalid={Boolean(errors.musicUrl)} onChange={(event) => update("musicUrl", event.target.value)} />
             </Field>
           </div>
-          <div className="sm:col-span-2">
-            <Field
-              label="Nova senha"
-              htmlFor="password"
-              error={errors.password}
-              hint="A API exige uma nova senha ao salvar o perfil."
-            >
-              <Input id="password" type="password" autoComplete="new-password" value={form.password} invalid={Boolean(errors.password)} onChange={(event) => update("password", event.target.value)} />
-            </Field>
-          </div>
+          <Field
+            label="Nova senha"
+            htmlFor="password"
+            error={errors.password}
+            hint="A API exige uma nova senha ao salvar o perfil."
+          >
+            <Input id="password" type="password" autoComplete="new-password" value={form.password} invalid={Boolean(errors.password)} onChange={(event) => update("password", event.target.value)} />
+          </Field>
+          <Field label="Confirmar senha" htmlFor="confirmPassword" error={errors.confirmPassword}>
+            <Input id="confirmPassword" type="password" autoComplete="new-password" value={form.confirmPassword} invalid={Boolean(errors.confirmPassword)} onChange={(event) => update("confirmPassword", event.target.value)} />
+          </Field>
           <div className="sm:col-span-2">
             <Button type="submit" loading={loading}>
               Salvar alterações
