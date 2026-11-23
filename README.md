@@ -73,3 +73,4 @@ npm run build
 - `PATCH` continua substituindo completamente o recurso, preservando o contrato HTTP existente.
 - Exames devolvem `noteIds` nas respostas, permitindo editar o vínculo com notas no front.
 - Usuários usam `firstName` e `lastName`; a migração divide o nome antigo no primeiro espaço para preservar os dados.
+- Notas abrem em abas dentro de `/notes`, com editor CodeMirror, preview Markdown e salvamento manual por `Ctrl/Cmd+S`.
