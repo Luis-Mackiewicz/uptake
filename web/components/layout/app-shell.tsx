@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
+import { PomodoroMobile } from "@/components/pomodoro/pomodoro-mobile";
+import { PomodoroWidget } from "@/components/pomodoro/pomodoro-widget";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
@@ -13,7 +15,6 @@ const navigation = [
   { href: "/contents", label: "Conteúdos" },
   { href: "/notes", label: "Notas" },
   { href: "/exams", label: "Provas" },
-  { href: "/pomodoro", label: "Pomodoro" },
   { href: "/reviews", label: "Revisões" },
   { href: "/cycles", label: "Ciclos" },
   { href: "/settings", label: "Configurações" },
@@ -27,11 +28,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[240px_1fr]">
-      <aside className="hidden border-r border-neutral-200 bg-white p-5 lg:block">
-        <Link href="/dashboard" className="font-display text-3xl tracking-widest text-neutral-900">
+      <aside className="hidden border-r border-neutral-200 bg-white p-5 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
+        <Link href="/dashboard" className="shrink-0 font-display text-3xl tracking-widest text-neutral-900">
           UPTAKE
         </Link>
-        <nav className="mt-8 space-y-1">
+        <nav className="mt-8 min-h-0 flex-1 space-y-1 overflow-y-auto">
           {navigation.map((item) => (
             <Link
               key={item.href}
@@ -47,7 +48,12 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
+        <div className="mt-auto shrink-0 border-t border-neutral-200 pt-4">
+          <PomodoroWidget />
+        </div>
       </aside>
+
+      <PomodoroMobile />
 
       <div className="flex min-h-screen flex-col">
         <header className="border-b border-neutral-200 bg-white">
