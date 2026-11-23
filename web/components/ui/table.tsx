@@ -1,8 +1,12 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 interface TablePartProps {
   className?: string;
+  children?: ReactNode;
+}
+
+interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
   children?: ReactNode;
 }
 
@@ -18,8 +22,12 @@ export function TableBody({ className, children }: TablePartProps) {
   return <tbody className={cn("divide-y divide-neutral-200", className)}>{children}</tbody>;
 }
 
-export function TableRow({ className, children }: TablePartProps) {
-  return <tr className={cn("transition hover:bg-neutral-50", className)}>{children}</tr>;
+export function TableRow({ className, children, ...props }: TableRowProps) {
+  return (
+    <tr {...props} className={cn("transition hover:bg-neutral-50", className)}>
+      {children}
+    </tr>
+  );
 }
 
 export function TableHead({ className, children }: TablePartProps) {

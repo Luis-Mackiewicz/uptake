@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,23 +13,64 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { Select } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type { Content, CreateContentRequest, MessageResponse, StudyGroup } from "@/lib/api/types";
-import { isBlank, isValidPositiveId, validateLength } from "@/lib/validation";
+import { isBlank, validateLength } from "@/lib/validation";
 
-type ContentForm = { title: string; description: string; studyGroupId: string };
+type ContentForm = { title: string; description: string };
 type FormErrors = Partial<Record<keyof ContentForm, string>>;
 
-const emptyForm: ContentForm = { title: "", description: "", studyGroupId: "" };
+const emptyForm: ContentForm = { title: "", description: "" };
 
-export default function ContentsPage() {
-  const { data, setPage, reload } = useResourceList<Content>("/contents");
-  const groupsQuery = useResourceList<StudyGroup>("/study-groups", { limit: 100 });
+export function GroupContentsPage({ groupId }: { groupId: number }) {
+  const router = useRouter();
+  const { notify } = useToast();
+  const [group, setGroup] = useState<StudyGroup | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const load = async () => {
+      try {
+        const result = await api.get<StudyGroup>(`/study-groups/${groupId}`);
+        if (active) setGroup(result);
+      } catch (error) {
+        if (!active) return;
+        notify(
+          error instanceof ApiRequestError && error.status === 404
+            ? "Grupo não encontrado"
+            : "Não foi possível carregar o grupo",
+          "error",
+        );
+        router.replace("/study-groups");
+      }
+    };
+
+    void load();
+    return () => {
+      active = false;
+    };
+  }, [groupId, notify, router]);
+
+  if (!group) {
+    return (
+      <Card className="p-6">
+        <p className="text-sm text-neutral-600">Carregando grupo...</p>
+      </Card>
+    );
+  }
+
+  return <GroupContents group={group} />;
+}
+
+function GroupContents({ group }: { group: StudyGroup }) {
+  const { data, setPage, reload } = useResourceList<Content>("/contents", {
+    studyGroupId: group.id,
+  });
   const { notify } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Content | null>(null);
@@ -36,12 +79,9 @@ export default function ContentsPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<Content | null>(null);
 
-  const groups = groupsQuery.data?.data ?? [];
-  const groupName = (id: number) => groups.find((group) => group.id === id)?.name ?? `#${id}`;
-
   const openCreate = () => {
     setEditing(null);
-    setForm({ ...emptyForm, studyGroupId: groups[0] ? String(groups[0].id) : "" });
+    setForm(emptyForm);
     setErrors({});
     setDialogOpen(true);
   };
@@ -51,7 +91,6 @@ export default function ContentsPage() {
     setForm({
       title: content.title,
       description: content.description ?? "",
-      studyGroupId: String(content.studyGroupId),
     });
     setErrors({});
     setDialogOpen(true);
@@ -62,8 +101,6 @@ export default function ContentsPage() {
     if (isBlank(form.title)) nextErrors.title = "Informe o título";
     else if (!validateLength(form.title, 200)) nextErrors.title = "Máximo de 200 caracteres";
     if (!validateLength(form.description, 2000)) nextErrors.description = "Máximo de 2000 caracteres";
-    const groupId = Number(form.studyGroupId);
-    if (!isValidPositiveId(groupId)) nextErrors.studyGroupId = "Selecione um grupo";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -75,7 +112,7 @@ export default function ContentsPage() {
     const payload: CreateContentRequest = {
       title: form.title.trim(),
       description: isBlank(form.description) ? null : form.description.trim(),
-      studyGroupId: Number(form.studyGroupId),
+      studyGroupId: group.id,
     };
 
     setSaving(true);
@@ -117,9 +154,16 @@ export default function ContentsPage() {
   return (
     <div>
       <PageHeader
-        title="Conteúdos"
-        description="Cadastre os temas estudados dentro de cada grupo."
-        actions={<Button onClick={openCreate} disabled={!groups.length}>Novo conteúdo</Button>}
+        title={`Conteúdos de ${group.name}`}
+        description="Cadastre os temas estudados neste grupo."
+        actions={
+          <div className="flex flex-wrap gap-2">
+            <Link href="/study-groups">
+              <Button variant="secondary">Voltar</Button>
+            </Link>
+            <Button onClick={openCreate}>Novo conteúdo</Button>
+          </div>
+        }
       />
 
       <Card className="p-0">
@@ -129,7 +173,6 @@ export default function ContentsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Título</TableHead>
-                  <TableHead>Grupo</TableHead>
                   <TableHead>Descrição</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
@@ -138,7 +181,6 @@ export default function ContentsPage() {
                 {data.data.map((content) => (
                   <TableRow key={content.id}>
                     <TableCell className="font-medium">{content.title}</TableCell>
-                    <TableCell>{groupName(content.studyGroupId)}</TableCell>
                     <TableCell className="max-w-xs truncate text-neutral-600">{content.description ?? "—"}</TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-2">
@@ -161,8 +203,8 @@ export default function ContentsPage() {
         ) : (
           <EmptyState
             title={data ? "Nenhum conteúdo encontrado" : "Carregando..."}
-            description={groups.length ? "Cadastre um conteúdo para anexar notas." : "Crie um grupo de estudo primeiro."}
-            action={<Button onClick={openCreate} disabled={!groups.length}>Novo conteúdo</Button>}
+            description="Cadastre um conteúdo para anexar notas."
+            action={<Button onClick={openCreate}>Novo conteúdo</Button>}
           />
         )}
       </Card>
@@ -171,14 +213,6 @@ export default function ContentsPage() {
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
           <Field label="Título" htmlFor="content-title" error={errors.title}>
             <Input id="content-title" value={form.title} invalid={Boolean(errors.title)} onChange={(event) => setForm({ ...form, title: event.target.value })} />
-          </Field>
-          <Field label="Grupo" htmlFor="content-group" error={errors.studyGroupId}>
-            <Select id="content-group" value={form.studyGroupId} invalid={Boolean(errors.studyGroupId)} onChange={(event) => setForm({ ...form, studyGroupId: event.target.value })}>
-              <option value="">Selecione</option>
-              {groups.map((group) => (
-                <option key={group.id} value={group.id}>{group.name}</option>
-              ))}
-            </Select>
           </Field>
           <Field label="Descrição" htmlFor="content-description" error={errors.description}>
             <Textarea id="content-description" value={form.description} invalid={Boolean(errors.description)} onChange={(event) => setForm({ ...form, description: event.target.value })} />

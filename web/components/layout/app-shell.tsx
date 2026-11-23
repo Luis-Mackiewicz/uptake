@@ -12,7 +12,6 @@ import { cn } from "@/lib/cn";
 const navigation = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/study-groups", label: "Grupos" },
-  { href: "/contents", label: "Conteúdos" },
   { href: "/notes", label: "Notas" },
   { href: "/exams", label: "Provas" },
   { href: "/reviews", label: "Revisões" },

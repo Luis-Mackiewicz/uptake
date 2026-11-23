@@ -12,7 +12,6 @@ import type { Page } from "@/lib/api/types";
 
 interface Counts {
   groups: number;
-  contents: number;
   notes: number;
   exams: number;
   dueReviews: number;
@@ -29,9 +28,8 @@ export default function DashboardPage() {
 
     const load = async () => {
       try {
-        const [groups, contents, notes, exams, reviews, cycles] = await Promise.all([
+        const [groups, notes, exams, reviews, cycles] = await Promise.all([
           api.get<Page<unknown>>("/study-groups", { limit: 1 }),
-          api.get<Page<unknown>>("/contents", { limit: 1 }),
           api.get<Page<unknown>>("/notes", { limit: 1 }),
           api.get<Page<unknown>>("/exams", { limit: 1 }),
           api.get<Page<unknown>>("/reviews", { due: true, limit: 1 }),
@@ -41,7 +39,6 @@ export default function DashboardPage() {
         if (!active) return;
         setCounts({
           groups: groups.total,
-          contents: contents.total,
           notes: notes.total,
           exams: exams.total,
           dueReviews: reviews.total,
@@ -60,7 +57,6 @@ export default function DashboardPage() {
 
   const cards = [
     { label: "Grupos", value: counts?.groups, href: "/study-groups" },
-    { label: "Conteúdos", value: counts?.contents, href: "/contents" },
     { label: "Notas", value: counts?.notes, href: "/notes" },
     { label: "Provas", value: counts?.exams, href: "/exams" },
     { label: "Revisões pendentes", value: counts?.dueReviews, href: "/reviews" },

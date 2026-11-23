@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -25,6 +26,7 @@ type FormErrors = Partial<Record<keyof GroupForm, string>>;
 const emptyForm: GroupForm = { name: "", description: "" };
 
 export default function StudyGroupsPage() {
+  const router = useRouter();
   const { data, setPage, reload } = useResourceList<StudyGroup>("/study-groups");
   const { notify } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -126,15 +128,43 @@ export default function StudyGroupsPage() {
               </TableHeader>
               <TableBody>
                 {data.data.map((group) => (
-                  <TableRow key={group.id}>
+                  <TableRow
+                    key={group.id}
+                    role="link"
+                    tabIndex={0}
+                    className="cursor-pointer transition hover:bg-neutral-50"
+                    onClick={() => router.push(`/study-groups/${group.id}/contents`)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " " || event.key === "Spacebar") {
+                        event.preventDefault();
+                        router.push(`/study-groups/${group.id}/contents`);
+                      }
+                    }}
+                  >
                     <TableCell className="font-medium">{group.name}</TableCell>
                     <TableCell className="max-w-xs truncate text-neutral-600">{group.description ?? "—"}</TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-2">
-                        <Button variant="secondary" size="sm" onClick={() => openEdit(group)}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openEdit(group);
+                          }}
+                          onKeyDown={(event) => event.stopPropagation()}
+                        >
                           Editar
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setDeleting(group)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setDeleting(group);
+                          }}
+                          onKeyDown={(event) => event.stopPropagation()}
+                        >
                           Excluir
                         </Button>
                       </div>
