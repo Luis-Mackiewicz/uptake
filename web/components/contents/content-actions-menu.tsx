@@ -31,7 +31,7 @@ export function ContentActionsMenu({
     >
       <DropdownMenuItem
         icon={<NotebookPen size={15} aria-hidden />}
-        onClick={() => router.push(`/notes?contentId=${content.id}`)}
+        onClick={() => router.push(`/study-groups/${content.studyGroupId}/contents/${content.id}`)}
       >
         Abrir notas
       </DropdownMenuItem>

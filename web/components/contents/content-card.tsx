@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { GripVertical } from "lucide-react";
 import { ContentActionsMenu } from "./content-actions-menu";
 import { useSortableItem } from "@/components/ui/sortable";
@@ -13,8 +13,9 @@ interface ContentCardProps {
 }
 
 export function ContentCard({ content, onEdit, onDelete }: ContentCardProps) {
+  const router = useRouter();
   const { attributes, listeners, setNodeRef, style } = useSortableItem(content.id);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const openFolder = () => router.push(`/study-groups/${content.studyGroupId}/contents/${content.id}`);
 
   return (
     <div
@@ -22,13 +23,13 @@ export function ContentCard({ content, onEdit, onDelete }: ContentCardProps) {
       style={style}
       role="button"
       tabIndex={0}
-      aria-label={`Abrir opções de ${content.title}`}
+      aria-label={`Abrir ${content.title}`}
       className="rounded-xl border border-neutral-200 bg-white p-4 shadow-panel transition hover:border-lime-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-600"
-      onClick={() => setMenuOpen(true)}
+      onClick={openFolder}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          setMenuOpen(true);
+          openFolder();
         }
       }}
     >
@@ -44,13 +45,7 @@ export function ContentCard({ content, onEdit, onDelete }: ContentCardProps) {
         >
           <GripVertical size={16} aria-hidden />
         </button>
-        <ContentActionsMenu
-          content={content}
-          open={menuOpen}
-          onOpenChange={setMenuOpen}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <ContentActionsMenu content={content} onEdit={onEdit} onDelete={onDelete} />
       </div>
       <h3 className="mt-2 font-display text-xl tracking-wide text-neutral-900">
         {content.title}

@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { GripVertical } from "lucide-react";
 import { ContentActionsMenu } from "./content-actions-menu";
-import {
-  TableCell,
-  TableRow,
-} from "@/components/ui/table";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { useSortableItem } from "@/components/ui/sortable";
 import type { Content } from "@/lib/api/types";
 
@@ -17,15 +14,15 @@ interface ContentRowProps {
 }
 
 export function ContentRow({ content, onEdit, onDelete }: ContentRowProps) {
+  const router = useRouter();
   const { attributes, listeners, setNodeRef, style } = useSortableItem(content.id);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <TableRow
       ref={setNodeRef}
       style={style}
       className="cursor-pointer"
-      onClick={() => setMenuOpen(true)}
+      onClick={() => router.push(`/study-groups/${content.studyGroupId}/contents/${content.id}`)}
     >
       <TableCell className="w-10 px-2">
         <button
@@ -44,13 +41,7 @@ export function ContentRow({ content, onEdit, onDelete }: ContentRowProps) {
         {content.description ?? "—"}
       </TableCell>
       <TableCell className="text-right">
-        <ContentActionsMenu
-          content={content}
-          open={menuOpen}
-          onOpenChange={setMenuOpen}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <ContentActionsMenu content={content} onEdit={onEdit} onDelete={onDelete} />
       </TableCell>
     </TableRow>
   );
