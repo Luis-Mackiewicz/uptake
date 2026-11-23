@@ -30,6 +30,7 @@ export type NoteAvgAggregateOutputType = {
   id: number | null
   sizeBytes: number | null
   contentId: number | null
+  position: number | null
   userId: number | null
 }
 
@@ -37,6 +38,7 @@ export type NoteSumAggregateOutputType = {
   id: number | null
   sizeBytes: number | null
   contentId: number | null
+  position: number | null
   userId: number | null
 }
 
@@ -48,6 +50,7 @@ export type NoteMinAggregateOutputType = {
   mimeType: string | null
   sizeBytes: number | null
   contentId: number | null
+  position: number | null
   userId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -62,6 +65,7 @@ export type NoteMaxAggregateOutputType = {
   mimeType: string | null
   sizeBytes: number | null
   contentId: number | null
+  position: number | null
   userId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -76,6 +80,7 @@ export type NoteCountAggregateOutputType = {
   mimeType: number
   sizeBytes: number
   contentId: number
+  position: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -88,6 +93,7 @@ export type NoteAvgAggregateInputType = {
   id?: true
   sizeBytes?: true
   contentId?: true
+  position?: true
   userId?: true
 }
 
@@ -95,6 +101,7 @@ export type NoteSumAggregateInputType = {
   id?: true
   sizeBytes?: true
   contentId?: true
+  position?: true
   userId?: true
 }
 
@@ -106,6 +113,7 @@ export type NoteMinAggregateInputType = {
   mimeType?: true
   sizeBytes?: true
   contentId?: true
+  position?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -120,6 +128,7 @@ export type NoteMaxAggregateInputType = {
   mimeType?: true
   sizeBytes?: true
   contentId?: true
+  position?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -134,6 +143,7 @@ export type NoteCountAggregateInputType = {
   mimeType?: true
   sizeBytes?: true
   contentId?: true
+  position?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -235,6 +245,7 @@ export type NoteGroupByOutputType = {
   mimeType: string
   sizeBytes: number
   contentId: number
+  position: number
   userId: number
   createdAt: Date
   updatedAt: Date
@@ -272,6 +283,7 @@ export type NoteWhereInput = {
   mimeType?: Prisma.StringFilter<"Note"> | string
   sizeBytes?: Prisma.IntFilter<"Note"> | number
   contentId?: Prisma.IntFilter<"Note"> | number
+  position?: Prisma.IntFilter<"Note"> | number
   userId?: Prisma.IntFilter<"Note"> | number
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
@@ -290,6 +302,7 @@ export type NoteOrderByWithRelationInput = {
   mimeType?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -313,6 +326,7 @@ export type NoteWhereUniqueInput = Prisma.AtLeast<{
   mimeType?: Prisma.StringFilter<"Note"> | string
   sizeBytes?: Prisma.IntFilter<"Note"> | number
   contentId?: Prisma.IntFilter<"Note"> | number
+  position?: Prisma.IntFilter<"Note"> | number
   userId?: Prisma.IntFilter<"Note"> | number
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
@@ -331,6 +345,7 @@ export type NoteOrderByWithAggregationInput = {
   mimeType?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -353,6 +368,7 @@ export type NoteScalarWhereWithAggregatesInput = {
   mimeType?: Prisma.StringWithAggregatesFilter<"Note"> | string
   sizeBytes?: Prisma.IntWithAggregatesFilter<"Note"> | number
   contentId?: Prisma.IntWithAggregatesFilter<"Note"> | number
+  position?: Prisma.IntWithAggregatesFilter<"Note"> | number
   userId?: Prisma.IntWithAggregatesFilter<"Note"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Note"> | Date | string
@@ -365,6 +381,7 @@ export type NoteCreateInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -382,6 +399,7 @@ export type NoteUncheckedCreateInput = {
   mimeType?: string
   sizeBytes?: number
   contentId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -396,6 +414,7 @@ export type NoteUpdateInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -413,6 +432,7 @@ export type NoteUncheckedUpdateInput = {
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
   contentId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -429,6 +449,7 @@ export type NoteCreateManyInput = {
   mimeType?: string
   sizeBytes?: number
   contentId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -441,6 +462,7 @@ export type NoteUpdateManyMutationInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -454,6 +476,7 @@ export type NoteUncheckedUpdateManyInput = {
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
   contentId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -489,6 +512,7 @@ export type NoteCountOrderByAggregateInput = {
   mimeType?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -499,6 +523,7 @@ export type NoteAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -510,6 +535,7 @@ export type NoteMaxOrderByAggregateInput = {
   mimeType?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -524,6 +550,7 @@ export type NoteMinOrderByAggregateInput = {
   mimeType?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -534,6 +561,7 @@ export type NoteSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   sizeBytes?: Prisma.SortOrder
   contentId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -660,6 +688,7 @@ export type NoteCreateWithoutUserInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -676,6 +705,7 @@ export type NoteUncheckedCreateWithoutUserInput = {
   mimeType?: string
   sizeBytes?: number
   contentId: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -720,6 +750,7 @@ export type NoteScalarWhereInput = {
   mimeType?: Prisma.StringFilter<"Note"> | string
   sizeBytes?: Prisma.IntFilter<"Note"> | number
   contentId?: Prisma.IntFilter<"Note"> | number
+  position?: Prisma.IntFilter<"Note"> | number
   userId?: Prisma.IntFilter<"Note"> | number
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
@@ -732,6 +763,7 @@ export type NoteCreateWithoutContentInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -747,6 +779,7 @@ export type NoteUncheckedCreateWithoutContentInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -787,6 +820,7 @@ export type NoteCreateWithoutExamsInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -803,6 +837,7 @@ export type NoteUncheckedCreateWithoutExamsInput = {
   mimeType?: string
   sizeBytes?: number
   contentId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -832,6 +867,7 @@ export type NoteUpdateWithoutExamsInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -848,6 +884,7 @@ export type NoteUncheckedUpdateWithoutExamsInput = {
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
   contentId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -861,6 +898,7 @@ export type NoteCreateWithoutReviewsInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -877,6 +915,7 @@ export type NoteUncheckedCreateWithoutReviewsInput = {
   mimeType?: string
   sizeBytes?: number
   contentId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -906,6 +945,7 @@ export type NoteUpdateWithoutReviewsInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -922,6 +962,7 @@ export type NoteUncheckedUpdateWithoutReviewsInput = {
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
   contentId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -937,6 +978,7 @@ export type NoteCreateManyUserInput = {
   mimeType?: string
   sizeBytes?: number
   contentId: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -948,6 +990,7 @@ export type NoteUpdateWithoutUserInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -964,6 +1007,7 @@ export type NoteUncheckedUpdateWithoutUserInput = {
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
   contentId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -979,6 +1023,7 @@ export type NoteUncheckedUpdateManyWithoutUserInput = {
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
   contentId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -991,6 +1036,7 @@ export type NoteCreateManyContentInput = {
   markdownContent: string
   mimeType?: string
   sizeBytes?: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1003,6 +1049,7 @@ export type NoteUpdateWithoutContentInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1018,6 +1065,7 @@ export type NoteUncheckedUpdateWithoutContentInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1033,6 +1081,7 @@ export type NoteUncheckedUpdateManyWithoutContentInput = {
   markdownContent?: Prisma.StringFieldUpdateOperationsInput | string
   mimeType?: Prisma.StringFieldUpdateOperationsInput | string
   sizeBytes?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1087,6 +1136,7 @@ export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   mimeType?: boolean
   sizeBytes?: boolean
   contentId?: boolean
+  position?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1108,13 +1158,14 @@ export type NoteSelectScalar = {
   mimeType?: boolean
   sizeBytes?: boolean
   contentId?: boolean
+  position?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "fileName" | "markdownContent" | "mimeType" | "sizeBytes" | "contentId" | "userId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["note"]>
+export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "fileName" | "markdownContent" | "mimeType" | "sizeBytes" | "contentId" | "position" | "userId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["note"]>
 export type NoteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   content?: boolean | Prisma.ContentDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1139,6 +1190,7 @@ export type $NotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     mimeType: string
     sizeBytes: number
     contentId: number
+    position: number
     userId: number
     createdAt: Date
     updatedAt: Date
@@ -1523,6 +1575,7 @@ export interface NoteFieldRefs {
   readonly mimeType: Prisma.FieldRef<"Note", 'String'>
   readonly sizeBytes: Prisma.FieldRef<"Note", 'Int'>
   readonly contentId: Prisma.FieldRef<"Note", 'Int'>
+  readonly position: Prisma.FieldRef<"Note", 'Int'>
   readonly userId: Prisma.FieldRef<"Note", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Note", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Note", 'DateTime'>

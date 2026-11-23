@@ -53,6 +53,7 @@ model Content {
   description      String?
   studyGroupId     Int
   studyGroup       StudyGroup        @relation(fields: [studyGroupId], references: [id], onDelete: Restrict)
+  position         Int               @default(0)
   userId           Int
   user             User              @relation(fields: [userId], references: [id], onDelete: Restrict)
   notes            Note[]
@@ -63,6 +64,7 @@ model Content {
 
   @@index([userId, deletedAt])
   @@index([studyGroupId, deletedAt])
+  @@index([studyGroupId, position])
 }
 
 model Note {
@@ -74,6 +76,7 @@ model Note {
   sizeBytes       Int        @default(0)
   contentId       Int
   content         Content    @relation(fields: [contentId], references: [id], onDelete: Restrict)
+  position        Int        @default(0)
   userId          Int
   user            User       @relation(fields: [userId], references: [id], onDelete: Restrict)
   exams           ExamNote[]
@@ -84,6 +87,7 @@ model Note {
 
   @@unique([contentId, fileName])
   @@index([userId, deletedAt])
+  @@index([contentId, position])
 }
 
 model Exam {

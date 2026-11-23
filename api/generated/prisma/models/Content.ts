@@ -29,12 +29,14 @@ export type AggregateContent = {
 export type ContentAvgAggregateOutputType = {
   id: number | null
   studyGroupId: number | null
+  position: number | null
   userId: number | null
 }
 
 export type ContentSumAggregateOutputType = {
   id: number | null
   studyGroupId: number | null
+  position: number | null
   userId: number | null
 }
 
@@ -43,6 +45,7 @@ export type ContentMinAggregateOutputType = {
   title: string | null
   description: string | null
   studyGroupId: number | null
+  position: number | null
   userId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -54,6 +57,7 @@ export type ContentMaxAggregateOutputType = {
   title: string | null
   description: string | null
   studyGroupId: number | null
+  position: number | null
   userId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +69,7 @@ export type ContentCountAggregateOutputType = {
   title: number
   description: number
   studyGroupId: number
+  position: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -76,12 +81,14 @@ export type ContentCountAggregateOutputType = {
 export type ContentAvgAggregateInputType = {
   id?: true
   studyGroupId?: true
+  position?: true
   userId?: true
 }
 
 export type ContentSumAggregateInputType = {
   id?: true
   studyGroupId?: true
+  position?: true
   userId?: true
 }
 
@@ -90,6 +97,7 @@ export type ContentMinAggregateInputType = {
   title?: true
   description?: true
   studyGroupId?: true
+  position?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -101,6 +109,7 @@ export type ContentMaxAggregateInputType = {
   title?: true
   description?: true
   studyGroupId?: true
+  position?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -112,6 +121,7 @@ export type ContentCountAggregateInputType = {
   title?: true
   description?: true
   studyGroupId?: true
+  position?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -210,6 +220,7 @@ export type ContentGroupByOutputType = {
   title: string
   description: string | null
   studyGroupId: number
+  position: number
   userId: number
   createdAt: Date
   updatedAt: Date
@@ -244,6 +255,7 @@ export type ContentWhereInput = {
   title?: Prisma.StringFilter<"Content"> | string
   description?: Prisma.StringNullableFilter<"Content"> | string | null
   studyGroupId?: Prisma.IntFilter<"Content"> | number
+  position?: Prisma.IntFilter<"Content"> | number
   userId?: Prisma.IntFilter<"Content"> | number
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Content"> | Date | string
@@ -259,6 +271,7 @@ export type ContentOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -278,6 +291,7 @@ export type ContentWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"Content"> | string
   description?: Prisma.StringNullableFilter<"Content"> | string | null
   studyGroupId?: Prisma.IntFilter<"Content"> | number
+  position?: Prisma.IntFilter<"Content"> | number
   userId?: Prisma.IntFilter<"Content"> | number
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Content"> | Date | string
@@ -293,6 +307,7 @@ export type ContentOrderByWithAggregationInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -312,6 +327,7 @@ export type ContentScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"Content"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Content"> | string | null
   studyGroupId?: Prisma.IntWithAggregatesFilter<"Content"> | number
+  position?: Prisma.IntWithAggregatesFilter<"Content"> | number
   userId?: Prisma.IntWithAggregatesFilter<"Content"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Content"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Content"> | Date | string
@@ -321,6 +337,7 @@ export type ContentScalarWhereWithAggregatesInput = {
 export type ContentCreateInput = {
   title: string
   description?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -335,6 +352,7 @@ export type ContentUncheckedCreateInput = {
   title: string
   description?: string | null
   studyGroupId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -346,6 +364,7 @@ export type ContentUncheckedCreateInput = {
 export type ContentUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -360,6 +379,7 @@ export type ContentUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -373,6 +393,7 @@ export type ContentCreateManyInput = {
   title: string
   description?: string | null
   studyGroupId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -382,6 +403,7 @@ export type ContentCreateManyInput = {
 export type ContentUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -392,6 +414,7 @@ export type ContentUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -419,6 +442,7 @@ export type ContentCountOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -428,6 +452,7 @@ export type ContentCountOrderByAggregateInput = {
 export type ContentAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -436,6 +461,7 @@ export type ContentMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -447,6 +473,7 @@ export type ContentMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -456,6 +483,7 @@ export type ContentMinOrderByAggregateInput = {
 export type ContentSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   studyGroupId?: Prisma.SortOrder
+  position?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -586,6 +614,7 @@ export type ContentUpdateOneWithoutPomodoroSessionsNestedInput = {
 export type ContentCreateWithoutUserInput = {
   title: string
   description?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -599,6 +628,7 @@ export type ContentUncheckedCreateWithoutUserInput = {
   title: string
   description?: string | null
   studyGroupId: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -640,6 +670,7 @@ export type ContentScalarWhereInput = {
   title?: Prisma.StringFilter<"Content"> | string
   description?: Prisma.StringNullableFilter<"Content"> | string | null
   studyGroupId?: Prisma.IntFilter<"Content"> | number
+  position?: Prisma.IntFilter<"Content"> | number
   userId?: Prisma.IntFilter<"Content"> | number
   createdAt?: Prisma.DateTimeFilter<"Content"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Content"> | Date | string
@@ -649,6 +680,7 @@ export type ContentScalarWhereInput = {
 export type ContentCreateWithoutStudyGroupInput = {
   title: string
   description?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -661,6 +693,7 @@ export type ContentUncheckedCreateWithoutStudyGroupInput = {
   id?: number
   title: string
   description?: string | null
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -698,6 +731,7 @@ export type ContentUpdateManyWithWhereWithoutStudyGroupInput = {
 export type ContentCreateWithoutNotesInput = {
   title: string
   description?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -711,6 +745,7 @@ export type ContentUncheckedCreateWithoutNotesInput = {
   title: string
   description?: string | null
   studyGroupId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -737,6 +772,7 @@ export type ContentUpdateToOneWithWhereWithoutNotesInput = {
 export type ContentUpdateWithoutNotesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -750,6 +786,7 @@ export type ContentUncheckedUpdateWithoutNotesInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -760,6 +797,7 @@ export type ContentUncheckedUpdateWithoutNotesInput = {
 export type ContentCreateWithoutPomodoroSessionsInput = {
   title: string
   description?: string | null
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -773,6 +811,7 @@ export type ContentUncheckedCreateWithoutPomodoroSessionsInput = {
   title: string
   description?: string | null
   studyGroupId: number
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -799,6 +838,7 @@ export type ContentUpdateToOneWithWhereWithoutPomodoroSessionsInput = {
 export type ContentUpdateWithoutPomodoroSessionsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -812,6 +852,7 @@ export type ContentUncheckedUpdateWithoutPomodoroSessionsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -824,6 +865,7 @@ export type ContentCreateManyUserInput = {
   title: string
   description?: string | null
   studyGroupId: number
+  position?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -832,6 +874,7 @@ export type ContentCreateManyUserInput = {
 export type ContentUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -845,6 +888,7 @@ export type ContentUncheckedUpdateWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -857,6 +901,7 @@ export type ContentUncheckedUpdateManyWithoutUserInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   studyGroupId?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -866,6 +911,7 @@ export type ContentCreateManyStudyGroupInput = {
   id?: number
   title: string
   description?: string | null
+  position?: number
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -875,6 +921,7 @@ export type ContentCreateManyStudyGroupInput = {
 export type ContentUpdateWithoutStudyGroupInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -887,6 +934,7 @@ export type ContentUncheckedUpdateWithoutStudyGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -899,6 +947,7 @@ export type ContentUncheckedUpdateManyWithoutStudyGroupInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -950,6 +999,7 @@ export type ContentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   title?: boolean
   description?: boolean
   studyGroupId?: boolean
+  position?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -968,13 +1018,14 @@ export type ContentSelectScalar = {
   title?: boolean
   description?: boolean
   studyGroupId?: boolean
+  position?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "studyGroupId" | "userId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["content"]>
+export type ContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "studyGroupId" | "position" | "userId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["content"]>
 export type ContentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   studyGroup?: boolean | Prisma.StudyGroupDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -996,6 +1047,7 @@ export type $ContentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     title: string
     description: string | null
     studyGroupId: number
+    position: number
     userId: number
     createdAt: Date
     updatedAt: Date
@@ -1377,6 +1429,7 @@ export interface ContentFieldRefs {
   readonly title: Prisma.FieldRef<"Content", 'String'>
   readonly description: Prisma.FieldRef<"Content", 'String'>
   readonly studyGroupId: Prisma.FieldRef<"Content", 'Int'>
+  readonly position: Prisma.FieldRef<"Content", 'Int'>
   readonly userId: Prisma.FieldRef<"Content", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Content", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Content", 'DateTime'>
