@@ -43,6 +43,26 @@ npm start
 
 `npm test` executa testes unitários com `node:test` e não exige banco. O smoke test HTTP exige banco local e a API rodando.
 
+## Setup local do front
+
+O front em `web/` usa Next.js 16, React 19, Tailwind CSS 4 e consome a API por um rewrite local. Com a API rodando na porta `3500`:
+
+```bash
+cp web/.env.example web/.env.local
+cd web
+npm install
+npm run dev
+```
+
+O front sobe em `http://localhost:3000`. As requisições para `/api/*` são proxyadas para `API_PROXY_TARGET` (padrão `http://127.0.0.1:3500`), sem necessidade de CORS. A sessão guarda o JWT no `localStorage` e envia `Authorization: Bearer <token>` nas rotas protegidas.
+
+```bash
+cd web
+npm run lint
+npm run typecheck
+npm run build
+```
+
 ## Comportamentos do MVP
 
 - Rotas protegidas exigem `Authorization: Bearer <token>`; token ausente retorna `401`.
@@ -51,3 +71,4 @@ npm start
 - Itens do ciclo também usam exclusão lógica para não violar a unicidade de posição.
 - `sizeBytes` é calculado no servidor a partir de `markdownContent`, com limite de 2 MB.
 - `PATCH` continua substituindo completamente o recurso, preservando o contrato HTTP existente.
+- Exames devolvem `noteIds` nas respostas, permitindo editar o vínculo com notas no front.
