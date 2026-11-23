@@ -19,6 +19,7 @@ function makeContent(data: CreateContentData): ContentRecord {
     title: data.title,
     description: data.description ?? null,
     studyGroupId: data.studyGroupId,
+    position: 1,
     userId: 1,
     createdAt: now,
     updatedAt: now,
@@ -29,6 +30,7 @@ function createService(studyGroupExists = true) {
   let findManyArgs:
     | { userId: number; pagination: unknown; studyGroupId?: number }
     | undefined;
+  let reorderedIds: number[] | undefined;
 
   const repository: ContentRepository = {
     async findById() {
@@ -38,6 +40,16 @@ function createService(studyGroupExists = true) {
       findManyArgs = { userId, pagination, studyGroupId };
       return { data: [], total: 0 };
     },
+    async findActiveIds() {
+      return [1, 2, 3];
+    },
+    async findNextPosition() {
+      return 4;
+    },
+    async reorder(_userId, _studyGroupId, ids) {
+      reorderedIds = ids;
+    },
+    async normalizePositions() {},
     async create(_userId, data) {
       return makeContent(data);
     },
@@ -61,6 +73,7 @@ function createService(studyGroupExists = true) {
   return {
     service: new ContentService(repository, studyGroups),
     findManyArgs: () => findManyArgs,
+    reorderedIds: () => reorderedIds,
   };
 }
 
@@ -89,4 +102,21 @@ test("list contents query coerces studyGroupId and rejects zero", () => {
     7,
   );
   assert.equal(listContentsQuerySchema.safeParse({ studyGroupId: 0 }).success, false);
+});
+
+test("content service merges a partial reorder with the remaining ids", async () => {
+  const { service, reorderedIds } = createService();
+
+  await service.reorder(1, 7, [3, 1]);
+
+  assert.deepEqual(reorderedIds(), [3, 1, 2]);
+});
+
+test("content service rejects reordering ids outside the study group", async () => {
+  const { service } = createService();
+
+  await assert.rejects(
+    service.reorder(1, 7, [1, 99]),
+    /Lista de conteúdos inválida/,
+  );
 });

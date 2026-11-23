@@ -5,6 +5,7 @@ import {
 import { type Pagination, toPaginated } from "../../shared/domain.js";
 import { assertFound } from "../../shared/guards.js";
 import type { StudyGroupLookup } from "../../shared/ownership.js";
+import { mergeReorderedIds } from "../../shared/reorder.js";
 import { studyGroupLookup } from "../studyGroup/index.js";
 import type { CreateContentData, UpdateContentData } from "./schemas.js";
 import { contentRepository } from "./repository.js";
@@ -22,6 +23,14 @@ type ContentRepository = Omit<
     pagination: Pagination,
     studyGroupId?: number,
   ): Promise<{ data: ContentRecord[]; total: number }>;
+  findActiveIds(userId: number, studyGroupId: number): Promise<number[]>;
+  findNextPosition(userId: number, studyGroupId: number): Promise<number>;
+  reorder(
+    userId: number,
+    studyGroupId: number,
+    ids: number[],
+  ): Promise<void>;
+  normalizePositions(userId: number, studyGroupId: number): Promise<void>;
 };
 
 export class ContentService extends CrudService<
@@ -59,9 +68,41 @@ export class ContentService extends CrudService<
   }
 
   override async update(userId: number, id: number, data: UpdateContentData) {
-    await this.findById(userId, id);
+    const current = await this.findById(userId, id);
     await this.ensureStudyGroup(userId, data.studyGroupId);
-    return this.updateValidated(userId, id, data);
+
+    if (current.studyGroupId === data.studyGroupId) {
+      return this.updateValidated(userId, id, data);
+    }
+
+    const position = await this.repository.findNextPosition(
+      userId,
+      data.studyGroupId,
+    );
+    const updated = await this.repository.update(id, userId, {
+      ...data,
+      position,
+    } as UpdateContentData & { position: number });
+    await this.repository.normalizePositions(userId, current.studyGroupId);
+    return updated;
+  }
+
+  override async remove(userId: number, id: number) {
+    const current = await this.findById(userId, id);
+    const removed = await this.repository.softDelete(id, userId);
+    await this.repository.normalizePositions(userId, current.studyGroupId);
+    return removed;
+  }
+
+  async reorder(userId: number, studyGroupId: number, ids: number[]) {
+    await this.ensureStudyGroup(userId, studyGroupId);
+    const currentIds = await this.repository.findActiveIds(userId, studyGroupId);
+    const orderedIds = mergeReorderedIds(
+      currentIds,
+      ids,
+      "Lista de conteúdos inválida",
+    );
+    await this.repository.reorder(userId, studyGroupId, orderedIds);
   }
 
   private async ensureStudyGroup(userId: number, studyGroupId: number) {

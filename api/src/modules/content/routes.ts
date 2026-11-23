@@ -6,6 +6,7 @@ import { parseSchema } from "../../shared/validation.js";
 import {
   createContentSchema,
   listContentsQuerySchema,
+  reorderContentsSchema,
   updateContentSchema,
 } from "./schemas.js";
 import { contentService } from "./service.js";
@@ -27,6 +28,12 @@ export async function contentRoutes(app: FastifyInstance) {
     privateApp.get("/contents/:id", async (request) => {
       const { id } = parseSchema(idParamSchema, request.params);
       return contentService.findById(request.userId, id);
+    });
+
+    privateApp.patch("/contents/reorder", async (request) => {
+      const { studyGroupId, ids } = parseSchema(reorderContentsSchema, request.body);
+      await contentService.reorder(request.userId, studyGroupId, ids);
+      return { ids };
     });
 
     privateApp.patch("/contents/:id", async (request) => {

@@ -24,5 +24,12 @@ export const createContentSchema = z
 
 export const updateContentSchema = createContentSchema;
 
+export const reorderContentsSchema = z
+  .object({
+    studyGroupId: z.coerce.number().int().positive(),
+    ids: z.array(z.coerce.number().int().positive()).min(1),
+  })
+  .strict();
+
 export type CreateContentData = z.infer<typeof createContentSchema>;
 export type UpdateContentData = z.infer<typeof updateContentSchema>;

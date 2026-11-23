@@ -7,6 +7,7 @@ export const contentSafeSelect = {
   title: true,
   description: true,
   studyGroupId: true,
+  position: true,
   userId: true,
   createdAt: true,
   updatedAt: true,
@@ -16,6 +17,7 @@ export interface ContentInput {
   title: string;
   description?: string | null;
   studyGroupId: number;
+  position?: number;
 }
 
 export const contentRepository = {
@@ -44,11 +46,61 @@ export const contentRepository = {
         select: contentSafeSelect,
         skip: pagination.skip,
         take: pagination.limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ position: "asc" }, { id: "asc" }],
       }),
       prisma.content.count({ where }),
     ]);
     return { data, total };
+  },
+
+  async findActiveIds(userId: number, studyGroupId: number) {
+    const records = await prisma.content.findMany({
+      where: {
+        userId,
+        studyGroupId,
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
+      select: { id: true },
+      orderBy: [{ position: "asc" }, { id: "asc" }],
+    });
+    return records.map((record) => record.id);
+  },
+
+  async findNextPosition(userId: number, studyGroupId: number) {
+    const last = await prisma.content.findFirst({
+      where: {
+        userId,
+        studyGroupId,
+        deletedAt: null,
+        studyGroup: { deletedAt: null },
+      },
+      select: { position: true },
+      orderBy: { position: "desc" },
+    });
+    return (last?.position ?? 0) + 1;
+  },
+
+  async reorder(userId: number, studyGroupId: number, ids: number[]) {
+    await prisma.$transaction([
+      ...ids.map((id, index) =>
+        prisma.content.updateMany({
+          where: { id, userId, studyGroupId, deletedAt: null },
+          data: { position: -(index + 1) },
+        }),
+      ),
+      ...ids.map((id, index) =>
+        prisma.content.updateMany({
+          where: { id, userId, studyGroupId, deletedAt: null },
+          data: { position: index + 1 },
+        }),
+      ),
+    ]);
+  },
+
+  async normalizePositions(userId: number, studyGroupId: number) {
+    const ids = await this.findActiveIds(userId, studyGroupId);
+    await this.reorder(userId, studyGroupId, ids);
   },
 
   async create(userId: number, data: ContentInput) {
@@ -57,6 +109,7 @@ export const contentRepository = {
         title: data.title,
         description: data.description ?? null,
         studyGroupId: data.studyGroupId,
+        position: data.position ?? (await this.findNextPosition(userId, data.studyGroupId)),
         userId,
       },
       select: contentSafeSelect,
@@ -70,6 +123,7 @@ export const contentRepository = {
         title: data.title,
         description: data.description,
         studyGroupId: data.studyGroupId,
+        position: data.position,
       },
       select: contentSafeSelect,
     });
