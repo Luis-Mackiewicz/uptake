@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -9,6 +9,8 @@ interface DropdownMenuProps {
   trigger: ReactNode;
   children: ReactNode;
   align?: "left" | "right";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function DropdownMenu({
@@ -16,9 +18,21 @@ export function DropdownMenu({
   trigger,
   children,
   align = "right",
+  open: controlledOpen,
+  onOpenChange,
 }: DropdownMenuProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (!isControlled) setInternalOpen(next);
+      onOpenChange?.(next);
+    },
+    [isControlled, onOpenChange],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -36,7 +50,7 @@ export function DropdownMenu({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [open, setOpen]);
 
   return (
     <div
@@ -50,7 +64,7 @@ export function DropdownMenu({
         aria-expanded={open}
         aria-label={label}
         className="inline-flex h-8 w-8 items-center justify-center rounded-md text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-600"
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => setOpen(!open)}
       >
         {trigger}
       </button>

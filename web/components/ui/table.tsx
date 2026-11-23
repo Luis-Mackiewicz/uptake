@@ -1,4 +1,5 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import { forwardRef } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 interface TablePartProps {
@@ -6,9 +7,7 @@ interface TablePartProps {
   children?: ReactNode;
 }
 
-interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  children?: ReactNode;
-}
+type TableRowProps = ComponentPropsWithoutRef<"tr">;
 
 export function Table({ className, children }: TablePartProps) {
   return <div className={cn("overflow-x-auto rounded-lg border border-neutral-200 bg-white shadow-panel", className)}><table className="w-full text-left text-sm">{children}</table></div>;
@@ -22,13 +21,19 @@ export function TableBody({ className, children }: TablePartProps) {
   return <tbody className={cn("divide-y divide-neutral-200", className)}>{children}</tbody>;
 }
 
-export function TableRow({ className, children, ...props }: TableRowProps) {
-  return (
-    <tr {...props} className={cn("transition hover:bg-neutral-50", className)}>
-      {children}
-    </tr>
-  );
-}
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
+  function TableRow({ className, children, ...props }, ref) {
+    return (
+      <tr
+        {...props}
+        ref={ref}
+        className={cn("transition hover:bg-neutral-50", className)}
+      >
+        {children}
+      </tr>
+    );
+  },
+);
 
 export function TableHead({ className, children }: TablePartProps) {
   return <th scope="col" className={cn("px-4 py-3 font-medium", className)}>{children}</th>;

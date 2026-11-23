@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, Plus } from "lucide-react";
+import { ContentCard } from "./content-card";
+import { ContentRow } from "./content-row";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,12 +16,20 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { SortableProvider } from "@/components/ui/sortable";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import { ViewToggle, type ContentView } from "@/components/ui/view-toggle";
 import { useResourceList } from "@/hooks/use-resource-list";
 import { ApiRequestError, api } from "@/lib/api/client";
-import type { Content, CreateContentRequest, MessageResponse, StudyGroup } from "@/lib/api/types";
+import type {
+  Content,
+  CreateContentRequest,
+  MessageResponse,
+  ReorderContentsRequest,
+  StudyGroup,
+} from "@/lib/api/types";
 import { isBlank, validateLength } from "@/lib/validation";
 
 type ContentForm = { title: string; description: string };
@@ -68,7 +79,7 @@ export function GroupContentsPage({ groupId }: { groupId: number }) {
 }
 
 function GroupContents({ group }: { group: StudyGroup }) {
-  const { data, setPage, reload } = useResourceList<Content>("/contents", {
+  const { data, setData, setPage, reload } = useResourceList<Content>("/contents", {
     studyGroupId: group.id,
   });
   const { notify } = useToast();
@@ -78,6 +89,35 @@ function GroupContents({ group }: { group: StudyGroup }) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<Content | null>(null);
+  const [view, setView] = useState<ContentView>(() => {
+    if (typeof window === "undefined") return "table";
+    const saved = window.localStorage.getItem("uptake:contents-view");
+    return saved === "cards" ? "cards" : "table";
+  });
+
+  const changeView = (next: ContentView) => {
+    setView(next);
+    window.localStorage.setItem("uptake:contents-view", next);
+  };
+
+  const handleReorder = async (ids: number[]) => {
+    const current = data;
+    if (!current) return;
+    const byId = new Map(current.data.map((content) => [content.id, content]));
+    const ordered = ids
+      .map((id) => byId.get(id))
+      .filter((content): content is Content => Boolean(content));
+    setData({ ...current, data: ordered });
+
+    try {
+      const payload: ReorderContentsRequest = { studyGroupId: group.id, ids };
+      await api.patch("/contents/reorder", payload);
+      notify("Ordem salva", "success");
+    } catch (error) {
+      setData(current);
+      notify(error instanceof ApiRequestError ? error.message : "Não foi possível salvar a ordem", "error");
+    }
+  };
 
   const openCreate = () => {
     setEditing(null);
@@ -151,63 +191,86 @@ function GroupContents({ group }: { group: StudyGroup }) {
     }
   };
 
+  const ids = data?.data.map((content) => content.id) ?? [];
+
   return (
     <div>
       <PageHeader
         title={`Conteúdos de ${group.name}`}
         description="Cadastre os temas estudados neste grupo."
         actions={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ViewToggle value={view} onChange={changeView} />
             <Link href="/study-groups">
-              <Button variant="secondary">Voltar</Button>
+              <Button variant="secondary">
+                <ArrowLeft size={16} aria-hidden />
+                Voltar
+              </Button>
             </Link>
-            <Button onClick={openCreate}>Novo conteúdo</Button>
+            <Button onClick={openCreate}>
+              <Plus size={16} aria-hidden />
+              Novo conteúdo
+            </Button>
           </div>
         }
       />
 
-      <Card className="p-0">
-        {data?.data.length ? (
-          <>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Título</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+      {data?.data.length ? (
+        <>
+          {view === "table" ? (
+            <SortableProvider ids={ids} onReorder={handleReorder}>
+              <Card className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-10 px-2">
+                        <span className="sr-only">Arrastar</span>
+                      </TableHead>
+                      <TableHead>Título</TableHead>
+                      <TableHead>Descrição</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data.data.map((content) => (
+                      <ContentRow
+                        key={content.id}
+                        content={content}
+                        onEdit={openEdit}
+                        onDelete={setDeleting}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            </SortableProvider>
+          ) : (
+            <SortableProvider ids={ids} onReorder={handleReorder}>
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {data.data.map((content) => (
-                  <TableRow key={content.id}>
-                    <TableCell className="font-medium">{content.title}</TableCell>
-                    <TableCell className="max-w-xs truncate text-neutral-600">{content.description ?? "—"}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-2">
-                        <Button variant="secondary" size="sm" onClick={() => openEdit(content)}>
-                          Editar
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setDeleting(content)}>
-                          Excluir
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <ContentCard
+                    key={content.id}
+                    content={content}
+                    onEdit={openEdit}
+                    onDelete={setDeleting}
+                  />
                 ))}
-              </TableBody>
-            </Table>
-            <div className="p-4">
-              <Pagination page={data.page} totalPages={data.totalPages} total={data.total} onPageChange={setPage} />
-            </div>
-          </>
-        ) : (
+              </div>
+            </SortableProvider>
+          )}
+          <div className="mt-4">
+            <Pagination page={data.page} totalPages={data.totalPages} total={data.total} onPageChange={setPage} />
+          </div>
+        </>
+      ) : (
+        <Card>
           <EmptyState
             title={data ? "Nenhum conteúdo encontrado" : "Carregando..."}
             description="Cadastre um conteúdo para anexar notas."
             action={<Button onClick={openCreate}>Novo conteúdo</Button>}
           />
-        )}
-      </Card>
+        </Card>
+      )}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title={editing ? "Editar conteúdo" : "Novo conteúdo"}>
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
