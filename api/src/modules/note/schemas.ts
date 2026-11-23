@@ -1,0 +1,34 @@
+import { z } from "zod";
+
+export const createNoteSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(1, "Título é obrigatório")
+      .max(200, "Título deve ter no máximo 200 caracteres"),
+    fileName: z
+      .string()
+      .trim()
+      .min(1, "Nome do arquivo é obrigatório")
+      .max(255, "Nome do arquivo deve ter no máximo 255 caracteres")
+      .regex(/^[^/\\]+$/, "Nome do arquivo não pode conter barras"),
+    markdownContent: z.string().min(1, "Conteúdo da nota é obrigatório"),
+    mimeType: z
+      .string()
+      .trim()
+      .max(100, "MIME type deve ter no máximo 100 caracteres")
+      .default("text/markdown"),
+    sizeBytes: z.coerce
+      .number()
+      .int()
+      .nonnegative("Tamanho não pode ser negativo")
+      .default(0),
+    contentId: z.coerce.number().int().positive(),
+  })
+  .strict();
+
+export const updateNoteSchema = createNoteSchema;
+
+export type CreateNoteData = z.infer<typeof createNoteSchema>;
+export type UpdateNoteData = z.infer<typeof updateNoteSchema>;

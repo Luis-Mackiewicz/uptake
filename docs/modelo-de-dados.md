@@ -9,11 +9,10 @@ Este documento complementa a seção 8 do [PRD](./PRD.md) e registra as decisõe
 3. **Exam pode vincular várias Notes, de grupos diferentes** (RF-07). A tabela `ExamNote` resolve o N:N com chave primária composta. Assim, a prova de 28/01/2027 pode usar notas de History, Math e Physics.
 4. **Exam também pode pertencer a um StudyGroup** (`studyGroupId` opcional), conforme RD-03.
 5. **Isolamento por usuário:** todo registro tem `userId`. Toda consulta deve filtrar `userId = usuário autenticado` **e** `deletedAt = null`.
-6. **Exclusão lógica (RD-04):** nenhum `DELETE` físico. Excluir um grupo marca `deletedAt` nele e, em cascata lógica, em seus conteúdos e notas. Vínculos em `ExamNote` são preservados como histórico, mas notas excluídas não aparecem nas listagens. Por isso todas as relações usam `onDelete: Restrict`.
+6. **Exclusão lógica (RD-04):** nenhum `DELETE` físico. Excluir um grupo marca `deletedAt` nele e, em cascata lógica, em seus conteúdos e notas. Vínculos em `ExamNote` são preservados como histórico, mas notas excluídas não aparecem nas listagens. Por isso todas as relações usam `onDelete: Restrict`. Como as chaves únicas continuam valendo para linhas excluídas, um cadastro repetido **reativa** a linha existente (limpa `deletedAt`) em vez de inserir duplicata.
 7. **Música ambiente** (RF-11) fica em `User.musicUrl`; não há tabela própria.
 8. **Google Calendar** (RF-13): a conexão OAuth por usuário fica em `GoogleCalendarConnection`, com tokens criptografados pela aplicação. O `googleEventId` em `Exam` guarda o evento remoto correspondente.
-9. **IA** (RF-12): conversas e mensagens ficam em `AIConversation` e `AIMessage`; uma mensagem pode citar uma `Note` como contexto, por meio de `noteId`.
-10. **Paginação:** padrão de 10 itens por página, máximo de 50, para todas as listagens (RT-02).
+9. **Paginação:** `page` começa em 1, padrão de 20 itens por página e máximo de 100, para todas as listagens (RT-02).
 
 ## Dicionário de nomes
 
@@ -29,10 +28,7 @@ Este documento complementa a seção 8 do [PRD](./PRD.md) e registra as decisõe
 | Ciclo de estudos | `StudyCycle` |
 | Item do ciclo | `StudyCycleItem` |
 | Revisão | `Review` |
-| Conversa de IA | `AIConversation` |
-| Mensagem de IA | `AIMessage` |
 | Conexão com o Google Agenda | `GoogleCalendarConnection` |
-| Papel da mensagem | `MessageRole` (`USER`, `ASSISTANT`, `SYSTEM`) |
 
 ## Diagrama entidade-relacionamento
 
@@ -45,7 +41,6 @@ erDiagram
     USER ||--o{ POMODORO_SESSION : "records"
     USER ||--o{ STUDY_CYCLE : "builds"
     USER ||--o{ REVIEW : "tracks"
-    USER ||--o{ AI_CONVERSATION : "starts"
     USER ||--o| GOOGLE_CALENDAR_CONNECTION : "connects"
 
     STUDY_GROUP ||--o{ CONTENT : "contains"
@@ -56,9 +51,7 @@ erDiagram
     EXAM ||--o{ EXAM_NOTE : "links"
     NOTE ||--o{ EXAM_NOTE : "is linked to"
     NOTE ||--o{ REVIEW : "reviews"
-    NOTE ||--o{ AI_MESSAGE : "is cited by"
     STUDY_CYCLE ||--o{ STUDY_CYCLE_ITEM : "has"
-    AI_CONVERSATION ||--o{ AI_MESSAGE : "has"
 
     USER {
         int id PK
@@ -147,19 +140,6 @@ erDiagram
         int intervalDays
         int reviewCount
     }
-    AI_CONVERSATION {
-        int id PK
-        string title
-        int userId FK
-        datetime deletedAt "optional"
-    }
-    AI_MESSAGE {
-        int id PK
-        int aiConversationId FK
-        string role
-        string content
-        int noteId FK "optional"
-    }
     GOOGLE_CALENDAR_CONNECTION {
         int id PK
         int userId FK, UK
@@ -184,7 +164,6 @@ erDiagram
 | `PomodoroSession` | Histórico de sessões de foco | N:1 opcional com `Content` |
 | `StudyCycle` / `StudyCycleItem` | Rotina entre matérias, com posição e tempo | `StudyCycleItem` aponta para `StudyGroup` |
 | `Review` | Próxima revisão espaçada de uma nota | N:1 com `Note` |
-| `AIConversation` / `AIMessage` | Assistente de estudo | Mensagem pode citar `Note` |
 | `GoogleCalendarConnection` | Credenciais OAuth e sincronização | 1:1 com `User` |
 
 ## Como gravar um `.md`
@@ -201,6 +180,17 @@ erDiagram
 - `@@unique([userId, name])` em `StudyGroup`; `@@unique([contentId, fileName])` em `Note`; `@@unique([userId, noteId])` em `Review`; `@@unique([studyCycleId, position])` em `StudyCycleItem`.
 - `@@id([examId, noteId])` impede vínculo duplicado entre prova e nota.
 - `email` e `cpf` são únicos em `User`; `passwordHash` nunca é retornado pela API.
+
+## Reativação de registros excluídos
+
+Como o `deletedAt` não remove a linha, as chaves únicas continuam valendo. Antes de criar um registro, a API deve:
+
+1. Buscar a linha pela chave natural, **incluindo** registros com `deletedAt` preenchido: `email`/`cpf` em `User`, `[userId, name]` em `StudyGroup`, `[contentId, fileName]` em `Note`, `[userId, noteId]` em `Review` e `userId` em `GoogleCalendarConnection`.
+2. Se existir e estiver excluída, atualizar a linha com os novos dados e `deletedAt: null` (reativação).
+3. Se existir e estiver ativa, retornar erro de conflito (409).
+4. Se não existir, criar normalmente.
+
+Nas exclusões em cascata lógica, filhos já reativados continuam visíveis apenas se o pai também estiver ativo.
 
 ## Fora do MVP
 
