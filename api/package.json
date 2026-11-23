@@ -1,0 +1,17 @@
+{
+  "name": "uptake-api",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "fastify": "^5.12.8"
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15"
+  }
+}
