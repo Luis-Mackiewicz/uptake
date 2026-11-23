@@ -10,6 +10,7 @@ export interface NoteTab {
   title: string;
   fileName: string;
   contentId: number;
+  groupId?: number;
   savedContent: string;
   draft: string;
   status: NoteTabStatus;
@@ -20,7 +21,7 @@ export function useNoteTabs() {
   const [tabs, setTabs] = useState<NoteTab[]>([]);
   const [activeId, setActiveId] = useState<number | null>(null);
 
-  const openTab = useCallback((note: Note) => {
+  const openTab = useCallback((note: Note, groupId?: number) => {
     setTabs((current) => {
       if (current.some((tab) => tab.id === note.id)) return current;
       return [
@@ -30,6 +31,7 @@ export function useNoteTabs() {
           title: note.title,
           fileName: note.fileName,
           contentId: note.contentId,
+          groupId,
           savedContent: note.markdownContent,
           draft: note.markdownContent,
           status: "loading",
