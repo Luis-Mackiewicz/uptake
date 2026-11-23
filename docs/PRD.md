@@ -188,8 +188,8 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 ### RF-08 Pomodoro
 
 **Prioridade:** Should
-**Descrição:** temporizador de foco e pausa para sessões de estudo.
-**Critérios:** _a definir (duração padrão do foco e da pausa, se é configurável, se registra sessões)._
+**Descrição:** temporizador de foco e pausa disponível globalmente na sidebar.
+**Critérios:** padrões de 25 min de foco, 5 min de pausa curta e 15 min de pausa longa; tempos configuráveis no widget; pausa longa a cada 4 focos; sinal visual e sonoro ao finalizar cada fase; estado apenas local, sem histórico de sessões.
 
 ### RF-09 Ciclo de estudos
 

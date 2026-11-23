@@ -126,24 +126,6 @@ export interface CreateExamRequest {
   noteIds?: number[];
 }
 
-export interface PomodoroSession {
-  id: number;
-  userId: number;
-  contentId: number | null;
-  focusMinutes: number;
-  breakMinutes: number;
-  startedAt: string;
-  finishedAt: string | null;
-  completed: boolean;
-  createdAt: string;
-}
-
-export interface CreatePomodoroRequest {
-  contentId?: number | null;
-  focusMinutes?: number;
-  breakMinutes?: number;
-}
-
 export interface Review {
   id: number;
   userId: number;

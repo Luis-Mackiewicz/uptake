@@ -39,7 +39,7 @@ flowchart TD
         direction LR
         agenda[Google Agenda]
         musica[Música]
-        pomodoro[Pomodoro Timer]
+        pomodoro[Pomodoro Timer na sidebar]
     end
 
     dashboard -.-> Sidebar
