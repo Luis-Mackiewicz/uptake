@@ -39,7 +39,7 @@ export class ContentService extends CrudService<
   override async update(userId: number, id: number, data: UpdateContentData) {
     await this.findById(userId, id);
     await this.ensureStudyGroup(userId, data.studyGroupId);
-    return this.repository.update(id, userId, data);
+    return this.updateValidated(userId, id, data);
   }
 
   private async ensureStudyGroup(userId: number, studyGroupId: number) {

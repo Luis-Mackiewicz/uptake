@@ -47,7 +47,7 @@ export class ExamService extends CrudService<
     await this.findById(userId, id);
     await this.ensureStudyGroup(userId, data.studyGroupId);
     await this.ensureNotes(userId, data.noteIds);
-    return this.repository.update(id, userId, data);
+    return this.updateValidated(userId, id, data);
   }
 
   private async ensureStudyGroup(userId: number, studyGroupId?: number | null) {

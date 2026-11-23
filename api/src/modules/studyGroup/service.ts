@@ -67,7 +67,7 @@ export class StudyGroupService extends CrudService<
       throw new ConflictError("Já existe um grupo de estudo com esse nome");
     }
 
-    return this.repository.update(id, userId, data);
+    return this.updateValidated(userId, id, data);
   }
 }
 

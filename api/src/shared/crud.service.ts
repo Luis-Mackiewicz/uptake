@@ -54,6 +54,14 @@ export abstract class CrudService<
 
   async update(userId: number, id: number, data: UpdateData): Promise<T> {
     await this.findById(userId, id);
+    return this.updateValidated(userId, id, data);
+  }
+
+  protected updateValidated(
+    userId: number,
+    id: number,
+    data: UpdateData,
+  ): Promise<T> {
     return this.repository.update(id, userId, data);
   }
 

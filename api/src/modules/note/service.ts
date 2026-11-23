@@ -74,7 +74,7 @@ export class NoteService extends CrudService<
       throw new ConflictError("Já existe uma nota com esse nome neste conteúdo");
     }
 
-    return this.repository.update(id, userId, data);
+    return this.updateValidated(userId, id, data);
   }
 
   private async ensureContent(userId: number, contentId: number) {

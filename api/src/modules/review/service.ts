@@ -109,7 +109,7 @@ export class ReviewService extends CrudService<
     data: ReviewUpdateInput,
   ) {
     await this.findById(userId, id);
-    return this.repository.update(id, userId, data);
+    return this.updateValidated(userId, id, data);
   }
 
   async complete(userId: number, id: number) {
