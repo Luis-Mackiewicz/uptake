@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination } from "../../shared/domain.js";
 
 export const pomodoroSessionSafeSelect = {
   id: true,
@@ -54,17 +54,33 @@ export const pomodoroSessionRepository = {
     });
   },
 
-  async finish(id: number) {
+  async update(
+    id: number,
+    userId: number,
+    data: CreatePomodoroInput,
+  ) {
     return prisma.pomodoroSession.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
+      data: {
+        contentId: data.contentId ?? null,
+        focusMinutes: data.focusMinutes,
+        breakMinutes: data.breakMinutes,
+      },
+      select: pomodoroSessionSafeSelect,
+    });
+  },
+
+  async finish(id: number, userId: number) {
+    return prisma.pomodoroSession.update({
+      where: { id, userId, deletedAt: null },
       data: { finishedAt: new Date(), completed: true },
       select: pomodoroSessionSafeSelect,
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.pomodoroSession.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: pomodoroSessionSafeSelect,
     });

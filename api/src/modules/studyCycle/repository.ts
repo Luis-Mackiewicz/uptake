@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import type { Pagination } from "../schemas/pagination.schemas.js";
+import { prisma } from "../../lib/prisma.js";
+import type { Pagination } from "../../shared/domain.js";
 
 export const studyCycleSafeSelect = {
   id: true,
@@ -67,25 +67,25 @@ export const studyCycleRepository = {
     });
   },
 
-  async update(id: number, data: StudyCycleInput) {
+  async update(id: number, userId: number, data: StudyCycleInput) {
     return prisma.studyCycle.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data,
       select: studyCycleSafeSelect,
     });
   },
 
-  async softDelete(id: number) {
+  async softDelete(id: number, userId: number) {
     return prisma.studyCycle.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
       select: studyCycleSafeSelect,
     });
   },
 
-  async updateState(id: number, state: StudyCycleState) {
+  async updateState(id: number, userId: number, state: StudyCycleState) {
     return prisma.studyCycle.update({
-      where: { id },
+      where: { id, userId, deletedAt: null },
       data: state,
       select: studyCycleSafeSelect,
     });
