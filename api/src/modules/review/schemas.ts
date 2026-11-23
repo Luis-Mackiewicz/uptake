@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { paginationSchema } from "../../schemas/pagination.schemas.js";
+import { paginationSchema } from "../../shared/schemas.js";
 import {
   isReviewInterval,
   REVIEW_INTERVAL_MESSAGE,

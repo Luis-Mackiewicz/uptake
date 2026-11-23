@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { idParamSchema } from "../../schemas/id.schemas.js";
+import { idParamSchema } from "../../shared/schemas.js";
 import { privatePlugin } from "../../shared/routes.js";
 import { parseSchema } from "../../shared/validation.js";
 import {

@@ -1,18 +1,29 @@
 import { z } from "zod";
-import { ValidationError } from "../shared/errors.js";
+import { ValidationError } from "./errors.js";
 import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   calculateSkip,
   type Pagination,
-} from "../shared/domain.js";
+} from "./domain.js";
 
-export type { Pagination, PaginatedResult } from "../shared/domain.js";
-export { toPaginated } from "../shared/domain.js";
+export type { Pagination, PaginatedResult } from "./domain.js";
+export { toPaginated } from "./domain.js";
+
+export const idParamSchema = z
+  .object({
+    id: z.coerce.number().int().positive(),
+  })
+  .strict();
 
 export const paginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
-  limit: z.coerce.number().int().positive().max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
+  limit: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(MAX_PAGE_SIZE)
+    .default(DEFAULT_PAGE_SIZE),
 });
 
 export function parsePagination(query: unknown): Pagination {
