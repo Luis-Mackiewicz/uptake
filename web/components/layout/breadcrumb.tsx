@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { cn } from "@/lib/cn";
 
 export interface BreadcrumbItem {
   label: string;
@@ -8,11 +9,12 @@ export interface BreadcrumbItem {
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
+  className?: string;
 }
 
-export function Breadcrumb({ items }: BreadcrumbProps) {
+export function Breadcrumb({ items, className }: BreadcrumbProps) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-2">
+    <nav aria-label="Breadcrumb" className={cn("mb-2", className)}>
       <ol className="flex flex-wrap items-center gap-1 text-xs text-neutral-500">
         {items.map((item, index) => (
           <li key={`${item.label}-${index}`} className="flex items-center gap-1">

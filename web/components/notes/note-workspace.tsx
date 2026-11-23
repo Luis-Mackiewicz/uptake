@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { Breadcrumb, type BreadcrumbItem } from "@/components/layout/breadcrumb";
 import { MarkdownPreview } from "@/components/notes/markdown-preview";
 import { NoteEditor } from "@/components/notes/note-editor";
 import { NoteTabBar } from "@/components/notes/note-tab-bar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Select } from "@/components/ui/select";
 import type { NoteTab } from "@/hooks/use-note-tabs";
 import { cn } from "@/lib/cn";
 
@@ -23,13 +22,22 @@ const modes: Array<{ value: EditorMode; label: string }> = [
 interface NoteWorkspaceProps {
   tabs: NoteTab[];
   activeId: number | null;
+  breadcrumbs: BreadcrumbItem[];
   onSelect: (id: number) => void;
   onRequestClose: (id: number) => void;
   onDraftChange: (id: number, value: string) => void;
   onSave: () => void;
 }
 
-export function NoteWorkspace({ tabs, activeId, onSelect, onRequestClose, onDraftChange, onSave }: NoteWorkspaceProps) {
+export function NoteWorkspace({
+  tabs,
+  activeId,
+  breadcrumbs,
+  onSelect,
+  onRequestClose,
+  onDraftChange,
+  onSave,
+}: NoteWorkspaceProps) {
   const [mode, setMode] = useState<EditorMode>("split");
   const active = tabs.find((tab) => tab.id === activeId) ?? null;
   const dirty = active ? active.draft !== active.savedContent : false;
@@ -47,35 +55,52 @@ export function NoteWorkspace({ tabs, activeId, onSelect, onRequestClose, onDraf
             : { label: "Salvo", tone: "success" as const };
 
   return (
-    <Card className="flex min-h-[560px] flex-col p-0">
-      {tabs.length ? <NoteTabBar tabs={tabs} activeId={activeId} onSelect={onSelect} onRequestClose={onRequestClose} /> : null}
+    <Card className="flex h-full min-h-0 flex-col p-0">
+      {tabs.length ? (
+        <NoteTabBar
+          tabs={tabs}
+          activeId={activeId}
+          onSelect={onSelect}
+          onRequestClose={onRequestClose}
+          onSave={onSave}
+          canSave={dirty}
+          saving={active?.status === "saving"}
+        />
+      ) : null}
       {active && status ? (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 px-4 py-3">
-            <div className="min-w-0">
-              <p className="truncate font-medium text-neutral-900">{active.title}</p>
-              <p className="truncate font-mono text-xs text-neutral-500">{active.fileName}</p>
+          <div className="flex flex-wrap items-center gap-3 border-b border-neutral-200 px-4 py-2">
+            <div className="min-w-0 flex-1">
+              <Breadcrumb items={breadcrumbs} className="mb-1" />
+              <div className="flex min-w-0 items-baseline gap-2">
+                <p className="truncate font-medium text-neutral-900">{active.fileName}</p>
+                <p className="truncate text-xs text-neutral-500">{active.title}</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Select
-                aria-label="Modo de visualização"
-                value={mode}
-                onChange={(event) => setMode(event.target.value as EditorMode)}
-                className="h-8 w-28 text-xs"
-              >
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex rounded-md bg-neutral-100 p-0.5" role="group" aria-label="Modo de visualização">
                 {modes.map((item) => (
-                  <option key={item.value} value={item.value}>
+                  <button
+                    key={item.value}
+                    type="button"
+                    aria-pressed={mode === item.value}
+                    onClick={() => setMode(item.value)}
+                    className={cn(
+                      "h-7 rounded px-2.5 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-600",
+                      mode === item.value
+                        ? "bg-white text-lime-900 shadow-sm"
+                        : "text-neutral-600 hover:text-neutral-900",
+                    )}
+                  >
                     {item.label}
-                  </option>
+                  </button>
                 ))}
-              </Select>
+              </div>
+              <span className="text-[11px] text-neutral-500">
+                Dica: <kbd className="rounded border border-neutral-300 bg-white px-1 py-0.5 font-sans">Ctrl/⌘</kbd> +{" "}
+                <kbd className="rounded border border-neutral-300 bg-white px-1 py-0.5 font-sans">S</kbd> para salvar
+              </span>
               <Badge tone={status.tone}>{status.label}</Badge>
-              <Button size="sm" onClick={onSave} disabled={!dirty || active.status === "saving" || active.status === "loading"}>
-                Salvar
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => onRequestClose(active.id)}>
-                Fechar
-              </Button>
             </div>
           </div>
           {active.error ? (

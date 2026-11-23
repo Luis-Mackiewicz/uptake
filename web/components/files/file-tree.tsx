@@ -14,6 +14,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { ApiRequestError, api } from "@/lib/api/client";
 import type {
@@ -28,12 +29,24 @@ import type {
 } from "@/lib/api/types";
 import { isBlank, validateLength } from "@/lib/validation";
 
-type TreeForm = { name: string };
+type TreeForm = { name: string; description: string };
 type FormErrors = Partial<Record<keyof TreeForm, string>>;
-const emptyForm: TreeForm = { name: "" };
+const emptyForm: TreeForm = { name: "", description: "" };
 
 function isDeleteAction(action: FileTreeAction) {
   return action.type.startsWith("delete-");
+}
+
+function isContentAction(action: FileTreeAction) {
+  return action.type === "create-content" || action.type === "rename-content";
+}
+
+function isGroupAction(action: FileTreeAction) {
+  return action.type === "create-group" || action.type === "rename-group";
+}
+
+function isCreateNoteAction(action: FileTreeAction) {
+  return action.type === "create-note";
 }
 
 function actionTitle(action: FileTreeAction) {
@@ -41,13 +54,13 @@ function actionTitle(action: FileTreeAction) {
     case "create-group":
       return "Novo grupo";
     case "create-content":
-      return "Nova pasta";
+      return "Novo conteúdo";
     case "create-note":
       return "Nova nota";
     case "rename-group":
-      return "Renomear grupo";
+      return "Editar grupo";
     case "rename-content":
-      return "Renomear pasta";
+      return "Editar conteúdo";
     case "rename-note":
       return "Renomear nota";
     case "delete-group":
@@ -60,7 +73,7 @@ function actionTitle(action: FileTreeAction) {
 }
 
 function nameLabel(action: FileTreeAction) {
-  return action.type.includes("note") ? "Nome" : action.type.includes("content") ? "Pasta" : "Grupo";
+  return action.type.includes("content") ? "Título" : "Nome";
 }
 
 export function FileTree({ className }: { className?: string }) {
@@ -109,19 +122,38 @@ export function FileTree({ className }: { className?: string }) {
                 : next.type === "delete-note"
                   ? next.note.fileName
                   : "";
+    const existingDescription =
+      next.type === "rename-content"
+        ? next.content.description ?? ""
+        : next.type === "rename-group"
+          ? next.group.description ?? ""
+          : "";
     setAction(next);
-    setForm({ name: existingName });
+    setForm({ name: existingName, description: existingDescription });
     setErrors({});
   };
 
   const validate = () => {
     if (!action) return false;
     const nextErrors: FormErrors = {};
-    if (isBlank(form.name)) nextErrors.name = "Informe o nome";
-    else if (!validateLength(form.name, 255)) nextErrors.name = "Máximo de 255 caracteres";
-    else if (action.type.includes("note") && (form.name.includes("/") || form.name.includes("\\"))) {
-      nextErrors.name = "Não use barras no nome";
+
+    if (isContentAction(action)) {
+      if (isBlank(form.name)) nextErrors.name = "Informe o título";
+      else if (!validateLength(form.name, 200)) nextErrors.name = "Máximo de 200 caracteres";
+      if (!validateLength(form.description, 2000)) nextErrors.description = "Máximo de 2000 caracteres";
+    } else if (isGroupAction(action)) {
+      if (isBlank(form.name)) nextErrors.name = "Informe o nome";
+      else if (!validateLength(form.name, 100)) nextErrors.name = "Máximo de 100 caracteres";
+      if (!validateLength(form.description, 500)) nextErrors.description = "Máximo de 500 caracteres";
+    } else {
+      const nameLimit = isCreateNoteAction(action) ? 251 : 255;
+      if (isBlank(form.name)) nextErrors.name = "Informe o nome";
+      else if (!validateLength(form.name, nameLimit)) nextErrors.name = `Máximo de ${nameLimit} caracteres`;
+      else if (action.type.includes("note") && (form.name.includes("/") || form.name.includes("\\"))) {
+        nextErrors.name = "Não use barras no nome";
+      }
     }
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -178,21 +210,31 @@ export function FileTree({ className }: { className?: string }) {
     try {
       const name = form.name.trim();
       if (action.type === "create-group") {
-        const payload: CreateStudyGroupRequest = { name };
+        const payload: CreateStudyGroupRequest = {
+          name,
+          description: isBlank(form.description) ? null : form.description.trim(),
+        };
         const created = await api.post<StudyGroup>("/study-groups", payload);
         reload();
         router.push(`/study-groups/${created.id}/contents`);
       } else if (action.type === "rename-group") {
-        await api.patch(`/study-groups/${action.group.id}`, { name, description: action.group.description } satisfies CreateStudyGroupRequest);
+        await api.patch(`/study-groups/${action.group.id}`, {
+          name,
+          description: isBlank(form.description) ? null : form.description.trim(),
+        } satisfies CreateStudyGroupRequest);
       } else if (action.type === "create-content") {
-        const payload: CreateContentRequest = { title: name, studyGroupId: action.group.id };
+        const payload: CreateContentRequest = {
+          title: name,
+          description: isBlank(form.description) ? null : form.description.trim(),
+          studyGroupId: action.group.id,
+        };
         const created = await api.post<Content>("/contents", payload);
         reload();
         router.push(`/study-groups/${action.group.id}/contents/${created.id}`);
       } else if (action.type === "rename-content") {
         await api.patch(`/contents/${action.content.id}`, {
           title: name,
-          description: action.content.description,
+          description: isBlank(form.description) ? null : form.description.trim(),
           studyGroupId: action.group.id,
         } satisfies CreateContentRequest);
       } else if (action.type === "create-note") {
@@ -224,6 +266,7 @@ export function FileTree({ className }: { className?: string }) {
         const apiErrors: FormErrors = {};
         Object.entries(error.issues).forEach(([key, messages]) => {
           if (key === "title" || key === "name" || key === "fileName") apiErrors.name = messages[0];
+          if (key === "description") apiErrors.description = messages[0];
         });
         setErrors(apiErrors);
       }
@@ -277,15 +320,30 @@ export function FileTree({ className }: { className?: string }) {
       >
         {action && !isDeleteAction(action) ? (
           <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-            <Field label={nameLabel(action)} htmlFor="file-tree-name" error={errors.name}>
+            <Field
+              label={nameLabel(action)}
+              htmlFor="file-tree-name"
+              error={errors.name}
+              hint={isCreateNoteAction(action) ? "O arquivo será criado com a extensão .md." : undefined}
+            >
               <Input id="file-tree-name" value={form.name} invalid={Boolean(errors.name)} onChange={(event) => setForm({ ...form, name: event.target.value })} />
             </Field>
+            {isContentAction(action) || isGroupAction(action) ? (
+              <Field label="Descrição" htmlFor="file-tree-description" error={errors.description}>
+                <Textarea
+                  id="file-tree-description"
+                  value={form.description}
+                  invalid={Boolean(errors.description)}
+                  onChange={(event) => setForm({ ...form, description: event.target.value })}
+                />
+              </Field>
+            ) : null}
             <div className="flex justify-end gap-2">
               <Button type="button" variant="secondary" onClick={() => setAction(null)}>
                 Cancelar
               </Button>
               <Button type="submit" loading={saving}>
-                Salvar
+                {isCreateNoteAction(action) ? "Criar" : "Salvar"}
               </Button>
             </div>
           </form>

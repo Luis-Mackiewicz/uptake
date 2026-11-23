@@ -94,7 +94,7 @@ export function FileTreeNode({
         <DropdownMenu label={`Ações de ${label}`} trigger={<MoreHorizontal size={14} aria-hidden />} align="right">
           {group && !content && !note ? (
             <DropdownMenuItem icon={<Plus size={14} aria-hidden />} onClick={() => onAction({ type: "create-content", group })}>
-              Nova pasta
+              Novo conteúdo
             </DropdownMenuItem>
           ) : null}
           {content && !note ? (
@@ -103,7 +103,7 @@ export function FileTreeNode({
             </DropdownMenuItem>
           ) : null}
           <DropdownMenuItem icon={<Pencil size={14} aria-hidden />} onClick={() => onAction(note ? { type: "rename-note", group, content: content!, note } : content ? { type: "rename-content", group, content } : { type: "rename-group", group })}>
-            Renomear
+            {content && !note ? "Editar conteúdo" : !content && !note ? "Editar grupo" : "Renomear"}
           </DropdownMenuItem>
           <DropdownMenuItem
             destructive

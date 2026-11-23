@@ -1,14 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useFileTree } from "@/components/files/file-tree-provider";
-import { PageHeader } from "@/components/layout/page-header";
 import { NoteWorkspace } from "@/components/notes/note-workspace";
 import { useNoteTabsContext } from "@/components/notes/note-tabs-provider";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
@@ -179,40 +175,29 @@ export function NoteFilePage({
   }
 
   return (
-    <div>
-      <PageHeader
-        title={note.title}
-        description={`Arquivo Markdown de ${content.title}.`}
-        breadcrumbs={[
-          { label: "Grupos", href: "/study-groups" },
-          { label: group.name, href: `/study-groups/${group.id}/contents` },
-          { label: content.title, href: contentHref },
-          { label: note.fileName },
-        ]}
-        actions={
-          <Link href={contentHref}>
-            <Button variant="secondary">
-              <ArrowLeft size={16} aria-hidden />
-              Voltar à pasta
-            </Button>
-          </Link>
-        }
-      />
-
-      <NoteWorkspace
-        tabs={tabs}
-        activeId={noteId}
-        onSelect={(id) => {
-          const tab = tabs.find((item) => item.id === id);
-          activateTab(id);
-          if (!tab) return;
-          const tabGroupId = tab.groupId ?? group.id;
-          router.push(`/study-groups/${tabGroupId}/contents/${tab.contentId}/notes/${tab.id}`);
-        }}
-        onRequestClose={requestClose}
-        onDraftChange={setDraft}
-        onSave={() => void saveActive()}
-      />
+    <div className="flex h-[calc(100dvh-7rem)] min-h-[520px] flex-col">
+      <div className="min-h-0 flex-1">
+        <NoteWorkspace
+          tabs={tabs}
+          activeId={activeId ?? noteId}
+          breadcrumbs={[
+            { label: "Grupos", href: "/study-groups" },
+            { label: group.name, href: `/study-groups/${group.id}/contents` },
+            { label: content.title, href: contentHref },
+            { label: activeTab?.fileName ?? note.fileName },
+          ]}
+          onSelect={(id) => {
+            const tab = tabs.find((item) => item.id === id);
+            activateTab(id);
+            if (!tab) return;
+            const tabGroupId = tab.groupId ?? group.id;
+            router.push(`/study-groups/${tabGroupId}/contents/${tab.contentId}/notes/${tab.id}`);
+          }}
+          onRequestClose={requestClose}
+          onDraftChange={setDraft}
+          onSave={() => void saveActive()}
+        />
+      </div>
 
       <ConfirmDialog
         open={closingId !== null}

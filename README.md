@@ -79,4 +79,4 @@ npm run build
 - Usuários usam `firstName` e `lastName`; a migração divide o nome antigo no primeiro espaço para preservar os dados.
 - A sidebar mostra uma árvore de arquivos `grupo/ → conteúdo/ → nota.md`, com criar/renomear/excluir direto na árvore. A rota `/notes` continua disponível para criar e abrir notas.
 - Notas abrem em abas no editor de `/study-groups/{groupId}/contents/{contentId}/notes/{noteId}`, com editor CodeMirror, toolbar Markdown, preview Markdown e salvamento manual por `Ctrl/Cmd+S`. A lista da pasta permite arrastar para reordenar via `PATCH /notes/reorder`.
-- Pomodoro é um widget local na sidebar: 25/5/15 min por padrão, pausa longa a cada 4 focos, sinal com toast e beep; não registra histórico.
+- Pomodoro é um widget local na sidebar com modos `Pomodoro`, `Break` e `Long break`, relógio editável e botão `Start/Pausar`: 25/5/15 min por padrão, pausa longa a cada 4 focos, sinal com toast e beep; não registra histórico.

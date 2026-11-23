@@ -190,7 +190,7 @@ Prioridade pelo método MoSCoW: **Must** (obrigatório), **Should** (importante)
 
 **Prioridade:** Should
 **Descrição:** temporizador de foco e pausa disponível globalmente na sidebar.
-**Critérios:** padrões de 25 min de foco, 5 min de pausa curta e 15 min de pausa longa; tempos configuráveis no widget; pausa longa a cada 4 focos; sinal visual e sonoro ao finalizar cada fase; estado apenas local, sem histórico de sessões.
+**Critérios:** padrões de 25 min de foco, 5 min de pausa curta e 15 min de pausa longa; seleção por `Pomodoro`, `Break` e `Long break`; relógio editável para ajustar a duração da fase; `Start/Pausar` no widget; pausa longa a cada 4 focos; sinal visual e sonoro ao finalizar cada fase; estado apenas local, sem histórico de sessões.
 
 ### RF-09 Ciclo de estudos em Provas
 
