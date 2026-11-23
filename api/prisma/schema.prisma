@@ -34,7 +34,6 @@ model StudyGroup {
   id          Int              @id @default(autoincrement())
   name        String
   description String?          @db.VarChar(500)
-  color       String?          @db.Char(7)
   userId      Int
   user        User             @relation(fields: [userId], references: [id], onDelete: Restrict)
   contents    Content[]

@@ -40,7 +40,6 @@ export type StudyGroupMinAggregateOutputType = {
   id: number | null
   name: string | null
   description: string | null
-  color: string | null
   userId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -51,7 +50,6 @@ export type StudyGroupMaxAggregateOutputType = {
   id: number | null
   name: string | null
   description: string | null
-  color: string | null
   userId: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -62,7 +60,6 @@ export type StudyGroupCountAggregateOutputType = {
   id: number
   name: number
   description: number
-  color: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -85,7 +82,6 @@ export type StudyGroupMinAggregateInputType = {
   id?: true
   name?: true
   description?: true
-  color?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -96,7 +92,6 @@ export type StudyGroupMaxAggregateInputType = {
   id?: true
   name?: true
   description?: true
-  color?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -107,7 +102,6 @@ export type StudyGroupCountAggregateInputType = {
   id?: true
   name?: true
   description?: true
-  color?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -205,7 +199,6 @@ export type StudyGroupGroupByOutputType = {
   id: number
   name: string
   description: string | null
-  color: string | null
   userId: number
   createdAt: Date
   updatedAt: Date
@@ -239,7 +232,6 @@ export type StudyGroupWhereInput = {
   id?: Prisma.IntFilter<"StudyGroup"> | number
   name?: Prisma.StringFilter<"StudyGroup"> | string
   description?: Prisma.StringNullableFilter<"StudyGroup"> | string | null
-  color?: Prisma.StringNullableFilter<"StudyGroup"> | string | null
   userId?: Prisma.IntFilter<"StudyGroup"> | number
   createdAt?: Prisma.DateTimeFilter<"StudyGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StudyGroup"> | Date | string
@@ -254,7 +246,6 @@ export type StudyGroupOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  color?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -274,7 +265,6 @@ export type StudyGroupWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.StudyGroupWhereInput | Prisma.StudyGroupWhereInput[]
   name?: Prisma.StringFilter<"StudyGroup"> | string
   description?: Prisma.StringNullableFilter<"StudyGroup"> | string | null
-  color?: Prisma.StringNullableFilter<"StudyGroup"> | string | null
   userId?: Prisma.IntFilter<"StudyGroup"> | number
   createdAt?: Prisma.DateTimeFilter<"StudyGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StudyGroup"> | Date | string
@@ -289,7 +279,6 @@ export type StudyGroupOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  color?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -308,7 +297,6 @@ export type StudyGroupScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"StudyGroup"> | number
   name?: Prisma.StringWithAggregatesFilter<"StudyGroup"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"StudyGroup"> | string | null
-  color?: Prisma.StringNullableWithAggregatesFilter<"StudyGroup"> | string | null
   userId?: Prisma.IntWithAggregatesFilter<"StudyGroup"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"StudyGroup"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"StudyGroup"> | Date | string
@@ -318,7 +306,6 @@ export type StudyGroupScalarWhereWithAggregatesInput = {
 export type StudyGroupCreateInput = {
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -332,7 +319,6 @@ export type StudyGroupUncheckedCreateInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -345,7 +331,6 @@ export type StudyGroupUncheckedCreateInput = {
 export type StudyGroupUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -359,7 +344,6 @@ export type StudyGroupUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -373,7 +357,6 @@ export type StudyGroupCreateManyInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -383,7 +366,6 @@ export type StudyGroupCreateManyInput = {
 export type StudyGroupUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -393,7 +375,6 @@ export type StudyGroupUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -425,7 +406,6 @@ export type StudyGroupCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  color?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -441,7 +421,6 @@ export type StudyGroupMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  color?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -452,7 +431,6 @@ export type StudyGroupMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  color?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -563,7 +541,6 @@ export type StudyGroupUpdateOneRequiredWithoutCycleItemsNestedInput = {
 export type StudyGroupCreateWithoutUserInput = {
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -576,7 +553,6 @@ export type StudyGroupUncheckedCreateWithoutUserInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -618,7 +594,6 @@ export type StudyGroupScalarWhereInput = {
   id?: Prisma.IntFilter<"StudyGroup"> | number
   name?: Prisma.StringFilter<"StudyGroup"> | string
   description?: Prisma.StringNullableFilter<"StudyGroup"> | string | null
-  color?: Prisma.StringNullableFilter<"StudyGroup"> | string | null
   userId?: Prisma.IntFilter<"StudyGroup"> | number
   createdAt?: Prisma.DateTimeFilter<"StudyGroup"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StudyGroup"> | Date | string
@@ -628,7 +603,6 @@ export type StudyGroupScalarWhereInput = {
 export type StudyGroupCreateWithoutContentsInput = {
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -641,7 +615,6 @@ export type StudyGroupUncheckedCreateWithoutContentsInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -669,7 +642,6 @@ export type StudyGroupUpdateToOneWithWhereWithoutContentsInput = {
 export type StudyGroupUpdateWithoutContentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -682,7 +654,6 @@ export type StudyGroupUncheckedUpdateWithoutContentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -694,7 +665,6 @@ export type StudyGroupUncheckedUpdateWithoutContentsInput = {
 export type StudyGroupCreateWithoutExamsInput = {
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -707,7 +677,6 @@ export type StudyGroupUncheckedCreateWithoutExamsInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -735,7 +704,6 @@ export type StudyGroupUpdateToOneWithWhereWithoutExamsInput = {
 export type StudyGroupUpdateWithoutExamsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -748,7 +716,6 @@ export type StudyGroupUncheckedUpdateWithoutExamsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -760,7 +727,6 @@ export type StudyGroupUncheckedUpdateWithoutExamsInput = {
 export type StudyGroupCreateWithoutCycleItemsInput = {
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -773,7 +739,6 @@ export type StudyGroupUncheckedCreateWithoutCycleItemsInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   userId: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -801,7 +766,6 @@ export type StudyGroupUpdateToOneWithWhereWithoutCycleItemsInput = {
 export type StudyGroupUpdateWithoutCycleItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -814,7 +778,6 @@ export type StudyGroupUncheckedUpdateWithoutCycleItemsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -827,7 +790,6 @@ export type StudyGroupCreateManyUserInput = {
   id?: number
   name: string
   description?: string | null
-  color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -836,7 +798,6 @@ export type StudyGroupCreateManyUserInput = {
 export type StudyGroupUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -849,7 +810,6 @@ export type StudyGroupUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -862,7 +822,6 @@ export type StudyGroupUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -921,7 +880,6 @@ export type StudyGroupSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   name?: boolean
   description?: boolean
-  color?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -939,14 +897,13 @@ export type StudyGroupSelectScalar = {
   id?: boolean
   name?: boolean
   description?: boolean
-  color?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type StudyGroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "color" | "userId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["studyGroup"]>
+export type StudyGroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "userId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["studyGroup"]>
 export type StudyGroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   contents?: boolean | Prisma.StudyGroup$contentsArgs<ExtArgs>
@@ -967,7 +924,6 @@ export type $StudyGroupPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: number
     name: string
     description: string | null
-    color: string | null
     userId: number
     createdAt: Date
     updatedAt: Date
@@ -1348,7 +1304,6 @@ export interface StudyGroupFieldRefs {
   readonly id: Prisma.FieldRef<"StudyGroup", 'Int'>
   readonly name: Prisma.FieldRef<"StudyGroup", 'String'>
   readonly description: Prisma.FieldRef<"StudyGroup", 'String'>
-  readonly color: Prisma.FieldRef<"StudyGroup", 'String'>
   readonly userId: Prisma.FieldRef<"StudyGroup", 'Int'>
   readonly createdAt: Prisma.FieldRef<"StudyGroup", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"StudyGroup", 'DateTime'>

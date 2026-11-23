@@ -1,12 +1,5 @@
 import { z } from "zod";
 
-const colorSchema = z
-  .string()
-  .trim()
-  .regex(/^#[0-9A-Fa-f]{6}$/, "Cor deve estar no formato #RRGGBB")
-  .nullable()
-  .optional();
-
 export const createStudyGroupSchema = z
   .object({
     name: z
@@ -20,7 +13,6 @@ export const createStudyGroupSchema = z
       .max(500, "Descrição deve ter no máximo 500 caracteres")
       .nullable()
       .optional(),
-    color: colorSchema,
   })
   .strict();
 

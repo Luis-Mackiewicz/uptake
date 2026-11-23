@@ -7,7 +7,6 @@ export const studyGroupSafeSelect = {
   id: true,
   name: true,
   description: true,
-  color: true,
   userId: true,
   createdAt: true,
   updatedAt: true,
@@ -16,7 +15,6 @@ export const studyGroupSafeSelect = {
 export interface StudyGroupInput {
   name: string;
   description?: string | null;
-  color?: string | null;
 }
 
 export const studyGroupRepository = {
@@ -58,7 +56,6 @@ export const studyGroupRepository = {
       data: {
         name: data.name,
         description: data.description ?? null,
-        color: data.color ?? null,
         userId,
       },
       select: studyGroupSafeSelect,
@@ -95,7 +92,6 @@ export const studyGroupRepository = {
         data: {
           name: data.name,
           description: data.description ?? null,
-          color: data.color ?? null,
           deletedAt: null,
         },
         select: studyGroupSafeSelect,
@@ -111,7 +107,6 @@ export const studyGroupRepository = {
       data: {
         name: data.name,
         description: data.description,
-        color: data.color,
       },
       select: studyGroupSafeSelect,
     });

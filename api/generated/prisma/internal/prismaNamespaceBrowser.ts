@@ -100,7 +100,6 @@ export const StudyGroupScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  color: 'color',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
@@ -273,8 +272,7 @@ export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnu
 
 export const StudyGroupOrderByRelevanceFieldEnum = {
   name: 'name',
-  description: 'description',
-  color: 'color'
+  description: 'description'
 } as const
 
 export type StudyGroupOrderByRelevanceFieldEnum = (typeof StudyGroupOrderByRelevanceFieldEnum)[keyof typeof StudyGroupOrderByRelevanceFieldEnum]
